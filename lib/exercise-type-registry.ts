@@ -6,44 +6,56 @@ import {
   WeightInput
 } from "@/components/workout-form/inputs"
 
-import { ExerciseType, ExerciseTypeEntry } from "@/lib/types/exercise-type-registry.types"
+import {
+  ExerciseInput,
+  ExerciseInputType,
+  ExerciseType, 
+  ExerciseTypeEntry 
+} from "@/lib/types/exercise-type-registry.types"
 
 //             !!!! WARNING !!!!
 
 // A change in input units may cause the db to change.
 //     Be sure changes do not cause a conflict.
 
+const inputTypeRegistry: Record<ExerciseInputType, ExerciseInput> = {
+  "distance": {
+    name: "distance",
+    zodObject: z.number().nonnegative().int(),
+    units: ["mm", "m", "km", "in", "ft", "yd", "mi"],
+    component: DistanceInput
+  },
+  "reps": {
+    name: "reps",
+    zodObject: z.number().nonnegative().int(),
+    units: ["reps"],
+    component: RepsInput
+  },
+  "time": {
+    name: "time",
+    zodObject: z.number().nonnegative().int(),
+    units: ["ms", "s", "m", "h", "SS:mm", "MM:SS:mm", "HH:MM:SS:mm", "MM:SS", "HH:MM:SS"],
+    component: TimeInput
+  },
+  "weight": {
+    name: "weight",
+    zodObject: z.number().nonnegative().int(),
+    units: ["g", "kg", "oz", "lb"],
+    component: WeightInput
+  }
+}
+
 export const exerciseTypeRegistry: Record<ExerciseType, ExerciseTypeEntry> = {
   weightReps: {
     inputs: [
-      {
-        name: "weight",
-        zodObject: z.number().nonnegative().int(),
-        units: ["g", "kg", "oz", "lb"],
-        component: WeightInput
-      },
-      {
-        name: "reps",
-        zodObject: z.number().nonnegative().int(),
-        units: ["reps"],
-        component: RepsInput
-      }
+      inputTypeRegistry["weight"],
+      inputTypeRegistry["reps"]
     ]
   },
   timeDistance: {
     inputs: [
-      {
-        name: "time",
-        zodObject: z.number().nonnegative().int(),
-        units: ["ms", "s", "m", "h", "SS:mm", "MM:SS:mm", "HH:MM:SS:mm", "MM:SS", "HH:MM:SS"],
-        component: TimeInput
-      },
-      {
-        name: "distance",
-        zodObject: z.number().nonnegative().int(),
-        units: ["mm", "m", "km", "in", "ft", "yd", "mi"],
-        component: DistanceInput
-      }
+      inputTypeRegistry["time"],
+      inputTypeRegistry["distance"]
     ]
   }
 }

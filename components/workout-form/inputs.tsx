@@ -1,0 +1,23 @@
+export function WeightInput() {
+  return (
+    <input />
+  )
+}
+
+export function RepsInput() {
+  return (
+    <input />
+  )
+}
+
+export function TimeInput() {
+  return (
+    <input />
+  )
+}
+
+export function DistanceInput() {
+  return (
+    <input />
+  )
+}
