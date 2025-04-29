@@ -35,9 +35,10 @@ export const workoutFormSchema = z.object({
       .string()
       .min(1, "Workout name required")
       .max(1000, "Workout name too long"),
-  date: z
-      .string()
-      .date("Invalid date"),
+  date: z.date({
+    required_error: "Date is required",
+    invalid_type_error: "Invalid date type"
+  }),
   notes: z.string(),
   exercises: z.array(exerciseSchema)
 })
