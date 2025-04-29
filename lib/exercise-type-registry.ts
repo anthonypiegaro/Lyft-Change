@@ -43,8 +43,10 @@ const inputTypeRegistry: Record<ExerciseInputType, ExerciseInput> = {
     units: ["g", "kg", "oz", "lb"],
     component: WeightInput
   }
-}
+} as const
 
+
+// any changes ere must be mirrored in lib/schemas/workout-form.ts
 export const exerciseTypeRegistry: Record<ExerciseType, ExerciseTypeEntry> = {
   weightReps: {
     inputs: [
@@ -58,4 +60,6 @@ export const exerciseTypeRegistry: Record<ExerciseType, ExerciseTypeEntry> = {
       inputTypeRegistry["distance"]
     ]
   }
-}
+} as const
+
+export type ExerciseTypeRegistry = typeof exerciseTypeRegistry

@@ -1,7 +1,9 @@
 import React from "react";
 import { ZodType } from "zod"
 
-export type ExerciseType = "weightReps" | "timeDistance"
+export const exerciseTypes = ["weightReps", "timeDistance"] as const;
+
+export type ExerciseType = typeof exerciseTypes[number]
 
 export type ExerciseInputType = "distance" | "reps" | "time" | "weight"
 
