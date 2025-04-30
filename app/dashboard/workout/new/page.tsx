@@ -1,5 +1,9 @@
+import { WorkoutForm } from "@/components/workout-form/workout-form"
+
 export default function NewWorkoutPage() {
   return (
-    <h1>This is the page for when a user clicks the "Workout from Scratch"</h1>
+    <div className="flex justify-center w-full py-10 pb-20 md:pb-10 md:px-0 px-4">
+      <WorkoutForm />
+    </div>
   )
 }
