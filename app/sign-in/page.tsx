@@ -1,7 +1,7 @@
 import Image from "next/image"
 import { Dumbbell } from "lucide-react"
 
-import { SignInForm } from "@/components/sign-in-form"
+import { SignInForm } from "@/app/sign-in/sign-in-form"
 import someBaseballs from "@/public/some-baseballs.jpg"
 
 export default function SignInPage() {

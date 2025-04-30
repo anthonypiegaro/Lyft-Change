@@ -1,17 +1,14 @@
 "use client"
 
 import { useRef, useState } from "react"
-import dynamic from "next/dynamic"
 import Link from "next/link"
+import dynamic from "next/dynamic"
+import { LottieRefCurrentProps } from "lottie-react"
 import { useRouter } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { LottieRefCurrentProps } from "lottie-react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 
-import { authClient } from "@/lib/auth-client"
-import { cn } from "@/lib/utils"
-import { signUpFormSchema } from "@/lib/schemas/sign-up-form"
 import { Button } from "@/components/ui/button"
 import {
   Form,
@@ -19,42 +16,46 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
+  FormMessage
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 
+import { authClient } from "@/lib/auth-client"
+import { cn } from "@/lib/utils"
+
 import shapeAnimation from "@/public/lottie/shape-animation.json"
+
+import { signInFormSchema } from "./sign-in-form.schema"
 
 const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
-export function SignUpForm({
+export function SignInForm({
   className,
   ...props
 }: React.ComponentProps<"form">) {
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
-  const [error, setError] = useState<string>("")
+  const [error, setError] = useState<string | null>()
+  const [submitting, setSubmitting] = useState(false)
 
   const router = useRouter()
 
-  const lottieRef = useRef<LottieRefCurrentProps>(null);
+  const lottieRef = useRef<LottieRefCurrentProps>(null)
 
-  const form = useForm<z.infer<typeof signUpFormSchema>>({
-    resolver: zodResolver(signUpFormSchema),
+  const form = useForm<z.infer<typeof signInFormSchema>>({
+    resolver: zodResolver(signInFormSchema),
     defaultValues: {
       email: "",
       password: ""
     }
   })
 
-  const onSubmit = async (values: z.infer<typeof signUpFormSchema>) => {
+  const onSubmit = async (values: z.infer<typeof signInFormSchema>) => {
     try {
-      await authClient.signUp.email({
+      await authClient.signIn.email({
         email: values.email,
-        password: values.password,
-        name: values.email,
+        password: values.password
       }, {
         onRequest: (ctx) => {
-          setIsSubmitting(true)
+          setSubmitting(true)
           lottieRef.current?.play()
         },
         onSuccess: (ctx) => {
@@ -62,7 +63,7 @@ export function SignUpForm({
         },
         onError: (ctx) => {
           lottieRef.current?.goToAndStop(0)
-          setIsSubmitting(false)
+          setSubmitting(false)
           setError(ctx.error.message)
         }
       })
@@ -76,9 +77,9 @@ export function SignUpForm({
     <Form {...form}>
       <form className={cn("flex flex-col gap-6", className)} {...props}>
         <div className="flex flex-col items-center gap-2 text-center">
-          <h1 className="text-2xl font-bold">Register your account</h1>
+          <h1 className="text-2xl font-bold">Login to your account</h1>
           <p className="text-muted-foreground text-sm text-balance">
-            Enter your email below to register your account
+            Enter your email below to login to your account
           </p>
         </div>
         <div className="grid gap-6">
@@ -89,7 +90,7 @@ export function SignUpForm({
               <FormItem>
                 <FormLabel>email</FormLabel>
                 <FormControl>
-                  <Input placeholder="name@provider.com" {...field} disabled={isSubmitting} />
+                  <Input placeholder="name@provider.com" {...field} disabled={submitting} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -100,17 +101,26 @@ export function SignUpForm({
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>password</FormLabel>
+                <FormLabel className="flex justify-between">
+                  password
+                  <span>
+                  <Link
+                    href="#"
+                    className="ml-auto text-sm font-normal underline-offset-4 hover:underline"
+                  >
+                    Forgot your password?
+                  </Link>
+                  </span>
+                </FormLabel>
                 <FormControl>
-                  <Input type="password" {...field} disabled={isSubmitting} />
+                  <Input type="password" {...field} disabled={submitting} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          {error && <p className="text-destructive">{error}</p>}
-          <Button className="w-full" onClick={form.handleSubmit(onSubmit)} disabled={isSubmitting}>
-            Sign Up
+          <Button className="w-full" disabled={submitting} onClick={form.handleSubmit(onSubmit)} >
+            Sign In
             <Lottie 
               lottieRef={lottieRef}
               animationData={shapeAnimation} 
@@ -121,9 +131,9 @@ export function SignUpForm({
           </Button>
         </div>
         <div className="text-center text-sm">
-          Already have an account?{" "}
-          <Link href="/sign-in" className="underline underline-offset-4">
-            Sign in
+          Don&apos;t have an account?{" "}
+          <Link href="/sign-up" className="underline underline-offset-4">
+            Sign up
           </Link>
         </div>
       </form>

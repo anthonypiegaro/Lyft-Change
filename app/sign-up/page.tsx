@@ -1,7 +1,7 @@
 import Image from "next/image"
 import { Dumbbell } from "lucide-react"
 
-import { SignUpForm } from "@/components/sign-up-form"
+import { SignUpForm } from "@/app/sign-up/sign-up-form"
 import loneBaseball from "@/public/lone-baseball.jpg"
 
 export default function SignUpPage() {
