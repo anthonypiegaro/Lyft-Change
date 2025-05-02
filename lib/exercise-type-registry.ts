@@ -34,7 +34,7 @@ const inputTypeRegistry: Record<ExerciseInputType, ExerciseInput> = {
   "time": {
     name: "time",
     zodObject: z.number().nonnegative().int(),
-    units: ["ms", "s", "m", "h", "SS:mm", "MM:SS:mm", "HH:MM:SS:mm", "MM:SS", "HH:MM:SS"],
+    units: ["ms", "s", "m", "h"],
     component: TimeInput
   },
   "weight": {

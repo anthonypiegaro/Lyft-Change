@@ -7,7 +7,7 @@ const repsValidation = z.number().nonnegative().int()
 export const repsUnits = z.enum(["reps"])
 
 const timeValidation = z.number().nonnegative().int()
-export const timeUnits = z.enum(["ms", "s", "m", "h", "SS:mm", "MM:SS:mm", "HH:MM:SS:mm", "MM:SS", "HH:MM:SS"])
+export const timeUnits = z.enum(["ms", "s", "m", "h"])
 
 const weightValidation = z.number().nonnegative().int()
 export const weightUnits = z.enum(["g", "kg", "oz", "lb"])
