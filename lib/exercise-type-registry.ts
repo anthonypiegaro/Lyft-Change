@@ -4,7 +4,7 @@ import {
   RepsInput,
   TimeInput,
   WeightInput
-} from "@/components/workout-form/inputs"
+} from "@/components/forms/workout-form/inputs"
 
 import {
   ExerciseInput,
