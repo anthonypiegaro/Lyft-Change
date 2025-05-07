@@ -25,18 +25,24 @@ import {
 
 import { DataTablePagination } from "./data-table-pagination"
 import { DataTableSearchFilter } from "./data-table-search-filter"
+import { DataTableTagFilter } from "./data-table-tag-filter"
 import { DataTableViewOptions } from "./data-table-view-options"
 
 interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[],
-  data: TData[],
+  columns: ColumnDef<TData, TValue>[]
+  data: TData[]
   filterColumnName: string
+  tagOptions: {
+    label: string
+    value: string
+  }[]
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
-  filterColumnName
+  filterColumnName,
+  tagOptions
 }: DataTableProps<TData, TValue>) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [sorting, setSorting] = useState<SortingState>([])
@@ -64,6 +70,7 @@ export function DataTable<TData, TValue>({
       <div className="flex items-center gap-x-4 pb-4">
         <DataTableSearchFilter table={table} columnName={filterColumnName} />
         <DataTableViewOptions table={table} />
+        <DataTableTagFilter table={table} tagOptions={tagOptions} />
       </div>
       <div className="rounded-md border mb-4">
         <Table>

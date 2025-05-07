@@ -3,6 +3,7 @@
 import { ColumnDef } from "@tanstack/react-table"
 import { ArrowUpDown, MoreHorizontal } from "lucide-react"
 
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -38,9 +39,14 @@ export const columns: ColumnDef<ProgramRowType>[] = [
 
       return (
         <div>
-          {tags.map((tag, index) => index == tags.length - 1 ? tag : tag + ", ")}
+          {tags.map(tag => <Badge key={tag} className="mx-1">{tag}</Badge>)}
         </div>
       )
+    },
+    filterFn: (row, columnId, filterValue) => {
+      if (!filterValue || filterValue.length === 0) return true;
+      const rowTags = row.getValue(columnId) as string[];
+      return filterValue.every((tag: string) => rowTags.includes(tag));
     }
   },
   {

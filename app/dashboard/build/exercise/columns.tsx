@@ -18,6 +18,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu"
+import { MultiSelect } from "@/components/ui/multi-select"
 
 export type ExerciseRowType = {
   id: string
@@ -97,7 +98,7 @@ export const columns: ColumnDef<ExerciseRowType>[] = [
   },
   {
     accessorKey: "tags",
-    header: () => <div className="font-semibold">Tags</div>,
+    header: ({ column }) => <div className="font-semibold">Tags</div>,
     cell: ({ row }) => {
       const tags = row.original.tags
 
@@ -106,6 +107,11 @@ export const columns: ColumnDef<ExerciseRowType>[] = [
           {tags.map(tag => <Badge key={tag} className="mx-1">{tag}</Badge>)}
         </div>
       )
+    },
+    filterFn: (row, columnId, filterValue) => {
+      if (!filterValue || filterValue.length === 0) return true;
+      const rowTags = row.getValue(columnId) as string[];
+      return filterValue.every((tag: string) => rowTags.includes(tag));
     }
   },
   {
