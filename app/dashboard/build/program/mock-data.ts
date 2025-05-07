@@ -1,0 +1,24 @@
+import { ProgramRowType } from "./columns";
+
+export const mockProgramData: ProgramRowType[] = [
+  { id: "a1e2c3d4-5f6a-7b8c-9d0e-1f2a3b4c5d6e", name: "Velocity Throwing Block", tags: ["velocity", "throwing", "power"] },
+  { id: "b2f3d4e5-6a7b-8c9d-0e1f-2a3b4c5d6e7f", name: "Onboarding Program", tags: ["beginner", "intro", "general"] },
+  { id: "c3g4e5f6-7b8c-9d0e-1f2a-3b4c5d6e7f8a", name: "Strength Block", tags: ["strength", "hypertrophy"] },
+  { id: "d4h5f6a7-8c9d-0e1f-2a3b-4c5d6e7f8a9b", name: "Power Block", tags: ["power", "explosive"] },
+  { id: "e5i6a7b8-9d0e-1f2a-3b4c-5d6e7f8a9b0c", name: "Offseason Conditioning", tags: ["conditioning", "offseason"] },
+  { id: "f6j7b8c9-0e1f-2a3b-4c5d-6e7f8a9b0c1d", name: "Mobility & Movement", tags: ["mobility", "movement", "recovery"] },
+  { id: "a7k8c9d0-1f2a-3b4c-5d6e-7f8a9b0c1d2e", name: "In-Season Maintenance", tags: ["maintenance", "in-season"] },
+  { id: "b8l9d0e1-2a3b-4c5d-6e7f-8a9b0c1d2e3f", name: "Arm Care Protocol", tags: ["arm care", "recovery", "throwing"] },
+  { id: "c9m0e1f2-3b4c-5d6e-7f8a-9b0c1d2e3f4a", name: "Speed & Agility Block", tags: ["speed", "agility"] },
+  { id: "d0n1f2a3-4c5d-6e7f-8a9b-0c1d2e3f4a5b", name: "Hypertrophy Block", tags: ["hypertrophy", "muscle"] },
+  { id: "e1o2a3b4-5d6e-7f8a-9b0c-1d2e3f4a5b6c", name: "Return to Play", tags: ["rehab", "return to play"] },
+  { id: "f2p3b4c5-6e7f-8a9b-0c1d-2e3f4a5b6c7d", name: "Youth Development", tags: ["youth", "development", "intro"] },
+  { id: "a3q4c5d6-7f8a-9b0c-1d2e-3f4a5b6c7d8e", name: "Explosive Power", tags: ["explosive", "power"] },
+  { id: "b4r5d6e7-8a9b-0c1d-2e3f-4a5b6c7d8e9f", name: "Preseason Ramp-Up", tags: ["preseason", "ramp-up"] },
+  { id: "c5s6e7f8-9b0c-1d2e-3f4a-5b6c7d8e9f0a", name: "Endurance Block", tags: ["endurance", "conditioning"] },
+  { id: "d6t7f8a9-0c1d-2e3f-4a5b-6c7d8e9f0a1b", name: "Rotational Power", tags: ["rotation", "power", "core"] },
+  { id: "e7u8a9b0-1d2e-3f4a-5b6c-7d8e9f0a1b2c", name: "Upper Body Strength", tags: ["upper body", "strength"] },
+  { id: "f8v9b0c1-2e3f-4a5b-6c7d-8e9f0a1b2c3d", name: "Lower Body Strength", tags: ["lower body", "strength"] },
+  { id: "a9w0c1d2-3f4a-5b6c-7d8e-9f0a1b2c3d4e", name: "Throwing Velocity Builder", tags: ["throwing", "velocity", "power"] },
+  { id: "b0x1d2e3-4a5b-6c7d-8e9f-0a1b2c3d4e5f", name: "General Fitness", tags: ["general", "fitness", "all levels"] },
+];
