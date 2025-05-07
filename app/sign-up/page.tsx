@@ -23,8 +23,8 @@ export default function SignUpPage() {
         </div>
       </div>
       <div className="bg-muted relative hidden lg:block">
-        <Image 
-          src={loneBaseball} 
+        <img 
+          src="https://hhenvp4y5h3wlryn.public.blob.vercel-storage.com/some-baseballs-nKZ3kAsEA6TDNnd6NHduo8TWdfpaAS.jpg"
           alt="A single baseball in the middle of a dirt field" 
           className="absolute inset-0 h-full w-full object-cover"
         />

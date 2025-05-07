@@ -23,9 +23,9 @@ export default function SignInPage() {
         </div>
       </div>
       <div className="bg-muted relative hidden lg:block">
-        <Image 
-          src={someBaseballs} 
-          alt="Three baseballs scattered on an infield" 
+        <img
+          src="https://hhenvp4y5h3wlryn.public.blob.vercel-storage.com/lone-baseball-TUVg0kCXnQWPrIQLwo87nIEevMW30i.jpg"
+          alt="Three baseballs scattered on an infield"
           className="absolute inset-0 h-full w-full object-cover"
         />
         <div className="absolute inset-0 bg-black opacity-20 pointer-events-none"></div>
