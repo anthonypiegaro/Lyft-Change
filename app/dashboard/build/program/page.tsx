@@ -8,7 +8,9 @@ export default async function ProgramPage() {
   const tagOptions = mockProgramTags.map(tag => ({
     label: tag,
     value: tag
-  }))
+  })).sort((a, b) =>
+    a.label.localeCompare(b.label, undefined, { sensitivity: "base" })
+  )
 
   return (
     <div className="container mx-auto px-1">

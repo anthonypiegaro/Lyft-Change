@@ -8,7 +8,9 @@ export default async function ExercisePage() {
   const tagOptions = mockExerciseTags.map(tag => ({
     label: tag,
     value: tag,
-  }));
+  })).sort((a, b) =>
+    a.label.localeCompare(b.label, undefined, { sensitivity: "base" })
+  )
 
   return (
     <div className="container mx-auto px-1">
