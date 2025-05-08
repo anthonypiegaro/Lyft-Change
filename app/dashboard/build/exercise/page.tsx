@@ -1,13 +1,14 @@
 import { columns } from "./columns"
-import { mockExerciseData, mockExerciseTags } from "./mock-data";
+import { getExerciseTags } from "./get-exercise-tags.action";
+import { mockExerciseData } from "./mock-data";
 import { DataTable } from "../data-table";
 
 export default async function ExercisePage() {
-  await new Promise((resolve) => setTimeout(resolve, 5000));
+  const exerciseTags = await getExerciseTags()
 
-  const tagOptions = mockExerciseTags.map(tag => ({
-    label: tag,
-    value: tag,
+  const tagOptions = exerciseTags.map(tag => ({
+    label: tag.name,
+    value: tag.name,
   })).sort((a, b) =>
     a.label.localeCompare(b.label, undefined, { sensitivity: "base" })
   )
