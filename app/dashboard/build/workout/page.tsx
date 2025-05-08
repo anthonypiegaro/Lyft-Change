@@ -19,6 +19,7 @@ export default async function WorkoutPage() {
         data={mockWorkoutData} 
         filterColumnName="name" 
         tagOptions={tagOptions}
+        type="workout"
       />
     </div>
   )

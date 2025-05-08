@@ -19,6 +19,7 @@ export default async function ProgramPage() {
         data={mockProgramData} 
         filterColumnName="name" 
         tagOptions={tagOptions}
+        type="program"
       />
     </div>
   )

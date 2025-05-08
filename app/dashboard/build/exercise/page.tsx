@@ -18,7 +18,8 @@ export default async function ExercisePage() {
         columns={columns} 
         data={mockExerciseData} 
         filterColumnName="name" 
-        tagOptions={tagOptions} 
+        tagOptions={tagOptions}
+        type="exercise"
       />
     </div>
   )

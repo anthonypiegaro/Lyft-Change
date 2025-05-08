@@ -3,8 +3,9 @@ import { redirect } from "next/navigation"
 
 import { AppSidebar } from "@/components/app-sidebar/app-sidebar"
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
-import { auth } from "@/lib/auth"
+import { Toaster } from "@/components/ui/sonner"
 import { ThemeToggleButton } from "@/components/ui/theme-toggle-button"
+import { auth } from "@/lib/auth"
 
 export default async function DashboardLayout({
   children,
@@ -32,6 +33,7 @@ export default async function DashboardLayout({
         <SidebarTrigger className="absolute left-4.75 top-5 z-50" />
         {children}
       </main>
+      <Toaster />
     </SidebarProvider>
   ) 
 }

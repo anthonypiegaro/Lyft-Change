@@ -23,6 +23,8 @@ import {
   TableRow
 } from "@/components/ui/table"
 
+import { AddEntityButton } from "./add-entity-button"
+import { AddTagButton } from "./add-tag-button"
 import { DataTablePagination } from "./data-table-pagination"
 import { DataTableSearchFilter } from "./data-table-search-filter"
 import { DataTableTagFilter } from "./data-table-tag-filter"
@@ -35,14 +37,16 @@ interface DataTableProps<TData, TValue> {
   tagOptions: {
     label: string
     value: string
-  }[]
+  }[],
+  type: "exercise" | "workout" | "program"
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
   filterColumnName,
-  tagOptions
+  tagOptions,
+  type
 }: DataTableProps<TData, TValue>) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [sorting, setSorting] = useState<SortingState>([])
@@ -71,6 +75,10 @@ export function DataTable<TData, TValue>({
         <DataTableSearchFilter table={table} columnName={filterColumnName} />
         <DataTableViewOptions table={table} />
         <DataTableTagFilter table={table} tagOptions={tagOptions} />
+        <div className="ml-auto flex gap-x-4">
+          <AddTagButton type={type} />
+          <AddEntityButton type={type} />
+        </div>
       </div>
       <div className="rounded-md border mb-4">
         <Table>
