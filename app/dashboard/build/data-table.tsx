@@ -34,19 +34,19 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
   filterColumnName: string
-  tagOptions: {
-    label: string
-    value: string
-  }[],
-  type: "exercise" | "workout" | "program"
+  type: "exercise" | "workout" | "program",
+  tags: {
+    id: string,
+    name: string
+  }[]
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
   filterColumnName,
-  tagOptions,
-  type
+  type,
+  tags
 }: DataTableProps<TData, TValue>) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [sorting, setSorting] = useState<SortingState>([])
@@ -68,6 +68,13 @@ export function DataTable<TData, TValue>({
       sorting
     }
   })
+
+  const tagOptions = tags.map(tag => ({
+    label: tag.name,
+    value: tag.name
+  })).sort((a, b) =>
+    a.label.localeCompare(b.label, undefined, { sensitivity: "base" })
+  )
 
   return (
     <>

@@ -8,7 +8,7 @@ import { auth } from "@/lib/auth"
 import { db } from "@/db/db"
 import { exerciseTag } from "@/db/schema"
 
-export const getExerciseTags = async (): Promise<{ name: string }[]> => {
+export const getExerciseTags = async (): Promise<{ id: string, name: string }[]> => {
   const session = await auth.api.getSession({
     headers: await headers()
   })
@@ -19,7 +19,7 @@ export const getExerciseTags = async (): Promise<{ name: string }[]> => {
 
   const userId = session.user.id
 
-  const tags = await db.select({ name: exerciseTag.name }).from(exerciseTag).where(eq(exerciseTag.userId, userId))
+  const tags = await db.select({ id: exerciseTag.id, name: exerciseTag.name }).from(exerciseTag).where(eq(exerciseTag.userId, userId))
 
   return tags;
 }
