@@ -11,7 +11,9 @@ export const getExercises = async ({ userId }: { userId: string }): Promise<Exer
     id: exercise.id,
     name: exercise.name,
     type: exerciseType.name,
-    tag: exerciseTag.name
+    tagId: exerciseTag.id,
+    tag: exerciseTag.name,
+    description: exercise.description
   })
   .from(exercise)
   .leftJoin(exerciseType, eq(exercise.typeId, exerciseType.id))
@@ -25,12 +27,16 @@ export const getExercises = async ({ userId }: { userId: string }): Promise<Exer
         id: row.id,
         name: row.name,
         type: row.type as ExerciseRowType["type"],
+        description: row?.description ?? "",
         tags: []
       }
     }
 
     if (row.tag != null) {
-      acc[row.id].tags.push(row.tag)
+      acc[row.id].tags.push({
+        id: row.tagId as string,
+        name: row.tag
+      })
     }
 
     return acc

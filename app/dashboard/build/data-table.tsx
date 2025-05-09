@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -29,6 +30,8 @@ import { DataTablePagination } from "./data-table-pagination"
 import { DataTableSearchFilter } from "./data-table-search-filter"
 import { DataTableTagFilter } from "./data-table-tag-filter"
 import { DataTableViewOptions } from "./data-table-view-options"
+
+const queryClient = new QueryClient()
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -76,6 +79,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <>
+    <QueryClientProvider client={queryClient}>
       <div className="flex items-center gap-x-4 pb-4">
         <DataTableSearchFilter table={table} columnName={filterColumnName} />
         <DataTableViewOptions table={table} />
@@ -131,6 +135,7 @@ export function DataTable<TData, TValue>({
         </Table>
       </div>
       <DataTablePagination table={table} />
+    </QueryClientProvider>
     </>
   )
 }

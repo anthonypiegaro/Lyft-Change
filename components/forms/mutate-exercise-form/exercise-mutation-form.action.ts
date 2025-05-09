@@ -43,14 +43,14 @@ export const mutateExercise = async (values: z.infer<typeof exerciseMutationForm
         typeId: typeId,
         name: values.name,
         description: values.description
-      }).returning({ id: exercise.id })
+      }).where(eq(exercise.id, values.id)).returning({ id: exercise.id })
 
       exerciseId = exerciseReturned[0].id
-    }
 
-    await tx.delete(exerciseToExerciseTag).where(
-      eq(exerciseToExerciseTag.exerciseId, exerciseId)
-    )
+      await tx.delete(exerciseToExerciseTag).where(
+        eq(exerciseToExerciseTag.exerciseId, exerciseId)
+      )
+    }
 
     const exerciseToExerciseTagValues = values.tags.map(tag => ({
       exerciseId,

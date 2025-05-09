@@ -58,7 +58,13 @@ export function ExerciseMutationForm({
     await mutateExercise(values)
       .then(() => { 
         onSuccess?.()
-        form.reset()
+        form.reset({
+          id: undefined,
+          type: "weightReps",
+          name: "",
+          tags: [],
+          description: ""
+        })
       })
       .catch(e => { 
         onError?.(e as Error)
