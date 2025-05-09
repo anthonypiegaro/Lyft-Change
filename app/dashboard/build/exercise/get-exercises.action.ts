@@ -1,6 +1,6 @@
 "use server"
 
-import { eq } from "drizzle-orm"
+import { and, eq } from "drizzle-orm"
 
 import { db } from "@/db/db"
 import { exercise, exerciseTag, exerciseToExerciseTag, exerciseType } from "@/db/schema"
@@ -19,7 +19,7 @@ export const getExercises = async ({ userId }: { userId: string }): Promise<Exer
   .leftJoin(exerciseType, eq(exercise.typeId, exerciseType.id))
   .leftJoin(exerciseToExerciseTag, eq(exercise.id, exerciseToExerciseTag.exerciseId))
   .leftJoin(exerciseTag, eq(exerciseToExerciseTag.exerciseTagId, exerciseTag.id))
-  .where(eq(exercise.userId, userId))
+  .where(and(eq(exercise.userId, userId), eq(exercise.hidden, false)))
 
   const exercises = exerciseRows.reduce((acc, row) => {
     if (!(row.id in acc)) {

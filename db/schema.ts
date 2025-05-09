@@ -58,7 +58,8 @@ export const exercise = pgTable("exercise", {
   userId: text("user_id").notNull().references(() => user.id, { onDelete: "cascade" }),
   typeId: uuid("type_id").notNull().references(() => exerciseType.id),
   name: text("name").notNull(),
-  description: text("description")
+  description: text("description"),
+  hidden: boolean("hidden").notNull().default(false)
 })
 
 export const exerciseTag = pgTable("exercise_tag", {

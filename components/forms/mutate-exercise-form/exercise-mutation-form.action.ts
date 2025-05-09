@@ -56,6 +56,9 @@ export const mutateExercise = async (values: z.infer<typeof exerciseMutationForm
       exerciseTagId: tag
     }))
 
-    await tx.insert(exerciseToExerciseTag).values(exerciseToExerciseTagValues)
+    if (exerciseToExerciseTagValues.length > 0) {
+      await tx.insert(exerciseToExerciseTag).values(exerciseToExerciseTagValues)
+    }
+
   })
 }

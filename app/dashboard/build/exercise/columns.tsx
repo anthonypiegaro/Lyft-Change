@@ -27,7 +27,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu"
+
 import { EditExerciseForm } from "./edit-exercise-form"
+import { HideExerciseForm } from "./hide-exercise-form"
 
 export type ExerciseRowType = {
   id: string
@@ -147,7 +149,12 @@ export const columns: ColumnDef<ExerciseRowType>[] = [
 
       const router = useRouter()
 
-      const onEditExerciseSuccess = () => {
+      const handleEditExerciseSuccess = () => {
+        setOpen(false)
+        router.refresh()
+      }
+
+      const handleHideExerciseSuccess = () => {
         setOpen(false)
         router.refresh()
       }
@@ -170,7 +177,7 @@ export const columns: ColumnDef<ExerciseRowType>[] = [
                 <DropdownMenuItem>Edit</DropdownMenuItem>
               </DialogTrigger>
               <DialogTrigger className="w-full" onClick={() => setForm("Hide Exercise")}>
-                <DropdownMenuItem>Hide</DropdownMenuItem>
+                <DropdownMenuItem className="text-destructive">Hide</DropdownMenuItem>
               </DialogTrigger>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -178,7 +185,10 @@ export const columns: ColumnDef<ExerciseRowType>[] = [
             <DialogHeader>
               <DialogTitle>{form}</DialogTitle>
             </DialogHeader>
-            {form == "Edit Exercise" && <EditExerciseForm exercise={exercise} onSuccess={onEditExerciseSuccess} />}
+            {form == "Edit Exercise" && <EditExerciseForm exercise={exercise} onSuccess={handleEditExerciseSuccess} />}
+            {form == "Hide Exercise" 
+              && <HideExerciseForm exerciseId={exercise.id} exerciseName={exercise.name} onSuccess={handleHideExerciseSuccess} close={() => setOpen(false)} />
+            }
           </DialogContent>
         </Dialog>
       )
