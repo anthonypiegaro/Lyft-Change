@@ -1,5 +1,9 @@
 "use client"
 
+import { useState } from "react"
+import { useRouter } from "next/navigation"
+import { toast } from "sonner"
+
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -8,15 +12,44 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import { ExerciseMutationForm } from "@/components/forms/mutate-exercise-form/exercise-mutation-form"
 
-export function AddEntityButton({ type }: { type: "exercise" | "workout" | "program" }) {
+export function AddEntityButton({ 
+  type,
+  tags
+}: { 
+  type: "exercise" | "workout" | "program",
+  tags: { id: string, name: string }[]
+}) {
+  const [open, setOpen] = useState(false)
+
+  const router = useRouter()
+
+  const handleSuccess = () => {
+    toast.success(`Successfully created ${type}`)
+    setOpen(false)
+    router.refresh()
+  }
+
+  const handleError = (e: Error) => {
+    toast.error(`Failed to save ${type}`, {
+      description: e.message,
+    });
+  }
+
+  const form = type === "exercise" 
+    ? <ExerciseMutationForm tags={tags} onError={handleError} onSuccess={handleSuccess} /> 
+    : type === "workout" ? "Workout Form" 
+    : "Program Form"
+
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button
           variant="outline"
           size="sm"
           className="hidden h-8 lg:flex capitalize"
+          onClick={() => setOpen(true)}
         >
           Add {type}
         </Button>
@@ -25,7 +58,7 @@ export function AddEntityButton({ type }: { type: "exercise" | "workout" | "prog
         <DialogHeader>
           <DialogTitle className="capitalize">Add New {type}</DialogTitle>
         </DialogHeader>
-        <p>Form goes here</p>
+        {form}
       </DialogContent>
     </Dialog>
   )

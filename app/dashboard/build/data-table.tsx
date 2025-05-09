@@ -72,9 +72,7 @@ export function DataTable<TData, TValue>({
   const tagOptions = tags.map(tag => ({
     label: tag.name,
     value: tag.name
-  })).sort((a, b) =>
-    a.label.localeCompare(b.label, undefined, { sensitivity: "base" })
-  )
+  }))
 
   return (
     <>
@@ -84,7 +82,7 @@ export function DataTable<TData, TValue>({
         <DataTableTagFilter table={table} tagOptions={tagOptions} />
         <div className="ml-auto flex gap-x-4">
           <AddTagButton type={type} />
-          <AddEntityButton type={type} />
+          <AddEntityButton type={type} tags={tags} />
         </div>
       </div>
       <div className="rounded-md border mb-4">

@@ -15,6 +15,7 @@ import {
   FormMessage
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import { MultiSelect } from "@/components/ui/multi-select"
 import {
   Select,
   SelectContent,
@@ -28,11 +29,13 @@ import { mutateExercise } from "./exercise-mutation-form.action"
 import { exerciseMutationFormSchema } from "./exercise-mutation-form.schema"
 
 export function ExerciseMutationForm({
+  tags,
   defaultValues,
   onSuccess,
   onError
 }: {
-  defaultValues?: typeof exerciseMutationFormSchema
+  tags: { id: string, name: string }[]
+  defaultValues?: z.infer<typeof exerciseMutationFormSchema>
   onSuccess?: () => void
   onError?: (error: Error) => void
 }) {
@@ -40,7 +43,13 @@ export function ExerciseMutationForm({
 
   const form = useForm<z.infer<typeof exerciseMutationFormSchema>>({
     resolver: zodResolver(exerciseMutationFormSchema),
-    defaultValues
+    defaultValues: {
+      id: defaultValues?.id,
+      type: defaultValues?.type ?? "weightReps",
+      name: defaultValues?.name ?? "",
+      tags: defaultValues?.tags ?? [],
+      description: defaultValues?.description ?? "",
+    }
   })
 
   const onSubmit = async (values: z.infer<typeof exerciseMutationFormSchema>) => {
@@ -59,9 +68,14 @@ export function ExerciseMutationForm({
       })
   }
 
+  const tagOptions = tags.map(tag => ({
+    label: tag.name,
+    value: tag.id
+  }))
+
   return (
     <Form {...form}>
-      <form>
+      <form className="flex flex-col gap-y-4">
         <FormField 
           control={form.control}
           name="type"
@@ -71,7 +85,7 @@ export function ExerciseMutationForm({
               <Select 
                 onValueChange={field.onChange} 
                 defaultValue={field.value}
-                disabled={isSubmitting}
+                disabled={isSubmitting || defaultValues?.id !== undefined}
               >
                 <FormControl>
                   <SelectTrigger>
@@ -100,6 +114,25 @@ export function ExerciseMutationForm({
             </FormItem>
           )}
         />
+        <FormField
+          control={form.control}
+          name="tags"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Tags</FormLabel>
+              <FormControl>
+                <MultiSelect
+                  options={tagOptions}
+                  onValueChange={selectedTags => field.onChange(selectedTags)}
+                  placeholder="Select tags..."
+                  defaultValue={field.value}
+                  maxCount={3}
+                  className="max-w-sm dark:bg-input/30"
+                />
+              </FormControl>
+            </FormItem>
+          )}
+        />
         <FormField 
           control={form.control}
           name="description"
@@ -121,6 +154,7 @@ export function ExerciseMutationForm({
           disabled={isSubmitting}
           onClick={form.handleSubmit(onSubmit)}
           type="button"
+          className="self-start"
         >
           {
             defaultValues 
