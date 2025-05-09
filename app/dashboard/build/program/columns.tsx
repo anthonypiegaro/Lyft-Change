@@ -15,7 +15,7 @@ import {
 export type ProgramRowType = {
   id: string,
   name: string,
-  tags: string[]
+  tags: { id: string, name: string }[]
 }
 
 export const columns: ColumnDef<ProgramRowType>[] = [
@@ -39,14 +39,14 @@ export const columns: ColumnDef<ProgramRowType>[] = [
 
       return (
         <div>
-          {tags.map(tag => <Badge key={tag} className="mx-1">{tag}</Badge>)}
+          {tags.map(tag => <Badge key={tag.id} className="mx-1">{tag.name}</Badge>)}
         </div>
       )
     },
     filterFn: (row, columnId, filterValue) => {
       if (!filterValue || filterValue.length === 0) return true;
-      const rowTags = row.getValue(columnId) as string[];
-      return filterValue.every((tag: string) => rowTags.includes(tag));
+      const rowTags = row.getValue(columnId) as ProgramRowType["tags"];
+      return filterValue.every((tag: string) => rowTags.map(rowTag => rowTag.name).includes(tag));
     }
   },
   {

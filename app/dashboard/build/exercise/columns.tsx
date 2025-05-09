@@ -128,8 +128,8 @@ export const columns: ColumnDef<ExerciseRowType>[] = [
     },
     filterFn: (row, columnId, filterValue) => {
       if (!filterValue || filterValue.length === 0) return true;
-      const rowTags = row.getValue(columnId) as string[];
-      return filterValue.every((tag: string) => rowTags.includes(tag));
+      const rowTags = row.getValue(columnId) as ExerciseRowType["tags"];
+      return filterValue.every((tag: string) => rowTags.map(rowTag => rowTag.name).includes(tag));
     }
   },
   {
