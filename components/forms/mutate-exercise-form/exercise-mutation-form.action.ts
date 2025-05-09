@@ -40,7 +40,6 @@ export const mutateExercise = async (values: z.infer<typeof exerciseMutationForm
 
     } else {
       const exerciseReturned = await tx.update(exercise).set({
-        typeId: typeId,
         name: values.name,
         description: values.description
       }).where(eq(exercise.id, values.id)).returning({ id: exercise.id })
