@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { 
@@ -10,6 +11,7 @@ import {
 } from "react-hook-form"
 import { CalendarIcon } from "lucide-react"
 import { format } from "date-fns"
+import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
@@ -61,16 +63,23 @@ import {
 } from "@/app/dashboard/workout/workout-form.schema"
 import { cn } from "@/lib/utils"
 
+import { createWorkoutInstance } from "./create-workout-template"
+
 type WorkoutFormValues = z.infer<typeof workoutFormSchema>
+type WorkoutType = "instance" | "template"
 
 function Exercise({
+  workoutType,
   form,
   exerciseField,
-  exerciseIndex
+  exerciseIndex,
+  isSubmitting
 }: {
-  form: UseFormReturn<WorkoutFormValues>,
-  exerciseField: FieldArrayWithId<WorkoutFormValues, "exercises", "id">,
+  workoutType: WorkoutType
+  form: UseFormReturn<WorkoutFormValues>
+  exerciseField: FieldArrayWithId<WorkoutFormValues, "exercises", "id">
   exerciseIndex: number
+  isSubmitting: boolean
 }) {
   const { fields: sets, append: appendSet } = useFieldArray({
     control: form.control,
@@ -89,7 +98,7 @@ function Exercise({
                 <FormItem className="flex justify-center">
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
-                      <SelectTrigger>
+                      <SelectTrigger disabled={isSubmitting}>
                         <SelectValue />
                       </SelectTrigger>
                     </FormControl>
@@ -111,7 +120,7 @@ function Exercise({
                 <FormItem className="flex justify-center">
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
-                      <SelectTrigger>
+                      <SelectTrigger disabled={isSubmitting}>
                         <SelectValue />
                       </SelectTrigger>
                     </FormControl>
@@ -138,7 +147,7 @@ function Exercise({
                 <FormItem className="flex justify-center">
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
-                      <SelectTrigger>
+                      <SelectTrigger disabled={isSubmitting}>
                         <SelectValue />
                       </SelectTrigger>
                     </FormControl>
@@ -160,7 +169,7 @@ function Exercise({
                 <FormItem className="flex justify-center">
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
-                      <SelectTrigger>
+                      <SelectTrigger disabled={isSubmitting}>
                         <SelectValue />
                       </SelectTrigger>
                     </FormControl>
@@ -192,7 +201,7 @@ function Exercise({
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Input {...field} />
+                    <Input {...field} disabled={isSubmitting} />
                   </FormControl>
                 </FormItem>
               )}
@@ -205,7 +214,7 @@ function Exercise({
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Input {...field} />
+                    <Input {...field} disabled={isSubmitting} />
                   </FormControl>
                 </FormItem>
               )}
@@ -223,7 +232,7 @@ function Exercise({
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Input {...field} />
+                    <Input {...field} disabled={isSubmitting} />
                   </FormControl>
                 </FormItem>
               )}
@@ -236,7 +245,7 @@ function Exercise({
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Input {...field} />
+                    <Input {...field} disabled={isSubmitting} />
                   </FormControl>
                 </FormItem>
               )}
@@ -264,6 +273,7 @@ function Exercise({
                   <Textarea 
                     className="resize-none"
                     {...field}
+                    disabled={isSubmitting}
                   />
                 </FormControl>
               </FormItem>
@@ -277,7 +287,7 @@ function Exercise({
             <TableRow>
               <TableHead className="w-[12.5%]">Set</TableHead>
               <UnitFields />
-              <TableHead className="w-[12.5%]">Completed</TableHead>
+              {workoutType == "instance" && <TableHead className="w-[12.5%]">Completed</TableHead>}
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -285,19 +295,21 @@ function Exercise({
               <TableRow key={set.id}>
                 <TableCell>{setIndex + 1}</TableCell>
                 <InputFields setIndex={setIndex} />
-                <TableCell>
-                  <FormField 
-                    control={form.control}
-                    name={`exercises.${exerciseIndex}.sets.${setIndex}`}
-                    render={({ field }) => (
-                      <FormItem className="flex justify-center">
-                        <FormControl>
-                          <Checkbox />
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
-                </TableCell>
+                {workoutType == "instance" && (
+                  <TableCell>
+                    <FormField 
+                      control={form.control}
+                      name={`exercises.${exerciseIndex}.sets.${setIndex}`}
+                      render={({ field }) => (
+                        <FormItem className="flex justify-center">
+                          <FormControl>
+                            <Checkbox disabled={isSubmitting} />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                  </TableCell>
+                )}
               </TableRow>
             ))}
           </TableBody>
@@ -311,6 +323,7 @@ function Exercise({
           })}
           type="button" 
           variant="outline"
+          disabled={isSubmitting}
         >
           Add Set
         </Button>
@@ -319,13 +332,18 @@ function Exercise({
   )
 }
 
-export function WorkoutForm() {
+export function WorkoutForm({
+  workoutType,
+  defaultValues
+}: {
+  workoutType: "instance" | "template",
+  defaultValues?: z.infer<typeof workoutFormSchema>
+}) {
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
   const form = useForm<z.infer<typeof workoutFormSchema>>({
     resolver: zodResolver(workoutFormSchema),
-    defaultValues: {
-      name: "New Workout",
-      date: new Date()
-    }
+    defaultValues: defaultValues ?? { name: "New Workout", date: new Date() }
   })
 
   const { fields, append } = useFieldArray({
@@ -334,7 +352,33 @@ export function WorkoutForm() {
   })
 
   const onSubmit = async (values: z.infer<typeof workoutFormSchema>) => {
+    setIsSubmitting(true)
 
+    if (workoutType === "instance") {
+      if (values.id == undefined) {
+        await createWorkoutInstance(values)
+          .then(() => {
+            toast.success("Success", {
+              description: `${values.name} has been created successfully.`
+            })
+          })
+          .catch(e => {
+            toast.error("Error", {
+              description: e.message
+            })
+          })
+      } else {
+
+      }
+    } else {
+      if (values.id == undefined) {
+
+      } else {
+        
+      }
+    }
+
+    setIsSubmitting(false)
   }
 
   function addExercise() {
@@ -364,52 +408,55 @@ export function WorkoutForm() {
             <FormItem>
               <FormLabel>Name</FormLabel>
               <FormControl>
-                <Input className="font-semibold" {...field} />
+                <Input className="font-semibold" {...field} disabled={isSubmitting} />
               </FormControl>
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
-          name="date"
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel>Date</FormLabel>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <FormControl>
-                    <Button
-                      variant={"outline"}
-                      className={cn(
-                        "w-[240px] pl-3 text-left font-normal",
-                        !field.value && "text-muted-foreground"
-                      )}
-                    >
-                      {field.value ? (
-                        format(field.value, "PPP")
-                      ) : (
-                        <span>Pick a date</span>
-                      )}
-                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                    </Button>
-                  </FormControl>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={field.value}
-                    onSelect={field.onChange}
-                    disabled={(date) =>
-                      date > new Date() || date < new Date("1900-01-01")
-                    }
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        {workoutType === "instance" && (
+          <FormField
+            control={form.control}
+            name="date"
+            render={({ field }) => (
+              <FormItem className="flex flex-col">
+                <FormLabel>Date</FormLabel>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        disabled={isSubmitting}
+                        variant={"outline"}
+                        className={cn(
+                          "w-[240px] pl-3 text-left font-normal",
+                          !field.value && "text-muted-foreground"
+                        )}
+                      >
+                        {field.value ? (
+                          format(field.value, "PPP")
+                        ) : (
+                          <span>Pick a date</span>
+                        )}
+                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={field.value}
+                      onSelect={field.onChange}
+                      disabled={(date) =>
+                        date < new Date("1900-01-01")
+                      }
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
         <FormField 
           control={form.control}
           name="notes"
@@ -420,6 +467,7 @@ export function WorkoutForm() {
                 <Textarea
                   className="resize-none"
                   {...field}
+                  disabled={isSubmitting}
                 />
               </FormControl>
             </FormItem>
@@ -432,14 +480,24 @@ export function WorkoutForm() {
             key={exerciseField.id}
             exerciseField={exerciseField}
             exerciseIndex={exerciseIndex}
+            workoutType={workoutType}
+            isSubmitting={isSubmitting}
           />
         ))}
         <Button
           onClick={addExercise}
           type="button" 
           variant="outline"
+          disabled={isSubmitting}
         >
             Add Exercise
+        </Button>
+        <Button
+          type="button"
+          onClick={form.handleSubmit(onSubmit)}
+          disabled={isSubmitting}
+        >
+          {workoutType === "instance" ? isSubmitting ? "Finsishing Workout..." : "Finish Workout" : isSubmitting ? "Creating Workout..." : "Create Workout"}
         </Button>
       </form>
     </Form>

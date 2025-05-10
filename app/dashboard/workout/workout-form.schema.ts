@@ -46,6 +46,7 @@ const exerciseSchemas = [
 const exerciseSchema = z.discriminatedUnion("type", exerciseSchemas)
 
 export const workoutFormSchema = z.object({
+  id: z.string().optional(),
   name: z
       .string()
       .min(1, "Workout name required")
