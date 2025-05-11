@@ -33,6 +33,7 @@ import {
   FormMessage
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import { MultiSelect } from "@/components/ui/multi-select";
 import {
   Popover,
   PopoverContent,
@@ -335,9 +336,11 @@ function Exercise({
 }
 
 export function WorkoutForm({
+  tagOptions,
   workoutType,
   defaultValues
 }: {
+  tagOptions: { label: string, value: string }[]
   workoutType: "instance" | "template",
   defaultValues?: z.infer<typeof workoutFormSchema>
 }) {
@@ -466,6 +469,27 @@ export function WorkoutForm({
                   </PopoverContent>
                 </Popover>
                 <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
+        {workoutType === "template" && (
+          <FormField
+            control={form.control}
+            name="tagIds"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Tags</FormLabel>
+                <FormControl>
+                  <MultiSelect
+                    options={tagOptions}
+                    onValueChange={selectedTags => field.onChange(selectedTags)}
+                    placeholder="Select tags..."
+                    defaultValue={field.value}
+                    maxCount={3}
+                    className="max-w-sm dark:bg-input/30"
+                  />
+                </FormControl>
               </FormItem>
             )}
           />

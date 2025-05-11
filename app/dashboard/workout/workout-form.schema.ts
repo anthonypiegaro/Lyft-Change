@@ -55,6 +55,7 @@ export const workoutFormSchema = z.object({
     required_error: "Date is required",
     invalid_type_error: "Invalid date type"
   }),
+  tagIds: z.array(z.string()),
   notes: z.string(),
   exercises: z.array(exerciseSchema)
 })
