@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { z } from "zod"
+import { DevTool } from "@hookform/devtools";
 import { zodResolver } from "@hookform/resolvers/zod"
 import { 
   useFieldArray, 
@@ -63,7 +64,8 @@ import {
 } from "@/app/dashboard/workout/workout-form.schema"
 import { cn } from "@/lib/utils"
 
-import { createWorkoutInstance } from "./create-workout-template"
+import { createWorkoutInstance } from "./create-workout-instance"
+import { createWorkoutTemplate } from "./create-workout-template"
 
 type WorkoutFormValues = z.infer<typeof workoutFormSchema>
 type WorkoutType = "instance" | "template"
@@ -201,7 +203,7 @@ function Exercise({
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Input {...field} disabled={isSubmitting} />
+                    <Input {...field} onChange={e => { field.onChange(e.target.value === ""  ? "" : Number(e.target.value))} } disabled={isSubmitting} type="number" />
                   </FormControl>
                 </FormItem>
               )}
@@ -214,7 +216,7 @@ function Exercise({
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Input {...field} disabled={isSubmitting} />
+                    <Input {...field} onChange={e => { field.onChange(e.target.value === ""  ? "" : Number(e.target.value))} } disabled={isSubmitting} type="number" />
                   </FormControl>
                 </FormItem>
               )}
@@ -343,7 +345,7 @@ export function WorkoutForm({
 
   const form = useForm<z.infer<typeof workoutFormSchema>>({
     resolver: zodResolver(workoutFormSchema),
-    defaultValues: defaultValues ?? { name: "New Workout", date: new Date() }
+    defaultValues
   })
 
   const { fields, append } = useFieldArray({
@@ -372,7 +374,17 @@ export function WorkoutForm({
       }
     } else {
       if (values.id == undefined) {
-
+        await createWorkoutTemplate(values)
+          .then(() => {
+            toast.success("Success", {
+              description: `${values.name} has been created successfully.`
+            })
+          })
+          .catch(e => {
+            toast.error("Error", {
+              description: e.message
+            })
+          })
       } else {
         
       }
@@ -399,6 +411,7 @@ export function WorkoutForm({
   }
 
   return (
+    <>
     <Form {...form}>
       <form className="flex flex-col gap-y-4 w-full max-w-3xl h-auto">
         <FormField 
@@ -501,5 +514,7 @@ export function WorkoutForm({
         </Button>
       </form>
     </Form>
+    <DevTool control={form.control} />
+    </>
   )
 }
