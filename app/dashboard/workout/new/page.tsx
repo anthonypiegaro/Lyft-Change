@@ -1,14 +1,12 @@
-import { headers } from "next/headers"
-import { redirect } from "next/navigation"
-import { eq } from "drizzle-orm"
+"use server"
 
-import { db } from "@/db/db"
-import { exerciseTag } from "@/db/schema"
-import { auth } from "@/lib/auth"
-
-import { WorkoutForm } from "@/app/dashboard/workout/workout-form"
+import { WorkoutForm } from "../workout-form"
+import { getExercises } from "../get-exercises.action"
+import { getTags } from "../get-tags.action"
 
 export default async function NewWorkoutPage() {
+  const [tags, exercises] = await Promise.all([getTags(), getExercises()])
+
   const defaultValues = {
     name: "New Workout",
     date: new Date(),
@@ -17,24 +15,9 @@ export default async function NewWorkoutPage() {
     exercises: []
   }
 
-  const session = await auth.api.getSession({
-    headers: await headers()
-  })
-
-  if (!session) {
-    redirect("/sign-in")
-  }
-
-  const userId = session.user.id
-
-  const tags = await db
-    .select({ value: exerciseTag.id, label: exerciseTag.name })
-    .from(exerciseTag)
-    .where(eq(exerciseTag.userId, userId))
-
   return (
     <div className="flex justify-center w-full py-10 pb-20 md:pb-10 md:px-0 px-4">
-      <WorkoutForm workoutType="template" defaultValues={defaultValues} tagOptions={tags} />
+      <WorkoutForm workoutType="template" defaultValues={defaultValues} tagOptions={tags} exercises={exercises}/>
     </div>
   )
 }

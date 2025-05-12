@@ -24,6 +24,13 @@ import {
   CardTitle
 } from "@/components/ui/card"
 import { Checkbox } from "../../../components/ui/checkbox"
+import { 
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger
+} from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
@@ -65,8 +72,12 @@ import {
 } from "@/app/dashboard/workout/workout-form.schema"
 import { cn } from "@/lib/utils"
 
+import { ExerciseSelect } from "./exercise-select";
+
 import { createWorkoutInstance } from "./create-workout-instance"
 import { createWorkoutTemplate } from "./create-workout-template"
+
+import { ExerciseSelectExercise } from "./exercise-select";
 
 type WorkoutFormValues = z.infer<typeof workoutFormSchema>
 type WorkoutType = "instance" | "template"
@@ -338,11 +349,13 @@ function Exercise({
 export function WorkoutForm({
   tagOptions,
   workoutType,
-  defaultValues
+  defaultValues,
+  exercises
 }: {
   tagOptions: { label: string, value: string }[]
-  workoutType: "instance" | "template",
+  workoutType: "instance" | "template"
   defaultValues?: z.infer<typeof workoutFormSchema>
+  exercises: ExerciseSelectExercise[]
 }) {
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -527,8 +540,22 @@ export function WorkoutForm({
           variant="outline"
           disabled={isSubmitting}
         >
-            Add Exercise
+            Add Exercise (old)
         </Button>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button
+              type="button" 
+              variant="outline"
+              disabled={isSubmitting}
+            >
+                Add Exercise (new)
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <ExerciseSelect exercises={exercises} />
+          </DialogContent>
+        </Dialog>
         <Button
           type="button"
           onClick={form.handleSubmit(onSubmit)}
