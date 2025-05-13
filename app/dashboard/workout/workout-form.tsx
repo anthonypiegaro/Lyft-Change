@@ -10,7 +10,7 @@ import {
   UseFormReturn, 
   FieldArrayWithId 
 } from "react-hook-form"
-import { CalendarIcon } from "lucide-react"
+import { CalendarIcon, SquarePen, Trash } from "lucide-react"
 import { format } from "date-fns"
 import { toast } from "sonner"
 
@@ -87,15 +87,19 @@ function Exercise({
   form,
   exerciseField,
   exerciseIndex,
-  isSubmitting
+  isSubmitting,
+  onDelete
 }: {
   workoutType: WorkoutType
   form: UseFormReturn<WorkoutFormValues>
   exerciseField: FieldArrayWithId<WorkoutFormValues, "exercises", "id">
   exerciseIndex: number
-  isSubmitting: boolean
+  isSubmitting: boolean,
+  onDelete: () => void
 }) {
-  const { fields: sets, append: appendSet } = useFieldArray({
+  const [inEditMode, setInEditMode] = useState(false)
+
+  const { fields: sets, append: appendSet, remove: removeSet } = useFieldArray({
     control: form.control,
     name: `exercises.${exerciseIndex}.sets`
   })
@@ -273,7 +277,10 @@ function Exercise({
   }
 
   return (
-    <Card key={exerciseField.id}>
+    <Card key={exerciseField.id} className="relative">
+      <Button type="button" onClick={onDelete} variant="ghost" className="absolute bottom-2 right-2">
+        <Trash className="text-destructive"/>
+      </Button>
       <CardHeader>
         <CardTitle>{exerciseField.name}</CardTitle>
         <CardDescription>
@@ -299,7 +306,13 @@ function Exercise({
         <Table className="w-full">
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[12.5%]">Set</TableHead>
+              {inEditMode && <TableHead></TableHead>}
+              <TableHead className="w-[12.5%] flex items-center">
+                Set
+                <Button type="button" variant="ghost" onClick={() => setInEditMode(prev => !prev)}>
+                  <SquarePen />
+                </Button>
+              </TableHead>
               <UnitFields />
               {workoutType == "instance" && <TableHead className="w-[12.5%]">Completed</TableHead>}
             </TableRow>
@@ -307,17 +320,28 @@ function Exercise({
           <TableBody>
             {sets.map((set, setIndex) => (
               <TableRow key={set.id}>
+                {inEditMode && (
+                  <TableCell>
+                    <Button type="button" variant="ghost" onClick={() => removeSet(setIndex)}>
+                      <Trash className="text-destructive" />
+                    </Button>
+                  </TableCell>
+                )}
                 <TableCell>{setIndex + 1}</TableCell>
                 <InputFields setIndex={setIndex} />
                 {workoutType == "instance" && (
                   <TableCell>
                     <FormField 
                       control={form.control}
-                      name={`exercises.${exerciseIndex}.sets.${setIndex}`}
+                      name={`exercises.${exerciseIndex}.sets.${setIndex}.completed`}
                       render={({ field }) => (
                         <FormItem className="flex justify-center">
                           <FormControl>
-                            <Checkbox disabled={isSubmitting} />
+                            <Checkbox
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                              disabled={isSubmitting} 
+                            />
                           </FormControl>
                         </FormItem>
                       )}
@@ -360,13 +384,14 @@ export function WorkoutForm({
   exercises: ExerciseSelectExercise[]
 }) {
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [exerciseSelectionOpen, setExerciseSelectionOpen] = useState(false)
 
   const form = useForm<z.infer<typeof workoutFormSchema>>({
     resolver: zodResolver(workoutFormSchema),
     defaultValues
   })
 
-  const { fields, append } = useFieldArray({
+  const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: "exercises"
   })
@@ -411,27 +436,51 @@ export function WorkoutForm({
     setIsSubmitting(false)
   }
 
-  function addExercise() {
-    append({
-      name: "Bench Press",
-      type: "weightReps",
-      notes: "",
-      units: {
-        weight: "lb",
-        reps: "reps"
-      },
-      sets: []
-    },
-    {
-      shouldFocus: false
+  function addExercise(selectedExercise: ExerciseSelectExercise) {
+    if (selectedExercise.type.name === "weightReps") {
+      append({
+        name: selectedExercise.name,
+        type: "weightReps",
+        notes: "",
+        units: {
+          weight: "lb",
+          reps: "reps"
+        },
+        sets: []
+        },
+        {
+          shouldFocus: false
+        }
+      )
+    } else if (selectedExercise.type.name === "timeDistance") {
+      append({
+        name: selectedExercise.name,
+        type: "timeDistance",
+        notes: "",
+        units: {
+          time: "m",
+          distance: "mi"
+        },
+        sets: []
+        },
+        {
+          shouldFocus: false
+        }
+      )
     }
-  )
+
+    setExerciseSelectionOpen(false)
+  }
+
+  function handleAddExercises(selectedExercises: ExerciseSelectExercise[]) {
+    selectedExercises.forEach(exercise => addExercise(exercise))
   }
 
   return (
     <>
     <Form {...form}>
       <form className="flex flex-col gap-y-4 w-full max-w-3xl h-auto">
+        <h1 className="text-3xl font-semibold mx-auto pb-10 lg:text-4xl">{workoutType === "instance" ? "Workout Logger" : "Workout Builder"}</h1>
         <FormField 
           control={form.control}
           name="name"
@@ -526,6 +575,19 @@ export function WorkoutForm({
           )}
         />
         <Separator />
+        {fields.length === 0 && (
+          <div className="flex flex-col justify-center items-center gap-y-2 w-full h-64 border border-dashed rounded-md">
+            <p>No exercises added yet</p>
+            <Button
+              type="button" 
+              variant="outline"
+              onClick={() => setExerciseSelectionOpen(true)}
+              disabled={isSubmitting}
+            >
+                Add Exercise
+            </Button>
+          </div>
+        )}
         {fields.map((exerciseField, exerciseIndex) => (
           <Exercise 
             form={form}
@@ -534,30 +596,20 @@ export function WorkoutForm({
             exerciseIndex={exerciseIndex}
             workoutType={workoutType}
             isSubmitting={isSubmitting}
+            onDelete={() => remove(exerciseIndex)}
           />
         ))}
-        <Button
-          onClick={addExercise}
-          type="button" 
-          variant="outline"
-          disabled={isSubmitting}
-        >
-            Add Exercise (old)
-        </Button>
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button
-              type="button" 
-              variant="outline"
-              disabled={isSubmitting}
-            >
-                Add Exercise (new)
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <ExerciseSelect exercises={exercises} tagOptions={exerciseTags} />
-          </DialogContent>
-        </Dialog>
+        <Separator />
+        {fields.length > 0 && (
+          <Button
+            type="button" 
+            variant="outline"
+            disabled={isSubmitting}
+            onClick={() => setExerciseSelectionOpen(true)}
+          >
+              Add Exercise
+          </Button>
+      )}
         <Button
           type="button"
           onClick={form.handleSubmit(onSubmit)}
@@ -567,6 +619,15 @@ export function WorkoutForm({
         </Button>
       </form>
     </Form>
+
+    <Dialog open={exerciseSelectionOpen} onOpenChange={setExerciseSelectionOpen}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle className="text-3xl">Exercise Select</DialogTitle>
+        </DialogHeader>
+        <ExerciseSelect exercises={exercises} tagOptions={exerciseTags} onAdd={handleAddExercises}/>
+      </DialogContent>
+    </Dialog>
     <DevTool control={form.control} />
     </>
   )

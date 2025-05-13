@@ -26,11 +26,11 @@ export default async function DashboardLayout({
   return (
     <SidebarProvider defaultOpen={defaultOpen}>
       <AppSidebar/>
-      <div className="absolute top-5 right-4.75">
+      <div className="fixed top-5 right-4.75">
         <ThemeToggleButton />
       </div>
       <main className="flex w-full min-h-screen">
-        <SidebarTrigger className="absolute left-4.75 top-5 z-50" />
+        <SidebarTrigger className="fixed left-4.75 top-5 z-50" />
         {children}
       </main>
       <Toaster />
