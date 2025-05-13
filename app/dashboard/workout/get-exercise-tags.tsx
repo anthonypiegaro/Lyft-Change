@@ -8,7 +8,7 @@ import { db } from "@/db/db"
 import { exerciseTag } from "@/db/schema"
 import { auth } from "@/lib/auth"
 
-export const getTags = async () => {
+export const getExerciseTags = async () => {
   const session = await auth.api.getSession({
       headers: await headers()
     })

@@ -347,12 +347,14 @@ function Exercise({
 }
 
 export function WorkoutForm({
-  tagOptions,
+  exerciseTags,
+  workoutTags,
   workoutType,
   defaultValues,
   exercises
 }: {
-  tagOptions: { label: string, value: string }[]
+  exerciseTags: { label: string, value: string }[]
+  workoutTags: { label: string, value: string}[]
   workoutType: "instance" | "template"
   defaultValues?: z.infer<typeof workoutFormSchema>
   exercises: ExerciseSelectExercise[]
@@ -495,7 +497,7 @@ export function WorkoutForm({
                 <FormLabel>Tags</FormLabel>
                 <FormControl>
                   <MultiSelect
-                    options={tagOptions}
+                    options={workoutTags}
                     onValueChange={selectedTags => field.onChange(selectedTags)}
                     placeholder="Select tags..."
                     defaultValue={field.value}
@@ -553,7 +555,7 @@ export function WorkoutForm({
             </Button>
           </DialogTrigger>
           <DialogContent>
-            <ExerciseSelect exercises={exercises} />
+            <ExerciseSelect exercises={exercises} tagOptions={exerciseTags} />
           </DialogContent>
         </Dialog>
         <Button
