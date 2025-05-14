@@ -10,8 +10,12 @@ import {
   UseFormReturn, 
   FieldArrayWithId 
 } from "react-hook-form"
-import { CalendarIcon, SquarePen, Trash } from "lucide-react"
+import { CalendarIcon, Grip, SquarePen, Trash } from "lucide-react"
 import { format } from "date-fns"
+import { DndContext, DragEndEvent } from "@dnd-kit/core";
+import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
+import { SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import { CSS } from '@dnd-kit/utilities';
 import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
@@ -29,7 +33,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger
 } from "@/components/ui/dialog";
 import {
   Form,
@@ -98,6 +101,20 @@ function Exercise({
   onDelete: () => void
 }) {
   const [inEditMode, setInEditMode] = useState(false)
+
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+  } = useSortable({id: exerciseField.id})
+  
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    width: "100%"
+  };
 
   const { fields: sets, append: appendSet, remove: removeSet } = useFieldArray({
     control: form.control,
@@ -293,7 +310,7 @@ function Exercise({
   }
 
   return (
-    <Card key={exerciseField.id} className="relative">
+    <Card key={exerciseField.id} ref={setNodeRef} style={style} {...attributes} className="relative">
       <Button type="button" onClick={onDelete} variant="ghost" className="absolute bottom-2 right-2">
         <Trash className="text-destructive"/>
       </Button>
@@ -370,7 +387,7 @@ function Exercise({
         </Table>
         <Button
           className="my-4"
-          onClick={addSet}
+          onClick={() => addSet()}
           type="button" 
           variant="outline"
           disabled={isSubmitting}
@@ -378,6 +395,9 @@ function Exercise({
           Add Set
         </Button>
       </CardContent>
+      <Button type="button" variant="ghost" className="absolute top-4 right-4 cursor-grab active:cursor-grabbing" {...listeners}>
+        <Grip />
+      </Button>
     </Card>
   )
 }
@@ -403,7 +423,7 @@ export function WorkoutForm({
     defaultValues
   })
 
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append, remove, move } = useFieldArray({
     control: form.control,
     name: "exercises"
   })
@@ -486,6 +506,17 @@ export function WorkoutForm({
 
   function handleAddExercises(selectedExercises: ExerciseSelectExercise[]) {
     selectedExercises.forEach(exercise => addExercise(exercise))
+  }
+
+  function handleDragEnd(event: DragEndEvent) {
+    const {active, over} = event;
+    
+    if (active.id !== over?.id) {
+      const from = fields.findIndex(field => field.id === active.id);
+      const to = fields.findIndex(field => field.id === over?.id)
+
+      move(from, to)
+    }
   }
 
   return (
@@ -600,17 +631,21 @@ export function WorkoutForm({
             </Button>
           </div>
         )}
-        {fields.map((exerciseField, exerciseIndex) => (
-          <Exercise 
-            form={form}
-            key={exerciseField.id}
-            exerciseField={exerciseField}
-            exerciseIndex={exerciseIndex}
-            workoutType={workoutType}
-            isSubmitting={isSubmitting}
-            onDelete={() => remove(exerciseIndex)}
-          />
-        ))}
+        <DndContext modifiers={[restrictToVerticalAxis]} onDragEnd={handleDragEnd}>
+          <SortableContext items={fields.map(field => field.id)} strategy={verticalListSortingStrategy}>
+            {fields.map((exerciseField, exerciseIndex) => (
+              <Exercise 
+                form={form}
+                key={exerciseField.id}
+                exerciseField={exerciseField}
+                exerciseIndex={exerciseIndex}
+                workoutType={workoutType}
+                isSubmitting={isSubmitting}
+                onDelete={() => remove(exerciseIndex)}
+              />
+            ))}
+          </SortableContext>
+        </DndContext>
         <Separator />
         {fields.length > 0 && (
           <Button
