@@ -104,6 +104,22 @@ function Exercise({
     name: `exercises.${exerciseIndex}.sets`
   })
 
+  function addSet() {
+    if (exerciseField.type === "weightReps") {
+      appendSet({
+        weight: 0,
+        reps: 0,
+        completed: false
+      })
+    } else if (exerciseField.type === "timeDistance") {
+      appendSet({
+        time: 0,
+        distance: 0,
+        completed: false
+      })
+    }
+  }
+
   const UnitFields = () => {
     if (exerciseField.type == "weightReps") {
       return (
@@ -354,11 +370,7 @@ function Exercise({
         </Table>
         <Button
           className="my-4"
-          onClick={() => appendSet({ 
-            weight: 0, 
-            reps: 0,
-            completed: false
-          })}
+          onClick={addSet}
           type="button" 
           variant="outline"
           disabled={isSubmitting}
