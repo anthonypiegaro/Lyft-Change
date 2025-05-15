@@ -4,11 +4,11 @@ import { RefObject, useLayoutEffect, useRef, useState } from "react"
 import { z } from "zod"
 import { DevTool } from "@hookform/devtools";
 import { zodResolver } from "@hookform/resolvers/zod"
-import { 
+import {
+  FieldArrayWithId,
   useFieldArray, 
   useForm, 
-  UseFormReturn, 
-  FieldArrayWithId 
+  UseFormReturn
 } from "react-hook-form"
 import { CalendarIcon, Grip, SquarePen, Trash } from "lucide-react"
 import { format } from "date-fns"
@@ -110,6 +110,7 @@ function Exercise({
   const {
     active,
     attributes,
+    isDragging,
     listeners,
     setNodeRef,
     transform,
@@ -159,18 +160,24 @@ function Exercise({
   })
 
   function addSet() {
-    if (exerciseField.type === "weightReps") {
+    const exercise = form.getValues(`exercises.${exerciseIndex}`)
+
+    if (exercise.type === "weightReps") {
       appendSet({
-        weight: 0,
-        reps: 0,
+        weight: exercise.sets.length > 0 ? exercise.sets[exercise.sets.length - 1].weight : 0,
+        reps: exercise.sets.length > 0 ? exercise.sets[exercise.sets.length - 1].reps : 0,
         completed: false
-      })
-    } else if (exerciseField.type === "timeDistance") {
+      },
+      { shouldFocus: false }
+      )
+    } else if (exercise.type === "timeDistance") {
       appendSet({
-        time: 0,
-        distance: 0,
+        time: exercise.sets.length > 0 ? exercise.sets[exercise.sets.length - 1].time : 0,
+        distance: exercise.sets.length > 0 ? exercise.sets[exercise.sets.length - 1].distance : 0,
         completed: false
-      })
+      },
+      { shouldFocus: false }
+      )
     }
   }
 
@@ -289,7 +296,13 @@ function Exercise({
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Input {...field} onChange={e => { field.onChange(e.target.value === ""  ? "" : Number(e.target.value))} } disabled={isSubmitting} type="number" />
+                    <Input 
+                      {...field} 
+                      onChange={e => { field.onChange(e.target.value === ""  ? "" : Number(e.target.value))} }
+                      onWheel={e => { e.currentTarget.blur() }}
+                      onFocus={e => e.target.select()}
+                      disabled={isSubmitting} type="number" 
+                    />
                   </FormControl>
                 </FormItem>
               )}
@@ -302,7 +315,13 @@ function Exercise({
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Input {...field} onChange={e => { field.onChange(e.target.value === ""  ? "" : Number(e.target.value))} } disabled={isSubmitting} type="number" />
+                    <Input 
+                      {...field} 
+                      onChange={e => { field.onChange(e.target.value === ""  ? "" : Number(e.target.value))} }
+                      onWheel={e => { e.currentTarget.blur() }}
+                      onFocus={e => e.target.select()}
+                      disabled={isSubmitting} type="number" 
+                    />
                   </FormControl>
                 </FormItem>
               )}
@@ -320,7 +339,13 @@ function Exercise({
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Input {...field} disabled={isSubmitting} />
+                    <Input 
+                      {...field} 
+                      onChange={e => { field.onChange(e.target.value === ""  ? "" : Number(e.target.value))} }
+                      onWheel={e => { e.currentTarget.blur() }}
+                      onFocus={e => e.target.select()}
+                      disabled={isSubmitting} type="number" 
+                    />
                   </FormControl>
                 </FormItem>
               )}
@@ -333,7 +358,13 @@ function Exercise({
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Input {...field} disabled={isSubmitting} />
+                    <Input 
+                      {...field} 
+                      onChange={e => { field.onChange(e.target.value === ""  ? "" : Number(e.target.value))} }
+                      onWheel={e => { e.currentTarget.blur() }}
+                      onFocus={e => e.target.select()}
+                      disabled={isSubmitting} type="number" 
+                    />
                   </FormControl>
                 </FormItem>
               )}
@@ -347,7 +378,8 @@ function Exercise({
   }
 
   return (
-    <Card key={exerciseField.id} ref={setCombinedRef} style={style} {...attributes} className="relative mb-4">
+    <div key={exerciseField.id} ref={setCombinedRef} style={style} {...attributes} className={"relative mb-4 touch-none"}>
+    <Card className="select-none lg:select-auto">
       {!collapsed && (
         <Button type="button" onClick={onDelete} variant="ghost" className="absolute bottom-2 right-2">
           <Trash className="text-destructive"/>
@@ -389,7 +421,12 @@ function Exercise({
                   </Button>
                 </TableHead>
                 <UnitFields />
-                {workoutType == "instance" && <TableHead className="w-[12.5%]">Completed</TableHead>}
+                {workoutType == "instance" && (
+                  <TableHead className="w-[12.5%]">
+                    <span className="inline sm:hidden">✓</span>
+                    <span className="hidden sm:inline">Completed</span>
+                  </TableHead>
+                )}
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -438,10 +475,11 @@ function Exercise({
           </Button>
         </CardContent>
       )}
-      <Button type="button" variant="ghost" className="absolute top-4 right-4 cursor-grab active:cursor-grabbing" {...listeners}>
-        <Grip />
-      </Button>
     </Card>
+    <Button type="button" variant="ghost" className="absolute top-4 right-4 cursor-grab active:cursor-grabbing touch-none" {...listeners}>
+      <Grip />
+    </Button>
+    </div>
   )
 }
 
