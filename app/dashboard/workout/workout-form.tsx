@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { RefObject, useLayoutEffect, useRef, useState } from "react"
 import { z } from "zod"
 import { DevTool } from "@hookform/devtools";
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -12,7 +12,7 @@ import {
 } from "react-hook-form"
 import { CalendarIcon, Grip, SquarePen, Trash } from "lucide-react"
 import { format } from "date-fns"
-import { DndContext, DragEndEvent } from "@dnd-kit/core";
+import { DndContext, DragEndEvent, DragStartEvent, useDndMonitor } from "@dnd-kit/core";
 import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 import { SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { CSS } from '@dnd-kit/utilities';
@@ -91,7 +91,8 @@ function Exercise({
   exerciseField,
   exerciseIndex,
   isSubmitting,
-  onDelete
+  onDelete,
+  containerRef
 }: {
   workoutType: WorkoutType
   form: UseFormReturn<WorkoutFormValues>
@@ -99,22 +100,58 @@ function Exercise({
   exerciseIndex: number
   isSubmitting: boolean,
   onDelete: () => void
+  containerRef: RefObject<HTMLFormElement | null>
 }) {
   const [inEditMode, setInEditMode] = useState(false)
+  const [collapsed, setCollapsed] = useState(false)
+  const prevActiveItemHeight = useRef(0)
+  const localRef = useRef<HTMLDivElement | null>(null);
 
   const {
+    active,
     attributes,
     listeners,
     setNodeRef,
     transform,
     transition,
   } = useSortable({id: exerciseField.id})
+
+  useLayoutEffect(() => {
+    if (active?.id === exerciseField.id) {
+      const currentHeight = localRef.current?.getBoundingClientRect().top ?? 0
+
+      const diff = prevActiveItemHeight.current - currentHeight
+
+      if (containerRef.current !== null) {
+        containerRef.current.style.transform = `translateY(${diff}px)`
+      }
+    
+    }
+  }, [collapsed])
+
+  function setCombinedRef(node: HTMLDivElement | null) {
+    setNodeRef(node)
+    localRef.current = node
+  }
   
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
     width: "100%"
   };
+
+  useDndMonitor({
+    onDragStart(event: DragStartEvent) { 
+      setCollapsed(true)
+
+      if (event.active.id == exerciseField.id) {
+        const yPos = localRef.current?.getBoundingClientRect().top
+
+        prevActiveItemHeight.current = yPos ?? 0
+      }
+    },
+    onDragEnd() { setCollapsed(false) }
+  })
 
   const { fields: sets, append: appendSet, remove: removeSet } = useFieldArray({
     control: form.control,
@@ -310,91 +347,97 @@ function Exercise({
   }
 
   return (
-    <Card key={exerciseField.id} ref={setNodeRef} style={style} {...attributes} className="relative">
-      <Button type="button" onClick={onDelete} variant="ghost" className="absolute bottom-2 right-2">
-        <Trash className="text-destructive"/>
-      </Button>
+    <Card key={exerciseField.id} ref={setCombinedRef} style={style} {...attributes} className="relative mb-4">
+      {!collapsed && (
+        <Button type="button" onClick={onDelete} variant="ghost" className="absolute bottom-2 right-2">
+          <Trash className="text-destructive"/>
+        </Button>
+      )}
       <CardHeader>
         <CardTitle>{exerciseField.name}</CardTitle>
-        <CardDescription>
-          <FormField 
-            control={form.control}
-            name={`exercises.${exerciseIndex}.notes`}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Notes</FormLabel>
-                <FormControl>
-                  <Textarea 
-                    className="resize-none"
-                    {...field}
-                    disabled={isSubmitting}
-                  />
-                </FormControl>
-              </FormItem>
-            )}
-          />
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <Table className="w-full">
-          <TableHeader>
-            <TableRow>
-              {inEditMode && <TableHead></TableHead>}
-              <TableHead className="w-[12.5%] flex items-center">
-                Set
-                <Button type="button" variant="ghost" onClick={() => setInEditMode(prev => !prev)}>
-                  <SquarePen />
-                </Button>
-              </TableHead>
-              <UnitFields />
-              {workoutType == "instance" && <TableHead className="w-[12.5%]">Completed</TableHead>}
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {sets.map((set, setIndex) => (
-              <TableRow key={set.id}>
-                {inEditMode && (
-                  <TableCell>
-                    <Button type="button" variant="ghost" onClick={() => removeSet(setIndex)}>
-                      <Trash className="text-destructive" />
-                    </Button>
-                  </TableCell>
-                )}
-                <TableCell>{setIndex + 1}</TableCell>
-                <InputFields setIndex={setIndex} />
-                {workoutType == "instance" && (
-                  <TableCell>
-                    <FormField 
-                      control={form.control}
-                      name={`exercises.${exerciseIndex}.sets.${setIndex}.completed`}
-                      render={({ field }) => (
-                        <FormItem className="flex justify-center">
-                          <FormControl>
-                            <Checkbox
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                              disabled={isSubmitting} 
-                            />
-                          </FormControl>
-                        </FormItem>
-                      )}
+        {!collapsed && (
+          <CardDescription>
+            <FormField 
+              control={form.control}
+              name={`exercises.${exerciseIndex}.notes`}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Notes</FormLabel>
+                  <FormControl>
+                    <Textarea 
+                      className="resize-none"
+                      {...field}
+                      disabled={isSubmitting}
                     />
-                  </TableCell>
-                )}
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+          </CardDescription>
+        )}
+      </CardHeader>
+      {!collapsed && (
+        <CardContent>
+          <Table className="w-full">
+            <TableHeader>
+              <TableRow>
+                {inEditMode && <TableHead></TableHead>}
+                <TableHead className="w-[12.5%] flex items-center">
+                  Set
+                  <Button type="button" variant="ghost" onClick={() => setInEditMode(prev => !prev)}>
+                    <SquarePen />
+                  </Button>
+                </TableHead>
+                <UnitFields />
+                {workoutType == "instance" && <TableHead className="w-[12.5%]">Completed</TableHead>}
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-        <Button
-          className="my-4"
-          onClick={() => addSet()}
-          type="button" 
-          variant="outline"
-          disabled={isSubmitting}
-        >
-          Add Set
-        </Button>
-      </CardContent>
+            </TableHeader>
+            <TableBody>
+              {sets.map((set, setIndex) => (
+                <TableRow key={set.id}>
+                  {inEditMode && (
+                    <TableCell>
+                      <Button type="button" variant="ghost" onClick={() => removeSet(setIndex)}>
+                        <Trash className="text-destructive" />
+                      </Button>
+                    </TableCell>
+                  )}
+                  <TableCell>{setIndex + 1}</TableCell>
+                  <InputFields setIndex={setIndex} />
+                  {workoutType == "instance" && (
+                    <TableCell>
+                      <FormField 
+                        control={form.control}
+                        name={`exercises.${exerciseIndex}.sets.${setIndex}.completed`}
+                        render={({ field }) => (
+                          <FormItem className="flex justify-center">
+                            <FormControl>
+                              <Checkbox
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                                disabled={isSubmitting} 
+                              />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                    </TableCell>
+                  )}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+          <Button
+            className="my-4"
+            onClick={() => addSet()}
+            type="button" 
+            variant="outline"
+            disabled={isSubmitting}
+          >
+            Add Set
+          </Button>
+        </CardContent>
+      )}
       <Button type="button" variant="ghost" className="absolute top-4 right-4 cursor-grab active:cursor-grabbing" {...listeners}>
         <Grip />
       </Button>
@@ -417,6 +460,8 @@ export function WorkoutForm({
 }) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [exerciseSelectionOpen, setExerciseSelectionOpen] = useState(false)
+
+  const container = useRef<HTMLFormElement | null>(null)
 
   const form = useForm<z.infer<typeof workoutFormSchema>>({
     resolver: zodResolver(workoutFormSchema),
@@ -517,12 +562,16 @@ export function WorkoutForm({
 
       move(from, to)
     }
+
+    if (container.current) {
+      container.current.style.transform = "translateY(0px)"
+    }
   }
 
   return (
     <>
     <Form {...form}>
-      <form className="flex flex-col gap-y-4 w-full max-w-3xl h-auto">
+      <form ref={container} className="flex flex-col gap-y-4 w-full max-w-3xl h-auto">
         <h1 className="text-3xl font-semibold mx-auto pb-10 lg:text-4xl">{workoutType === "instance" ? "Workout Logger" : "Workout Builder"}</h1>
         <FormField 
           control={form.control}
@@ -631,21 +680,24 @@ export function WorkoutForm({
             </Button>
           </div>
         )}
-        <DndContext modifiers={[restrictToVerticalAxis]} onDragEnd={handleDragEnd}>
-          <SortableContext items={fields.map(field => field.id)} strategy={verticalListSortingStrategy}>
-            {fields.map((exerciseField, exerciseIndex) => (
-              <Exercise 
-                form={form}
-                key={exerciseField.id}
-                exerciseField={exerciseField}
-                exerciseIndex={exerciseIndex}
-                workoutType={workoutType}
-                isSubmitting={isSubmitting}
-                onDelete={() => remove(exerciseIndex)}
-              />
-            ))}
-          </SortableContext>
-        </DndContext>
+        <div>
+          <DndContext modifiers={[restrictToVerticalAxis]} onDragEnd={handleDragEnd}>
+            <SortableContext items={fields.map(field => field.id)} strategy={verticalListSortingStrategy}>
+              {fields.map((exerciseField, exerciseIndex) => (
+                <Exercise 
+                  form={form}
+                  key={exerciseField.id}
+                  exerciseField={exerciseField}
+                  exerciseIndex={exerciseIndex}
+                  workoutType={workoutType}
+                  isSubmitting={isSubmitting}
+                  onDelete={() => remove(exerciseIndex)}
+                  containerRef={container}
+                />
+              ))}
+            </SortableContext>
+          </DndContext>
+        </div>
         <Separator />
         {fields.length > 0 && (
           <Button
