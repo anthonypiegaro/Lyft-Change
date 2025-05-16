@@ -1,6 +1,7 @@
 import { cookies, headers } from "next/headers"
 import { redirect } from "next/navigation"
 
+import { PopupProvider } from "@/components/pop-up-context"
 import { AppSidebar } from "@/components/app-sidebar/app-sidebar"
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { Toaster } from "@/components/ui/sonner"
@@ -25,15 +26,17 @@ export default async function DashboardLayout({
 
   return (
     <SidebarProvider defaultOpen={defaultOpen}>
-      <AppSidebar/>
-      <div className="fixed top-5 right-4.75">
-        <ThemeToggleButton />
-      </div>
-      <main className="flex w-full min-h-screen">
-        <SidebarTrigger className="fixed left-4.75 top-5 z-50" />
-        {children}
-      </main>
-      <Toaster />
+      <PopupProvider>
+        <AppSidebar/>
+        <div className="fixed top-5 right-4.75">
+          <ThemeToggleButton />
+        </div>
+        <main className="flex w-full min-h-screen">
+          <SidebarTrigger className="fixed left-4.75 top-5 z-50" />
+          {children}
+        </main>
+        <Toaster />
+      </PopupProvider>
     </SidebarProvider>
   ) 
 }

@@ -1,6 +1,7 @@
 "use client"
 
 import { RefObject, useLayoutEffect, useRef, useState } from "react"
+import { useRouter } from "next/navigation";
 import { z } from "zod"
 import { DevTool } from "@hookform/devtools";
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -18,6 +19,7 @@ import { SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-
 import { CSS } from '@dnd-kit/utilities';
 import { toast } from "sonner"
 
+import { usePopup } from "@/components/pop-up-context";
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
 import { 
@@ -76,6 +78,7 @@ import {
 import { cn } from "@/lib/utils"
 
 import { ExerciseSelect } from "./exercise-select";
+import { WorkoutInstanceSuccess } from "./workout-instance-success";
 
 import { createWorkoutInstance } from "./create-workout-instance"
 import { createWorkoutTemplate } from "./create-workout-template"
@@ -110,7 +113,6 @@ function Exercise({
   const {
     active,
     attributes,
-    isDragging,
     listeners,
     setNodeRef,
     transform,
@@ -501,6 +503,10 @@ export function WorkoutForm({
 
   const container = useRef<HTMLFormElement | null>(null)
 
+  const router = useRouter()
+
+  const { showPopup } = usePopup()
+
   const form = useForm<z.infer<typeof workoutFormSchema>>({
     resolver: zodResolver(workoutFormSchema),
     defaultValues
@@ -518,9 +524,8 @@ export function WorkoutForm({
       if (values.id == undefined) {
         await createWorkoutInstance(values)
           .then(() => {
-            toast.success("Success", {
-              description: `${values.name} has been created successfully.`
-            })
+            showPopup(<WorkoutInstanceSuccess formValues={values} />)
+            router.push("/dashboard")
           })
           .catch(e => {
             toast.error("Error", {
