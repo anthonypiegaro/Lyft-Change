@@ -14,6 +14,7 @@ export const weightUnits = z.enum(["g", "kg", "oz", "lb"])
 
 const exerciseSchemas = [
   z.object({
+    exerciseId: z.string(),
     name: z.string(),
     type: z.literal("weightReps"),
     notes: z.string(),
@@ -28,6 +29,7 @@ const exerciseSchemas = [
     }))
   }),
   z.object({
+    exerciseId: z.string(),
     name: z.string(),
     type: z.literal("timeDistance"),
     notes: z.string(),

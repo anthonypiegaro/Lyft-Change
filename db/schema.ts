@@ -109,7 +109,7 @@ export const workoutInstance = pgTable("workout_instance", {
 export const exerciseTemplate = pgTable("exercise_template", {
   id: uuid("id").primaryKey().defaultRandom(),
   userId: text("user_id").notNull().references(() => user.id, { onDelete: "cascade" }),
-  exerciseId: uuid("exercise_id").notNull().references(() => exercise.id),
+  exerciseId: uuid("exercise_id").notNull().references(() => exercise.id, { onDelete: "cascade" }),
   workoutId: uuid("workout_id").notNull().references(() => workout.id, { onDelete: "cascade" }),
   notes: text("notes"),
   orderNumber: integer("order_number").notNull()
@@ -118,7 +118,9 @@ export const exerciseTemplate = pgTable("exercise_template", {
 export const exerciseInstance = pgTable("exercise_instance", {
   id: uuid("id").primaryKey().defaultRandom(),
   userId: text("user_id").notNull().references(() => user.id, { onDelete: "cascade" }),
+  exerciseId: uuid("exercise_id").notNull().references(() => exercise.id, { onDelete: "cascade" }),
   workoutInstanceId: uuid("workout_instance_id").notNull().references(() => workoutInstance.id, { onDelete: "cascade" }),
+  notes: text("notes"),
   orderNumber: integer("order_number").notNull()
 })
 

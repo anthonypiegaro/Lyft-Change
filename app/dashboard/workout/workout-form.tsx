@@ -80,13 +80,14 @@ import { cn } from "@/lib/utils"
 import { ExerciseSelect } from "./exercise-select";
 import { WorkoutInstanceSuccess } from "./workout-instance-success";
 
-import { createWorkoutInstance } from "./create-workout-instance"
+import { createWorkoutInstance } from "./create-workout-instance.action"
 import { createWorkoutTemplate } from "./create-workout-template"
 
 import { ExerciseSelectExercise } from "./exercise-select";
 
 type WorkoutFormValues = z.infer<typeof workoutFormSchema>
 type WorkoutType = "instance" | "template"
+export type PersonalRecord = string
 
 function Exercise({
   workoutType,
@@ -523,8 +524,8 @@ export function WorkoutForm({
     if (workoutType === "instance") {
       if (values.id == undefined) {
         await createWorkoutInstance(values)
-          .then(() => {
-            showPopup(<WorkoutInstanceSuccess formValues={values} />)
+          .then(data => {
+            showPopup(<WorkoutInstanceSuccess formValues={values} personalRecords={data.personalRecords} />)
             router.push("/dashboard")
           })
           .catch(e => {
@@ -559,6 +560,7 @@ export function WorkoutForm({
   function addExercise(selectedExercise: ExerciseSelectExercise) {
     if (selectedExercise.type.name === "weightReps") {
       append({
+        exerciseId: selectedExercise.id,
         name: selectedExercise.name,
         type: "weightReps",
         notes: "",
@@ -574,6 +576,7 @@ export function WorkoutForm({
       )
     } else if (selectedExercise.type.name === "timeDistance") {
       append({
+        exerciseId: selectedExercise.id,
         name: selectedExercise.name,
         type: "timeDistance",
         notes: "",
@@ -770,7 +773,7 @@ export function WorkoutForm({
         <ExerciseSelect exercises={exercises} tagOptions={exerciseTags} onAdd={handleAddExercises}/>
       </DialogContent>
     </Dialog>
-    <DevTool control={form.control} />
+    {/* <DevTool control={form.control} /> */}
     </>
   )
 }
