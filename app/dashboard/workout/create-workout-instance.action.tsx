@@ -31,6 +31,10 @@ export const createWorkoutInstance = async (values: z.infer<typeof workoutFormSc
   const personalRecords: string[] = []
 
   await db.transaction(async tx => {
+    if (values.id != null) {
+      await tx.delete(workoutInstance).where(eq(workoutInstance.id, values.id))
+    }
+
     const workout = await tx.insert(workoutInstance).values({
       userId: userId,
       name: values.name,

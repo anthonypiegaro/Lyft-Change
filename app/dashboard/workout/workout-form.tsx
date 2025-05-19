@@ -522,20 +522,17 @@ export function WorkoutForm({
     setIsSubmitting(true)
 
     if (workoutType === "instance") {
-      if (values.id == undefined) {
-        await createWorkoutInstance(values)
-          .then(data => {
-            showPopup(<WorkoutInstanceSuccess formValues={values} personalRecords={data.personalRecords} />)
-            router.push("/dashboard")
+      await createWorkoutInstance(values)
+        .then(data => {
+          showPopup(<WorkoutInstanceSuccess formValues={values} personalRecords={data.personalRecords} />)
+          router.push("/dashboard")
+        })
+        .catch(e => {
+          toast.error("Error", {
+            description: e.message
           })
-          .catch(e => {
-            toast.error("Error", {
-              description: e.message
-            })
-          })
-      } else {
+        })
 
-      }
     } else {
       if (values.id == undefined) {
         await createWorkoutTemplate(values)

@@ -1,0 +1,108 @@
+"use server"
+
+import { eq } from "drizzle-orm"
+import { z } from "zod"
+
+import { db } from "@/db/db"
+import {
+  exercise,
+  exerciseInstance,
+  exerciseType,
+  setInstance,
+  timeDistanceInstance,
+  weightRepsInstance,
+  workoutInstance
+} from "@/db/schema"
+
+import { workoutFormSchema } from "../workout-form.schema"
+import { distanceFromMillimeters, timeFromMilliseconds, weightFromGrams } from "../unit-converter"
+
+type WorkoutFormSchema = z.infer<typeof workoutFormSchema>
+
+export const getWorkout = async (id: string): Promise<WorkoutFormSchema> => {
+  const workoutRes = await db.select({
+    name: workoutInstance.name,
+    date: workoutInstance.date,
+    notes: workoutInstance.notes
+  }).from(workoutInstance).where(eq(workoutInstance.id, id))
+
+  const workout: WorkoutFormSchema = { 
+    name: workoutRes[0].name,
+    notes: workoutRes[0].notes ?? "",
+    date: new Date(workoutRes[0].date),
+    id, 
+    tagIds: [], 
+    exercises: [] 
+  }
+
+  const exercisesRes = await db.select({
+    id: exerciseInstance.id,
+    exerciseId: exerciseInstance.exerciseId,
+    name: exercise.name,
+    type: exerciseType.name,
+    notes: exerciseInstance.notes
+  })
+  .from(exerciseInstance)
+  .innerJoin(exercise, eq(exerciseInstance.exerciseId, exercise.id))
+  .innerJoin(exerciseType, eq(exercise.typeId, exerciseType.id))
+  .where(eq(exerciseInstance.workoutInstanceId, id))
+  .orderBy(exerciseInstance.orderNumber)
+
+  for (const exerciseRes of exercisesRes) {
+    if (exerciseRes.type === "weightReps") {
+      const setsRes = await db.select({
+        weight: weightRepsInstance.weight,
+        reps: weightRepsInstance.reps,
+        completed: setInstance.completed
+      })
+      .from(setInstance)
+      .innerJoin(weightRepsInstance, eq(setInstance.id, weightRepsInstance.setInstanceId))
+      .where(eq(setInstance.exerciseInstanceId, exerciseRes.id))
+      .orderBy(setInstance.orderNumber)
+
+      workout.exercises.push({
+        exerciseId: exerciseRes.exerciseId,
+        name: exerciseRes.name,
+        type: "weightReps",
+        notes: exerciseRes.notes ?? "",
+        units: {
+          weight: "lb",
+          reps: "reps"
+        },
+        sets: setsRes.map(set => ({
+          weight: Math.round(weightFromGrams["lb"](set.weight)),
+          reps: set.reps,
+          completed: set.completed
+        }))
+      })
+    } else if (exerciseRes.type === "timeDistance") {
+      const setsRes = await db.select({
+        time: timeDistanceInstance.time,
+        distance: timeDistanceInstance.distance,
+        completed: setInstance.completed
+      })
+      .from(setInstance)
+      .innerJoin(timeDistanceInstance, eq(setInstance.id, timeDistanceInstance.setInstanceId))
+      .where(eq(setInstance.exerciseInstanceId, exerciseRes.id))
+      .orderBy(setInstance.orderNumber)
+
+      workout.exercises.push({
+        exerciseId: exerciseRes.exerciseId,
+        name: exerciseRes.name,
+        type: "timeDistance",
+        notes: exerciseRes.notes ?? "",
+        units: {
+          time: "m",
+          distance: "mi"
+        },
+        sets: setsRes.map(set => ({
+          time: Math.round(timeFromMilliseconds["m"](set.time)),
+          distance: Math.round(distanceFromMillimeters["mi"](set.distance)),
+          completed: set.completed
+        }))
+      })
+    }
+  }
+
+  return workout
+}
