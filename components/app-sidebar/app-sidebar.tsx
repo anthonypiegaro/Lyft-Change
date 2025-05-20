@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link";
-import { Blocks, Home } from "lucide-react";
+import { Blocks, Calendar, Home } from "lucide-react";
 
 import { 
   Sidebar,
@@ -45,6 +45,12 @@ const menuItems = [
         url: "/dashboard/build/program"
       }
     ]
+  },
+  {
+    title: "Schedular",
+    url: "/dashboard/schedular",
+    icon: Calendar,
+    subItems: []
   },
 ]
 
