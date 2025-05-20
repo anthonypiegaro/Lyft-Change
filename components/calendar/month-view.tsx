@@ -41,64 +41,67 @@ export function MonthView({
   }
   
   return (
-    <div className="grid grid-cols-7 h-full">
-      {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
-        <div key={day} className="p-2 text-center text-sm font-medium text-gray-500">
-          {day}
-        </div>
-      ))}
+    <div className="flex flex-col h-full">
+      <div className="grid grid-cols-7">
+        {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
+          <div key={day} className="p-2 text-center text-sm font-medium text-gray-500 h-10">
+            {day}
+          </div>
+        ))}
+      </div>
+      <div className="grid grid-cols-7 flex-1">
+        {weeks.map((week, weekIndex) => (
+          <React.Fragment key={weekIndex}>
+            {week.map((day) => {
+              const isCurrentMonth = day.getMonth() === currentMonth
+              const events = getEventsForDate(day)
+              const maxEventsToShow = 3
+              const hasMoreEvents = events.length > maxEventsToShow
 
-      {weeks.map((week, weekIndex) => (
-        <React.Fragment key={weekIndex}>
-          {week.map((day) => {
-            const isCurrentMonth = day.getMonth() === currentMonth
-            const events = getEventsForDate(day)
-            const maxEventsToShow = 3
-            const hasMoreEvents = events.length > maxEventsToShow
-
-            return (
-              <div
-                key={day.toISOString()}
-                className={cn(
-                  "border-t border-r p-1 min-h-24 overflow-hidden",
-                  weekIndex === 0 && "border-t",
-                  !isCurrentMonth && "bg-input",
-                )}
-                onClick={() => handleDateClick(day)}
-              >
-                <div className="flex justify-between">
-                  <span
-                    className={cn(
-                      "inline-flex items-center justify-center w-6 h-6 text-sm",
-                      isToday(day) && "bg-blue-100 text-blue-700 rounded-full font-semibold",
-                      isSelected(day) && !isToday(day) && "bg-gray-100 rounded-full font-semibold",
-                      !isCurrentMonth && "text-muted-foreground"
-                    )}
-                  >
-                    {day.getDate()}
-                  </span>
-                </div>
-
-                <div className="mt-1 space-y-1 max-h-[calc(100%-1.5rem)] overflow-hidden">
-                  {events.slice(0, maxEventsToShow).map((event) => (
-                    <div
-                      key={event.id}
-                      className="px-1 py-0.5 text-xs rounded truncate bg-zinc-400/80 hover:bg-zinc-400"
-                      onClick={(e) => handleEventClick(event, e)}
-                    >
-                      {event.name}
-                    </div>
-                  ))}
-
-                  {hasMoreEvents && (
-                    <div className="px-1 py-0.5 text-xs text-gray-500">+{events.length - maxEventsToShow} more</div>
+              return (
+                <div
+                  key={day.toISOString()}
+                  className={cn(
+                    "border-t border-r p-1 min-h-24 overflow-hidden",
+                    weekIndex === 0 && "border-t",
+                    !isCurrentMonth && "bg-input",
                   )}
+                  onClick={() => handleDateClick(day)}
+                >
+                  <div className="flex justify-between">
+                    <span
+                      className={cn(
+                        "inline-flex items-center justify-center w-6 h-6 text-sm",
+                        isToday(day) && "bg-blue-100 text-blue-700 rounded-full font-semibold",
+                        isSelected(day) && !isToday(day) && "bg-gray-100 rounded-full font-semibold",
+                        !isCurrentMonth && "text-muted-foreground"
+                      )}
+                    >
+                      {day.getDate()}
+                    </span>
+                  </div>
+
+                  <div className="mt-1 space-y-1 max-h-[calc(100%-1.5rem)] overflow-hidden">
+                    {events.slice(0, maxEventsToShow).map((event) => (
+                      <div
+                        key={event.id}
+                        className="px-1 py-0.5 text-xs rounded truncate bg-zinc-400/80 hover:bg-zinc-400"
+                        onClick={(e) => handleEventClick(event, e)}
+                      >
+                        {event.name}
+                      </div>
+                    ))}
+
+                    {hasMoreEvents && (
+                      <div className="px-1 py-0.5 text-xs text-gray-500">+{events.length - maxEventsToShow} more</div>
+                    )}
+                  </div>
                 </div>
-              </div>
-            )
-          })}
-        </React.Fragment>
-      ))}
+              )
+            })}
+          </React.Fragment>
+        ))}
+      </div>
     </div>
   )
 }
