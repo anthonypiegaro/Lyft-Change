@@ -16,7 +16,7 @@ export function MonthView({
   onEventClick?: (event: CalendarEvent) => void
   onDateClick?: (date: Date) => void
 }) {
-  const { days, isSelected, isToday, getEventsForDate, currentDate } = calendar
+  const { days, isToday, getEventsForDate, currentDate } = calendar
 
   const currentMonth = currentDate.getMonth()
 
@@ -73,7 +73,6 @@ export function MonthView({
                       className={cn(
                         "inline-flex items-center justify-center w-6 h-6 text-sm",
                         isToday(day) && "bg-blue-100 text-blue-700 rounded-full font-semibold",
-                        isSelected(day) && !isToday(day) && "bg-gray-100 rounded-full font-semibold",
                         !isCurrentMonth && "text-muted-foreground"
                       )}
                     >

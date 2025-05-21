@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight, CalendarIcon, Plus } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 
+import { DatePicker } from "./date-picker"
 import { DayView } from "./day-view"
 import { WeekView } from "./week-view"
 import { MonthView } from "./month-view"
@@ -81,7 +82,7 @@ export function Calendar({
     <div className="flex flex-col h-full border rounded-lg shadow-sm bg-background">
       <div className="flex items-center justify-between p-4 border-b">
         <div className="flex items-center space-x-2">
-          <CalendarIcon className="w-5 h-5 text-muted-foreground" />
+          <DatePicker selected={calendar.currentDate} onSelect={calendar.goToDate} />
           <h2 className="text-lg font-semibold">{formatDate()}</h2>
         </div>
         <div className="flex items-center space-x-2">
