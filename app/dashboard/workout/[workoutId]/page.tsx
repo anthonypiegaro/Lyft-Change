@@ -4,7 +4,7 @@ import { WorkoutForm } from "../workout-form"
 import { getExercises } from "../get-exercises.action"
 import { getExerciseTags } from "../get-exercise-tags"
 import { getWorkoutTags } from "../get-workout-tags.action"
-import { getWorkout } from "./getWorkout.action"
+import { getWorkout } from "./get-workout.action"
 
 export default async function WorkoutPage({
   params,

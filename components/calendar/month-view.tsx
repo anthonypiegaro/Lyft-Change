@@ -13,7 +13,7 @@ export function MonthView({
   onDateClick
 }: {
   calendar: UseCalendarReturn<WorkoutEvent>
-  onEventClick?: (event: CalendarEvent) => void
+  onEventClick?: (event: CalendarEvent<WorkoutEvent>) => void
   onDateClick?: (date: Date) => void
 }) {
   const { days, isToday, getEventsForDate, currentDate } = calendar
@@ -35,7 +35,7 @@ export function MonthView({
     onDateClick?.(date)
   }
 
-  const handleEventClick = (event: CalendarEvent, e: React.MouseEvent) => {
+  const handleEventClick = (event: CalendarEvent<WorkoutEvent>, e: React.MouseEvent) => {
     e.stopPropagation()
     onEventClick?.(event)
   }

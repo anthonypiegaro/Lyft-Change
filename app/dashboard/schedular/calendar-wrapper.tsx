@@ -1,6 +1,9 @@
 "use client"
 
-import { Calendar } from "@/components/calendar/calendar"
+import { useRouter } from "next/navigation"
+
+import { Calendar, WorkoutEvent } from "@/components/calendar/calendar"
+import { CalendarEvent } from "@/components/calendar/use-calendar"
 import { parseISO } from "date-fns"
 
 export type WorkoutEventPreprocessed = {
@@ -19,5 +22,11 @@ export function CalendarWrapper({
     date: parseISO(event.date),
   }));
 
-  return <Calendar events={parsedEvents} />
+  const router = useRouter()
+
+  const handleEventClick = (event: CalendarEvent<WorkoutEvent>) => {
+    router.push(`/dashboard/workout/${event.id}`)
+  }
+
+  return <Calendar events={parsedEvents} onEventClick={handleEventClick}/>
 }

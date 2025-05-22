@@ -37,10 +37,14 @@ export function Calendar({
     events
   })
 
+  const handleEventClick = (event: CalendarEvent<WorkoutEvent>) => {
+    onEventClick?.(event)
+  }
+
   const renderView = () => {
     switch (calendar.view) {
       case "month":
-        return <MonthView calendar={calendar} />
+        return <MonthView calendar={calendar} onEventClick={handleEventClick} />
       case "week":
         return <WeekView calendar={calendar} />
       case "day":
