@@ -185,8 +185,8 @@ export const columns: ColumnDef<ExerciseRowType>[] = [
             <DialogHeader>
               <DialogTitle>{form}</DialogTitle>
             </DialogHeader>
-            {form == "Edit Exercise" && <EditExerciseForm exercise={exercise} onSuccess={handleEditExerciseSuccess} />}
-            {form == "Hide Exercise" 
+            {form === "Edit Exercise" && <EditExerciseForm exercise={exercise} onSuccess={handleEditExerciseSuccess} />}
+            {form === "Hide Exercise" 
               && <HideExerciseForm exerciseId={exercise.id} exerciseName={exercise.name} onSuccess={handleHideExerciseSuccess} close={() => setOpen(false)} />
             }
           </DialogContent>

@@ -1,16 +1,27 @@
 "use client"
 
+import { useRouter } from "next/navigation"
+import { useState } from "react"
 import { ColumnDef } from "@tanstack/react-table"
 import { ArrowUpDown, MoreHorizontal } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { 
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu"
+import { DeleteTemplateForm } from "./delete-workout-template-form"
 
 export type WorkoutRowType = {
   id: string,
@@ -54,23 +65,55 @@ export const columns: ColumnDef<WorkoutRowType>[] = [
     cell: ({ row }) => {
       const workout = row.original
 
+      const [form, setForm] = useState<"Delete Workout" | "">("")
+      const [open, setOpen] = useState(false)
+
+      const router = useRouter()
+
+      const handleDeleteWorkoutSuccess = () => {
+        setOpen(false)
+        router.refresh()
+      }
+
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <div className="w-full flex justify-end">
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Open Menu</span>
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </div>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem>
-              <a href={`/dashboard/workout/template/${workout.id}`}>Edit</a>
-            </DropdownMenuItem>
-            <DropdownMenuItem>Delete</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <Dialog open={open} onOpenChange={setOpen} >
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <div className="w-full flex justify-end">
+                <Button variant="ghost" className="h-8 w-8 p-0">
+                  <span className="sr-only">Open menu</span>
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </div>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem 
+                onClick={() => router.push(`/dashboard/workout/template/${workout.id}`)}
+              >
+                Edit
+              </DropdownMenuItem>
+              <DialogTrigger 
+                className="w-full" 
+                onClick={() => setForm("Delete Workout")}
+              >
+                <DropdownMenuItem className="text-destructive">Delete</DropdownMenuItem>
+              </DialogTrigger>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>{form}</DialogTitle>
+            </DialogHeader>
+            {form === "Delete Workout" && (
+              <DeleteTemplateForm 
+                workoutId={workout.id} 
+                workoutName={workout.name} 
+                onSuccess={handleDeleteWorkoutSuccess}
+                close={() => setOpen(false)}
+              />
+            )}
+          </DialogContent>
+        </Dialog>
       )
     }
   }
