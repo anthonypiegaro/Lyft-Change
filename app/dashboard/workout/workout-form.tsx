@@ -79,9 +79,10 @@ import { cn } from "@/lib/utils"
 
 import { ExerciseSelect } from "./exercise-select";
 import { WorkoutInstanceSuccess } from "./workout-instance-success";
+import { WorkoutTemplateSuccess } from "./workout-template-success";
 
 import { createWorkoutInstance } from "./create-workout-instance.action"
-import { createWorkoutTemplate } from "./create-workout-template"
+import { createWorkoutTemplate } from "./create-workout-template.action"
 
 import { ExerciseSelectExercise } from "./exercise-select";
 
@@ -534,21 +535,16 @@ export function WorkoutForm({
         })
 
     } else {
-      if (values.id == undefined) {
-        await createWorkoutTemplate(values)
-          .then(() => {
-            toast.success("Success", {
-              description: `${values.name} has been created successfully.`
-            })
+      await createWorkoutTemplate(values)
+        .then(data => {
+          showPopup(<WorkoutTemplateSuccess formValues={values} />)
+          router.push("/dashboard")
+        })
+        .catch(e => {
+          toast.error("Error", {
+            description: e.message
           })
-          .catch(e => {
-            toast.error("Error", {
-              description: e.message
-            })
-          })
-      } else {
-        
-      }
+        })
     }
 
     setIsSubmitting(false)

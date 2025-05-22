@@ -43,13 +43,13 @@ export function AddEntityButton({
     : "Program Form"
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={type === "workout" ? false : open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button
           variant="outline"
           size="sm"
           className="hidden h-8 lg:flex capitalize"
-          onClick={() => setOpen(true)}
+          onClick={type === "workout" ? () => router.push("/dashboard/workout/template/new") : () => setOpen(true)}
         >
           Add {type}
         </Button>
