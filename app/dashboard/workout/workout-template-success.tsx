@@ -16,9 +16,11 @@ const options: Intl.DateTimeFormatOptions = {
 };
 
 export function WorkoutTemplateSuccess({
-  formValues
+  formValues,
+  newTemplate
 }: {
   formValues: z.infer<typeof workoutFormSchema>
+  newTemplate: boolean
 }) {
 
   return (
@@ -31,7 +33,7 @@ export function WorkoutTemplateSuccess({
           autoplay
         />
       </div>
-      <h1 className="text-xl font-medium text-center mb-4">Workout Template Successfully Created</h1>
+      <h1 className="text-xl font-medium text-center mb-4">Workout Template Successfully {newTemplate ? "Created" : "Edited"}</h1>
       <h2 className="text-lg font-normal">{formValues.name}</h2>
       <h2 className="text-muted-foreground mb-4">{formValues.date.toLocaleDateString('en-US', options)}</h2>
       <h2 className="mb-2">Exercises</h2>

@@ -537,8 +537,12 @@ export function WorkoutForm({
     } else {
       await createWorkoutTemplate(values)
         .then(data => {
-          showPopup(<WorkoutTemplateSuccess formValues={values} />)
-          router.push("/dashboard")
+          if (values.id != undefined) {
+            showPopup(<WorkoutTemplateSuccess formValues={values} newTemplate={true}/>)
+          } else {
+            showPopup(<WorkoutTemplateSuccess formValues={values} newTemplate={false} />)
+          }
+          router.push("/dashboard/build/workout")
         })
         .catch(e => {
           toast.error("Error", {
