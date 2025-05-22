@@ -1,5 +1,7 @@
 "use server"
 
+import { headers } from "next/headers"
+import { notFound, redirect } from "next/navigation"
 import { eq } from "drizzle-orm"
 import { z } from "zod"
 
@@ -13,6 +15,7 @@ import {
   weightRepsInstance,
   workoutInstance
 } from "@/db/schema"
+import { auth } from "@/lib/auth"
 
 import { workoutFormSchema } from "../workout-form.schema"
 import { distanceFromMillimeters, timeFromMilliseconds, weightFromGrams } from "../unit-converter"
@@ -20,7 +23,18 @@ import { distanceFromMillimeters, timeFromMilliseconds, weightFromGrams } from "
 type WorkoutFormSchema = z.infer<typeof workoutFormSchema>
 
 export const getWorkout = async (id: string): Promise<WorkoutFormSchema> => {
+  const session = await auth.api.getSession({
+    headers: await headers()
+  })
+
+  if (!session) {
+    redirect("/sign-in")
+  }
+
+  const userId = session.user.id
+
   const workoutRes = await db.select({
+    userId: workoutInstance.userId,
     name: workoutInstance.name,
     date: workoutInstance.date,
     notes: workoutInstance.notes
@@ -33,6 +47,14 @@ export const getWorkout = async (id: string): Promise<WorkoutFormSchema> => {
     id, 
     tagIds: [], 
     exercises: [] 
+  }
+
+  if (workoutRes.length === 0) {
+    notFound()
+  }
+
+  if (workoutRes[0].userId !== userId) {
+    redirect("/403")
   }
 
   const exercisesRes = await db.select({

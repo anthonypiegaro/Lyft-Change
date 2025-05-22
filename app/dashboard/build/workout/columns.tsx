@@ -65,7 +65,9 @@ export const columns: ColumnDef<WorkoutRowType>[] = [
             </div>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem>Edit</DropdownMenuItem>
+            <DropdownMenuItem>
+              <a href={`/dashboard/workout/template/${workout.id}`}>Edit</a>
+            </DropdownMenuItem>
             <DropdownMenuItem>Delete</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

@@ -43,7 +43,8 @@ export const createWorkoutTemplate = async (values: z.infer<typeof workoutFormSc
 
     const workoutTemplate = await tx.insert(workout).values({
       name: values.name,
-      userId: userId
+      userId: userId,
+      notes: values.notes
     }).returning({ id: workout.id })
 
     const workoutTemplateId = workoutTemplate[0].id

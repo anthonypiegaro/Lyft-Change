@@ -80,7 +80,8 @@ export const exerciseToExerciseTag = pgTable("exercise_to_exercise_tag", {
 export const workout = pgTable("workout", {
   id: uuid("workout").primaryKey().defaultRandom(),
   userId: text("user_id").notNull().references(() => user.id, { onDelete: "cascade" }),
-  name: text("name").notNull()
+  name: text("name").notNull(),
+  notes: text("notes")
 })
 
 export const workoutTag = pgTable("workout_tag", {
