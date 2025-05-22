@@ -31,7 +31,7 @@ export const createWorkoutInstance = async (values: z.infer<typeof workoutFormSc
   const personalRecords: string[] = []
 
   await db.transaction(async tx => {
-    if (values.id != null) {
+    if (values.id != undefined) {
       await tx.delete(workoutInstance).where(eq(workoutInstance.id, values.id))
     }
 

@@ -497,7 +497,7 @@ export function WorkoutForm({
   exerciseTags: { label: string, value: string }[]
   workoutTags: { label: string, value: string}[]
   workoutType: "instance" | "template"
-  defaultValues?: z.infer<typeof workoutFormSchema>
+  defaultValues: z.infer<typeof workoutFormSchema>
   exercises: ExerciseSelectExercise[]
 }) {
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -536,8 +536,8 @@ export function WorkoutForm({
 
     } else {
       await createWorkoutTemplate(values)
-        .then(data => {
-          if (values.id != undefined) {
+        .then(() => {
+          if (values.id == undefined) {
             showPopup(<WorkoutTemplateSuccess formValues={values} newTemplate={true}/>)
           } else {
             showPopup(<WorkoutTemplateSuccess formValues={values} newTemplate={false} />)
@@ -770,7 +770,7 @@ export function WorkoutForm({
         <ExerciseSelect exercises={exercises} tagOptions={exerciseTags} onAdd={handleAddExercises}/>
       </DialogContent>
     </Dialog>
-    {/* <DevTool control={form.control} /> */}
+    <DevTool control={form.control} />
     </>
   )
 }
