@@ -22,7 +22,7 @@ import { distanceFromMillimeters, timeFromMilliseconds, weightFromGrams } from "
 
 type WorkoutFormSchema = z.infer<typeof workoutFormSchema>
 
-export const getWorkout = async (id: string): Promise<WorkoutFormSchema> => {
+export const getWorkout = async (id: string): Promise<Omit<WorkoutFormSchema, "date"> & { date: string }> => {
   const session = await auth.api.getSession({
     headers: await headers()
   })
@@ -40,10 +40,10 @@ export const getWorkout = async (id: string): Promise<WorkoutFormSchema> => {
     notes: workoutInstance.notes
   }).from(workoutInstance).where(eq(workoutInstance.id, id))
 
-  const workout: WorkoutFormSchema = { 
+  const workout: Omit<WorkoutFormSchema, "date"> & { date: string } = { 
     name: workoutRes[0].name,
     notes: workoutRes[0].notes ?? "",
-    date: new Date(workoutRes[0].date),
+    date: workoutRes[0].date,
     id, 
     tagIds: [], 
     exercises: [] 

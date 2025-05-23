@@ -139,7 +139,7 @@ export function ExerciseSelect({
           />
       </div>
       <div 
-        className="overflow-auto h-64 md:h-80 lg:h-96 xl:h-[500px]" 
+        className="overflow-auto h-64 md:h-80 lg:h-96 xl:h-[500px] mask-b-from-95% mask-t-from-95%" 
         ref={parentRef}
       >
         <div

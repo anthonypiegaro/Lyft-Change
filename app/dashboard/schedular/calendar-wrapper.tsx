@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation"
 
-import { Calendar, WorkoutEvent } from "@/components/calendar/calendar"
+import { Calendar, Tag, WorkoutEvent, WorkoutTemplate } from "@/components/calendar/calendar"
 import { CalendarEvent } from "@/components/calendar/use-calendar"
 import { parseISO } from "date-fns"
 
@@ -13,9 +13,13 @@ export type WorkoutEventPreprocessed = {
 }
 
 export function CalendarWrapper({
-  events
+  events,
+  workoutTemplates,
+  tags
 }: {
   events: WorkoutEventPreprocessed[]
+  workoutTemplates: WorkoutTemplate[]
+  tags: Tag[]
 }) {
   const parsedEvents = events.map((event) => ({
     ...event,
@@ -28,5 +32,5 @@ export function CalendarWrapper({
     router.push(`/dashboard/workout/${event.id}`)
   }
 
-  return <Calendar events={parsedEvents} onEventClick={handleEventClick}/>
+  return <Calendar events={parsedEvents} onEventClick={handleEventClick} workoutTemplates={workoutTemplates} tags={tags}/>
 }

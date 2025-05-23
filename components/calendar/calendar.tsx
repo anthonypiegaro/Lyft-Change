@@ -1,6 +1,7 @@
 "use client"
 
-import { ChevronLeft, ChevronRight, CalendarIcon, Plus } from "lucide-react"
+import { useState } from "react"
+import { ChevronLeft, ChevronRight, Plus } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 
@@ -9,11 +10,23 @@ import { DayView } from "./day-view"
 import { WeekView } from "./week-view"
 import { MonthView } from "./month-view"
 import { CalendarEvent, CalendarView, useCalendar } from "./use-calendar"
+import { AddWorkoutForm } from "./add-workout-form"
 
 export type WorkoutEvent = {
   id: string
   name: string
   date: Date
+}
+
+export type Tag = {
+  value: string,
+  label: string
+}
+
+export type WorkoutTemplate = {
+  id: string
+  name: string
+  tags: Tag[]
 }
 
 export function Calendar({
@@ -23,14 +36,21 @@ export function Calendar({
   onEventClick,
   onDateClick,
   onAddEvent,
+  workoutTemplates,
+  tags
 }: {
   events?: CalendarEvent<WorkoutEvent>[]
   initialView?: CalendarView
   initialDate?: Date
   onEventClick?: (event: CalendarEvent<WorkoutEvent>) => void
   onDateClick?: (date: Date) => void
-  onAddEvent?: (event: CalendarEvent<WorkoutEvent>) => void
+  onAddEvent?: (event: CalendarEvent<WorkoutEvent> | CalendarEvent<WorkoutEvent>[]) => void
+  workoutTemplates: WorkoutTemplate[]
+  tags: Tag[]
 }) {
+  const [showAddWorkoutForm, setShowAddWorkoutForm] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
   const calendar = useCalendar<WorkoutEvent>({
     initialView,
     initialDate,
@@ -39,6 +59,14 @@ export function Calendar({
 
   const handleEventClick = (event: CalendarEvent<WorkoutEvent>) => {
     onEventClick?.(event)
+  }
+
+  const handleAddWorkoutClick = () => {
+    setShowAddWorkoutForm(true)
+  }
+
+  const handleAddWorkoutSubmit = (workoutTemplateIds: string[], date: Date) => {
+    setIsSubmitting(true)
   }
 
   const renderView = () => {
@@ -123,12 +151,20 @@ export function Calendar({
           </Button>
         </div>
 
-        <Button>
+        <Button onClick={handleAddWorkoutClick}>
           <Plus className="w-4 h-4 sm:mr-1" />
           <p className="hidden sm:block">Add Workout</p>
         </Button>
       </div>
       <div className="flex-1 overflow-auto">{renderView()}</div>
+      <AddWorkoutForm 
+        workoutTemplates={workoutTemplates} 
+        tags={tags} 
+        open={showAddWorkoutForm} 
+        onOpenChange={setShowAddWorkoutForm}
+        onAdd={handleAddWorkoutSubmit}
+        disabled={isSubmitting}
+      />
     </div>
   )
 }
