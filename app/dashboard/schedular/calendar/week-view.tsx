@@ -1,6 +1,6 @@
 "use client"
 
-import { CalendarEvent, UseCalendarReturn } from "./use-calendar"
+import { CalendarEvent, UseCalendarReturn } from "../../../../components/calendar/use-calendar"
 import { WorkoutEvent } from "./calendar"
 import React from "react"
 import { cn } from "@/lib/utils"

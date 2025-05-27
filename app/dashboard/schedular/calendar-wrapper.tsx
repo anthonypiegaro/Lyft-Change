@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation"
 
-import { Calendar, Tag, WorkoutEvent, WorkoutTemplate } from "@/components/calendar/calendar"
+import { Calendar, Tag, WorkoutEvent, WorkoutTemplate } from "@/app/dashboard/schedular/calendar/calendar"
 import { CalendarEvent } from "@/components/calendar/use-calendar"
 import { parseISO } from "date-fns"
 

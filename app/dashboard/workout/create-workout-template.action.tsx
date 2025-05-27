@@ -64,7 +64,7 @@ export const createWorkoutTemplate = async (values: z.infer<typeof workoutFormSc
           userId: userId,
           workoutId: workoutTemplateId,
           exerciseId: exercise.exerciseId,
-          notes: values.notes,
+          notes: exercise.notes,
           orderNumber: index
         }).returning({ id: exerciseTemplate.id })
 

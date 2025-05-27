@@ -1,7 +1,7 @@
 "use client"
 
 import { WorkoutEvent } from "./calendar"
-import { CalendarEvent, UseCalendarReturn } from "./use-calendar"
+import { CalendarEvent, UseCalendarReturn } from "../../../../components/calendar/use-calendar"
 
 export function DayView({
   calendar,

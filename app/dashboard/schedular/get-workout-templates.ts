@@ -12,7 +12,7 @@ import {
 } from "@/db/schema"
 import { auth } from "@/lib/auth"
 
-import { WorkoutTemplate } from "@/components/calendar/calendar"
+import { WorkoutTemplate } from "@/app/dashboard/schedular/calendar/calendar"
 
 export const getWorkoutTemplates = async (): Promise<WorkoutTemplate[]> => {
   const session = await auth.api.getSession({

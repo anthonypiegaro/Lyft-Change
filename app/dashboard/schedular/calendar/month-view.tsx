@@ -5,7 +5,7 @@ import React from "react"
 import { cn } from "@/lib/utils"
 
 import { WorkoutEvent } from "./calendar"
-import { CalendarEvent, UseCalendarReturn } from "./use-calendar"
+import { CalendarEvent, UseCalendarReturn } from "../../../../components/calendar/use-calendar"
 
 export function MonthView({
   calendar,
@@ -84,7 +84,7 @@ export function MonthView({
                     {events.slice(0, maxEventsToShow).map((event) => (
                       <div
                         key={event.id}
-                        className="px-1 py-0.5 text-xs rounded truncate bg-zinc-400/80 hover:bg-zinc-400"
+                        className="px-1 py-0.5 text-xs rounded truncate bg-zinc-400/80 hover:bg-zinc-400 cursor-pointer"
                         onClick={(e) => handleEventClick(event, e)}
                       >
                         {event.name}

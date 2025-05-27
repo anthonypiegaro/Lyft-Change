@@ -24,6 +24,7 @@ export interface CalendarActions<T> {
   goToPrev: () => void
   goToNext: () => void
   addEvent: (event: CalendarEvent<T>) => void
+  addEvents: (events: CalendarEvent<T>[]) => void
   updateEvent: (event: CalendarEvent<T>) => void
   deleteEvent: (id: string) => void
 }
@@ -60,19 +61,6 @@ const isSameDay = (date1: Date, date2: Date) => {
     date1.getMonth() === date2.getMonth() &&
     date1.getDate() === date2.getDate()
   )
-}
-
-const isSameWeek = (date1: Date, date2: Date) => {
-  const d1 = new Date(date1)
-  const d2 = new Date(date2)
-
-  const day1 = d1.getDay()
-  const day2 = d2.getDay()
-
-  d1.setDate(d1.getDate() - day1)
-  d2.setDate(d2.getDate() - day2)
-
-  return isSameDay(d1, d2)
 }
 
 const getDaysInMonth = (year: number, month: number) => {
@@ -230,11 +218,17 @@ export const useCalendar = <T = {}>({
     })
   }, [])
 
-  const addEvent = useCallback((event: Omit<CalendarEvent<T>, "id">) => {
-    const newEvent = { ...event, id: generateId() }
+  const addEvent = useCallback((event: CalendarEvent<T>) => {
     setState((prev) => ({
       ...prev,
-      events: [...prev.events, newEvent as CalendarEvent<T>],
+      events: [...prev.events, event],
+    }))
+  }, [])
+
+  const addEvents = useCallback((newEvents: CalendarEvent<T>[]) => {
+    setState((prev) => ({
+      ...prev,
+      events: [...prev.events, ...newEvents],
     }))
   }, [])
 
@@ -265,6 +259,7 @@ export const useCalendar = <T = {}>({
     goToPrev,
     goToNext,
     addEvent,
+    addEvents,
     updateEvent,
     deleteEvent,
   }

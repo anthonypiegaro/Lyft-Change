@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { ChevronLeft, ChevronRight, Plus } from "lucide-react"
+import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
 
@@ -9,8 +10,9 @@ import { DatePicker } from "./date-picker"
 import { DayView } from "./day-view"
 import { WeekView } from "./week-view"
 import { MonthView } from "./month-view"
-import { CalendarEvent, CalendarView, useCalendar } from "./use-calendar"
+import { CalendarEvent, CalendarView, useCalendar } from "../../../../components/calendar/use-calendar"
 import { AddWorkoutForm } from "./add-workout-form"
+import { addWorkouts } from "./add-workouts.action"
 
 export type WorkoutEvent = {
   id: string
@@ -65,8 +67,26 @@ export function Calendar({
     setShowAddWorkoutForm(true)
   }
 
-  const handleAddWorkoutSubmit = (workoutTemplateIds: string[], date: Date) => {
+  const handleAddWorkoutSubmit = async (workoutTemplateIds: string[], date: Date) => {
     setIsSubmitting(true)
+
+    await addWorkouts({ workoutTemplateIds, date })
+      .then(data  => {
+        setShowAddWorkoutForm(false)
+
+        calendar.addEvents(data)
+
+        toast.success("Success", {
+          description: "Workouts have been added"
+        })
+      })
+      .catch(error => {
+        toast.error("Error", {
+          description: error.message
+        })
+      })
+
+    setIsSubmitting(false)
   }
 
   const renderView = () => {

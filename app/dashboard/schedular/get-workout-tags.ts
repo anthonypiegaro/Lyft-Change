@@ -7,7 +7,7 @@ import { eq } from "drizzle-orm"
 import { db } from "@/db/db"
 import { workoutTag } from "@/db/schema"
 import { auth } from "@/lib/auth"
-import { Tag } from "@/components/calendar/calendar"
+import { Tag } from "@/app/dashboard/schedular/calendar/calendar"
 
 export const getWorkoutTags = async (): Promise<Tag[]> => {
   const session = await auth.api.getSession({
