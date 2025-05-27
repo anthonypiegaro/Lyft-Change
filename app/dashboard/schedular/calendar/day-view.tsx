@@ -1,24 +1,36 @@
 "use client"
 
+import { Trash } from "lucide-react"
+
+import { Button } from "@/components/ui/button"
+import { CalendarEvent, UseCalendarReturn } from "@/components/calendar/use-calendar"
+import { cn } from "@/lib/utils"
+
 import { WorkoutEvent } from "./calendar"
-import { CalendarEvent, UseCalendarReturn } from "../../../../components/calendar/use-calendar"
 
 export function DayView({
   calendar,
   onEventClick,
-  onDateClick
+  onDeleteClick,
+  inEditMode
 }: {
   calendar: UseCalendarReturn<WorkoutEvent>
-  onEventClick?: (event: CalendarEvent) => void
-  onDateClick?: (event: Date) => void
+  onEventClick?: (event: CalendarEvent<WorkoutEvent>) => void
+  onDeleteClick?: (id: string, name: string) => void
+  inEditMode: boolean
 }) {
   const { currentDate, getEventsForDate } = calendar
 
   const events = getEventsForDate(currentDate)
 
-  const handleEventClick = (event: CalendarEvent, e: React.MouseEvent) => {
+  const handleEventClick = (event: CalendarEvent<WorkoutEvent>, e: React.MouseEvent) => {
     e.stopPropagation()
     onEventClick?.(event)
+  }
+
+  const handleDeleteClick = (event: CalendarEvent<WorkoutEvent>, e: React.MouseEvent) => {
+    e.stopPropagation()
+    onDeleteClick?.(event.id, event.name)
   }
 
   return (
@@ -27,10 +39,17 @@ export function DayView({
         {events.map(event => (
           <div
             key={event.id}
-            className="h-20 rounded px-2 py-1 text-sm truncate font-medium bg-zinc-400/80 hover:bg-zinc-400"
+            className="flex justify-between items-center h-20 rounded px-2 py-1 text-sm truncate font-medium bg-zinc-400/80 hover:bg-zinc-400"
             onClick={e => handleEventClick(event, e)}
           >
             {event.name}
+            <Button 
+              variant="ghost" 
+              className={cn("h-auto w-auto min-w-0 min-h-0 cursor-pointer", !inEditMode && "hidden")}
+              onClick={e => handleDeleteClick(event, e)}
+            >
+              <Trash className="text-destructive w-1 h-1" />
+            </Button>
           </div>
         ))}
       </div>

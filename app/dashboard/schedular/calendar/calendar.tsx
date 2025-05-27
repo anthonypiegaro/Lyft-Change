@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { ChevronLeft, ChevronRight, Plus } from "lucide-react"
+import { ChevronLeft, ChevronRight, Pencil, PencilOff, Plus } from "lucide-react"
 import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
@@ -10,9 +10,11 @@ import { DatePicker } from "./date-picker"
 import { DayView } from "./day-view"
 import { WeekView } from "./week-view"
 import { MonthView } from "./month-view"
-import { CalendarEvent, CalendarView, useCalendar } from "../../../../components/calendar/use-calendar"
+import { CalendarEvent, CalendarView, useCalendar } from "@/components/calendar/use-calendar"
 import { AddWorkoutForm } from "./add-workout-form"
 import { addWorkouts } from "./add-workouts.action"
+import { DeleteEventConfirmation } from "./delete-event-confirmation"
+import { deleteWorkout } from "./delete-workout.action"
 
 export type WorkoutEvent = {
   id: string
@@ -52,6 +54,10 @@ export function Calendar({
 }) {
   const [showAddWorkoutForm, setShowAddWorkoutForm] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [inEditMode, setInEditMode] = useState(false)
+  const [showDeleteWorkoutForm, setShowDeleteWorkoutForm] = useState(false)
+  const [workoutToDeleteId, setWorkoutToDeleteId] = useState("")
+  const [workoutToDeleteName, setWorkoutToDeleteName] = useState("")
 
   const calendar = useCalendar<WorkoutEvent>({
     initialView,
@@ -65,6 +71,10 @@ export function Calendar({
 
   const handleAddWorkoutClick = () => {
     setShowAddWorkoutForm(true)
+  }
+
+  const handleEditClick = () => {
+    setInEditMode(prev => !prev)
   }
 
   const handleAddWorkoutSubmit = async (workoutTemplateIds: string[], date: Date) => {
@@ -89,14 +99,40 @@ export function Calendar({
     setIsSubmitting(false)
   }
 
+  const handleDeleteWorkout = async (workoutInstanceId: string) => {
+    setIsSubmitting(true)
+
+    await deleteWorkout(workoutInstanceId)
+      .then(() => {
+        calendar.deleteEvent(workoutInstanceId)
+        toast.success("Success", {
+          description: "Workout has been deleted successfully"
+        })
+        setShowDeleteWorkoutForm(false)
+      })
+      .catch(error => {
+        toast.error("Error", {
+          description: error.message
+        })
+      })
+
+    setIsSubmitting(false)
+  }
+
+  const handleDeleteClick = (workoutId: string, name: string) => {
+    setWorkoutToDeleteId(workoutId)
+    setWorkoutToDeleteName(name)
+    setShowDeleteWorkoutForm(true)
+  }
+
   const renderView = () => {
     switch (calendar.view) {
       case "month":
-        return <MonthView calendar={calendar} onEventClick={handleEventClick} />
+        return <MonthView calendar={calendar} onEventClick={handleEventClick} inEditMode={inEditMode} onDeleteClick={handleDeleteClick} />
       case "week":
-        return <WeekView calendar={calendar} />
+        return <WeekView calendar={calendar} onEventClick={handleEventClick} inEditMode={inEditMode} onDeleteClick={handleDeleteClick}/>
       case "day":
-        return <DayView calendar={calendar} />
+        return <DayView calendar={calendar} onEventClick={handleEventClick} inEditMode={inEditMode} onDeleteClick={handleDeleteClick}/>
       default:
         return null
     }
@@ -171,10 +207,15 @@ export function Calendar({
           </Button>
         </div>
 
-        <Button onClick={handleAddWorkoutClick}>
-          <Plus className="w-4 h-4 sm:mr-1" />
-          <p className="hidden sm:block">Add Workout</p>
-        </Button>
+        <div>
+          <Button onClick={handleEditClick} className="mr-1">
+            {inEditMode ? <PencilOff className="w-4 h-4" /> : <Pencil className="w-4 h-4"/>}
+          </Button>
+          <Button onClick={handleAddWorkoutClick}>
+            <Plus className="w-4 h-4 sm:mr-1" />
+            <p className="hidden sm:block">Add Workout</p>
+          </Button>
+        </div>
       </div>
       <div className="flex-1 overflow-auto">{renderView()}</div>
       <AddWorkoutForm 
@@ -184,6 +225,14 @@ export function Calendar({
         onOpenChange={setShowAddWorkoutForm}
         onAdd={handleAddWorkoutSubmit}
         disabled={isSubmitting}
+      />
+      <DeleteEventConfirmation 
+        isOpen={showDeleteWorkoutForm} 
+        onOpenChange={setShowDeleteWorkoutForm}
+        isSubmitting={isSubmitting}
+        workoutName={workoutToDeleteName}
+        workoutId={workoutToDeleteId}
+        onDelete={handleDeleteWorkout}
       />
     </div>
   )

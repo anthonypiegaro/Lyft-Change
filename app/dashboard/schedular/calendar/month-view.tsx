@@ -1,7 +1,9 @@
 "use client"
 
-import React from "react"
+import React, { useState } from "react"
+import { Trash } from "lucide-react"
 
+import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
 import { WorkoutEvent } from "./calendar"
@@ -10,11 +12,15 @@ import { CalendarEvent, UseCalendarReturn } from "../../../../components/calenda
 export function MonthView({
   calendar,
   onEventClick,
-  onDateClick
+  onDateClick,
+  onDeleteClick,
+  inEditMode
 }: {
   calendar: UseCalendarReturn<WorkoutEvent>
   onEventClick?: (event: CalendarEvent<WorkoutEvent>) => void
   onDateClick?: (date: Date) => void
+  onDeleteClick?: (id: string, name: string) => void
+  inEditMode: boolean
 }) {
   const { days, isToday, getEventsForDate, currentDate } = calendar
 
@@ -38,6 +44,11 @@ export function MonthView({
   const handleEventClick = (event: CalendarEvent<WorkoutEvent>, e: React.MouseEvent) => {
     e.stopPropagation()
     onEventClick?.(event)
+  }
+
+  const handleDeleteClick = (event: CalendarEvent<WorkoutEvent>, e: React.MouseEvent) => {
+    e.stopPropagation()
+    onDeleteClick?.(event.id, event.name)
   }
   
   return (
@@ -84,10 +95,17 @@ export function MonthView({
                     {events.slice(0, maxEventsToShow).map((event) => (
                       <div
                         key={event.id}
-                        className="px-1 py-0.5 text-xs rounded truncate bg-zinc-400/80 hover:bg-zinc-400 cursor-pointer"
+                        className="flex justify-between items-center px-1 py-0.5 text-xs rounded bg-zinc-400/80 hover:bg-zinc-400 cursor-pointer"
                         onClick={(e) => handleEventClick(event, e)}
                       >
-                        {event.name}
+                        <p className="text-sm truncate">{event.name}</p>
+                        <Button 
+                          variant="ghost" 
+                          className={cn("h-auto w-auto min-w-0 min-h-0 cursor-pointer", !inEditMode && "hidden")}
+                          onClick={e => handleDeleteClick(event, e)}
+                        >
+                          <Trash className="text-destructive w-1 h-1" />
+                        </Button>
                       </div>
                     ))}
 
