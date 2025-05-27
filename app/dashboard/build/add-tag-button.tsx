@@ -14,8 +14,15 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { TagForm } from "@/components/forms/create-tag-form/tag-form"
+import { cn } from "@/lib/utils"
 
-export function AddTagButton({ type }: { type: "exercise" | "workout" | "program" }) {
+export function AddTagButton({ 
+  type,
+  className 
+}: { 
+  type: "exercise" | "workout" | "program"
+  className?: string
+}) {
   const [open, setOpen] = useState(false)
   const router = useRouter()
 
@@ -37,7 +44,7 @@ export function AddTagButton({ type }: { type: "exercise" | "workout" | "program
         <Button
           variant="outline"
           size="sm"
-          className="hidden h-8 lg:flex"
+          className={cn("hidden h-8 lg:flex", className)}
           onClick={() => setOpen(true)}
         >
           Add Tag

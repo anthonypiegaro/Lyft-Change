@@ -30,6 +30,7 @@ import { DataTablePagination } from "./data-table-pagination"
 import { DataTableSearchFilter } from "./data-table-search-filter"
 import { DataTableTagFilter } from "./data-table-tag-filter"
 import { DataTableViewOptions } from "./data-table-view-options"
+import { ExtraOptions } from "./extra-options"
 
 const queryClient = new QueryClient()
 
@@ -84,9 +85,10 @@ export function DataTable<TData, TValue>({
         <DataTableSearchFilter table={table} columnName={filterColumnName} />
         <DataTableViewOptions table={table} />
         <DataTableTagFilter table={table} tagOptions={tagOptions} />
-        <div className="ml-auto flex gap-x-4">
-          <AddTagButton type={type} />
+        <div className=" flex items-center ml-auto flex">
+          <AddTagButton type={type} className="mr-4" />
           <AddEntityButton type={type} tags={tags} />
+          <ExtraOptions tags={tags} type={type} />
         </div>
       </div>
       <div className="rounded-md border mb-4">
