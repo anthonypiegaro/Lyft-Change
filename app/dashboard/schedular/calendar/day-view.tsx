@@ -39,7 +39,7 @@ export function DayView({
         {events.map(event => (
           <div
             key={event.id}
-            className="flex justify-between items-center h-20 rounded px-2 py-1 text-sm truncate font-medium bg-zinc-400/80 hover:bg-zinc-400"
+            className="flex justify-between items-center h-20 rounded px-2 py-1 text-sm truncate font-medium bg-zinc-400/80 hover:bg-zinc-400 cursor-pointer"
             onClick={e => handleEventClick(event, e)}
           >
             {event.name}

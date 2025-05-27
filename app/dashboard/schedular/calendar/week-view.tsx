@@ -60,7 +60,7 @@ export function WeekView({
             {events.filter(event => isSameDay(day, event.date)).map(event => (
               <div
                 key={event.id}
-                className="flex justify-between items-center h-10 rounded-md px-2 py-1 m-1 text-sm truncate font-medium bg-zinc-400/80 hover:bg-zinc-400"
+                className="flex justify-between items-center h-10 rounded-md px-2 py-1 m-1 text-sm truncate font-medium bg-zinc-400/80 hover:bg-zinc-400 cursor-pointer"
                 onClick={e => handleEventClick(event, e)}
               >
                 {event.name}
