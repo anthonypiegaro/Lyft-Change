@@ -16,6 +16,8 @@ import { Input } from "@/components/ui/input"
 import { MultiSelect } from "@/components/ui/multi-select"
 import { cn } from "@/lib/utils"
 
+import { CreateExerciseForm } from "./create-exercise-form"
+
 export type ExerciseSelectExercise = {
   id: string
   name: string
@@ -37,14 +39,17 @@ const typeMap: Record<ExerciseSelectExercise["type"]["name"], string> = {
 export function ExerciseSelect({
   exercises,
   tagOptions,
-  onAdd
+  onAdd,
+  onExerciseCreation
 }: {
   exercises: ExerciseSelectExercise[]
   tagOptions: { label: string, value: string }[]
   onAdd: (exercises: ExerciseSelectExercise[]) => void
+  onExerciseCreation: (exercise: ExerciseSelectExercise) => void
 }) {
   const parentRef = useRef(null)
   const [selectedExercises, setSelectedExercises] = useState<ExerciseSelectExercise[]>([])
+  const [showCreateExerciseForm, setShowCreateExerciseForm] = useState(false)
 
   // filters 
 
@@ -63,7 +68,8 @@ export function ExerciseSelect({
       .filter(exercise => tagFilter.every(
         tagId => exercise.tags.some(tag => tag.id === tagId)
       ))
-  }, [nameFilter, typeFilter, tagFilter])
+      .sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()))
+  }, [nameFilter, typeFilter, tagFilter, exercises])
 
   const getItemKey = useCallback(
     (index: number) => filteredExercises[index].id,
@@ -75,6 +81,8 @@ export function ExerciseSelect({
     getScrollElement: () => parentRef.current,
     getItemKey,
     estimateSize: () => 85,
+    paddingStart: 10,
+    paddingEnd: 10
   })
 
   function handleSelect(selectedExercise: ExerciseSelectExercise) {
@@ -101,8 +109,26 @@ export function ExerciseSelect({
     })
   }
 
+  function handleExerciseAdd(exercise: ExerciseSelectExercise) {
+    setSelectedExercises(prev => [...prev, exercise])
+    onExerciseCreation(exercise)
+    setShowCreateExerciseForm(false)
+  }
+
   return (
-    <div className="h-full">
+    <div className="flex flex-col h-full">
+      <CreateExerciseForm 
+        onAdd={handleExerciseAdd} 
+        open={showCreateExerciseForm} 
+        onOpenChange={setShowCreateExerciseForm} 
+        defaultValues={{ 
+          name: nameFilter,
+          tags: tagFilter, 
+          type: "weightReps", 
+          description: "" 
+        }}
+        tagOptions={tagOptions}
+      />
       <div className="flex flex-col items-center gap-2 py-4">
         <div className="flex w-full gap-2">
           <Input 
@@ -133,57 +159,73 @@ export function ExerciseSelect({
         <MultiSelect 
             defaultValue={tagFilter} 
             onValueChange={setTagFilter} 
-            options={tagOptions}
+            options={tagOptions.sort((a, b) => a.label.toLowerCase().localeCompare(b.label.toLowerCase()))}
             className="max-w-sm dark:bg-input/30"
             placeholder="Filter by tags..."
           />
       </div>
-      <div 
-        className="overflow-auto h-64 md:h-80 lg:h-96 xl:h-[500px] mask-b-from-95% mask-t-from-95%" 
-        ref={parentRef}
-      >
-        <div
-          style={{
-            height: `${virtualizer.getTotalSize()}px`,
-            width: '100%',
-            position: 'relative',
-          }}
+      {filteredExercises.length === 0 && (
+        <Button className="mx-auto truncate overflow-hidden whitespace-nowrap my-5" variant="outline" onClick={() => setShowCreateExerciseForm(true)}>
+          Create new exercise{nameFilter.length > 0 && (
+            <span className="flex hidden sm:block">
+              <span>"</span><span className="max-w-3xl truncate">{`${nameFilter}`}</span><span>"</span>
+            </span>
+          )}
+        </Button>
+      )}
+      {filteredExercises.length > 0 && (
+        <div 
+          className="overflow-auto h-64 md:h-80 lg:h-96 xl:h-[500px] mask-b-from-97% mask-t-from-97%" 
+          ref={parentRef}
         >
-          {virtualizer.getVirtualItems().map((virtualItem) => {
-            const exercise = filteredExercises[virtualItem.index]
+          <div
+            style={{
+              height: `${virtualizer.getTotalSize()}px`,
+              width: '100%',
+              position: 'relative',
+            }}
+          >
+            {virtualizer.getVirtualItems().map((virtualItem) => {
+              const exercise = filteredExercises[virtualItem.index]
 
-            return (
-              <div
-                key={virtualItem.key}
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  height: "85px",
-                  width: '100%',
-                  transform: `translateY(${virtualItem.start}px)`,
-                }}
-                className={cn(
-                  "py-1 border-b hover:bg-accent flex flex-col",
-                  selectedExercises.some(selectedExercise => selectedExercise.id === exercise.id) && "bg-neutral-600 hover:bg-neutral-700"
-                )}
-                onClick={() => handleSelect(exercise)}
-              >
-                <div className="text-lg font-medium truncate">{exercise.name}</div>
-                <div className="text-muted-foreground text-sm truncate">{typeMap[exercise.type.name]}</div>
-                <div className="truncate">
-                  {exercise.tags.map(tag => (
-                    <Badge key={tag.id} className="mr-1">{tag.name}</Badge>
-                  ))}
+              return (
+                <div
+                  key={virtualItem.key}
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    height: "85px",
+                    width: '100%',
+                    transform: `translateY(${virtualItem.start}px)`,
+                  }}
+                  className={cn(
+                    "px-1 py-1 border-b hover:bg-accent flex flex-col",
+                    selectedExercises.some(selectedExercise => selectedExercise.id === exercise.id) && "bg-neutral-600 hover:bg-neutral-700"
+                  )}
+                  onClick={() => handleSelect(exercise)}
+                >
+                  <div className="text-lg font-medium truncate">{exercise.name}</div>
+                  <div className="text-muted-foreground text-sm truncate">{typeMap[exercise.type.name]}</div>
+                  <div className="truncate">
+                    {exercise.tags.map(tag => (
+                      <Badge key={tag.id} className="mr-1">{tag.name}</Badge>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            )
-          })}
+              )
+            })}
+          </div>
         </div>
+      )}
+      <div className="flex justify-between">
+        <Button variant="ghost" onClick={() => setShowCreateExerciseForm(true)} className="self-end text-muted-foreground">
+          Create new exercise
+        </Button>
+        <Button type="button" className="mt-4" disabled={selectedExercises.length < 1} onClick={() => onAdd(selectedExercises)}>
+          Add Exercise{selectedExercises.length > 1 && "s"}{selectedExercises.length > 1 && ` (${selectedExercises.length})`}
+        </Button>
       </div>
-      <Button type="button" className="mt-4" disabled={selectedExercises.length < 1} onClick={() => onAdd(selectedExercises)}>
-        Add Exercise{selectedExercises.length > 1 && "s"}{selectedExercises.length > 1 && ` (${selectedExercises.length})`}
-      </Button>
     </div>
   )
 }

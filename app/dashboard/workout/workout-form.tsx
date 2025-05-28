@@ -492,16 +492,17 @@ export function WorkoutForm({
   workoutTags,
   workoutType,
   defaultValues,
-  exercises
+  initExercises
 }: {
   exerciseTags: { label: string, value: string }[]
   workoutTags: { label: string, value: string}[]
   workoutType: "instance" | "template"
   defaultValues: z.infer<typeof workoutFormSchema>
-  exercises: ExerciseSelectExercise[]
+  initExercises: ExerciseSelectExercise[]
 }) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [exerciseSelectionOpen, setExerciseSelectionOpen] = useState(false)
+  const [exercises, setExercises] = useState(initExercises)
 
   const container = useRef<HTMLFormElement | null>(null)
 
@@ -590,6 +591,10 @@ export function WorkoutForm({
     }
 
     setExerciseSelectionOpen(false)
+  }
+
+  function handleExerciseCreation(exercise: ExerciseSelectExercise) {
+    setExercises(prev => [...prev, exercise])
   }
 
   function handleAddExercises(selectedExercises: ExerciseSelectExercise[]) {
@@ -767,7 +772,7 @@ export function WorkoutForm({
         <DialogHeader>
           <DialogTitle className="text-3xl">Exercise Select</DialogTitle>
         </DialogHeader>
-        <ExerciseSelect exercises={exercises} tagOptions={exerciseTags} onAdd={handleAddExercises}/>
+        <ExerciseSelect exercises={exercises} tagOptions={exerciseTags} onAdd={handleAddExercises} onExerciseCreation={handleExerciseCreation}/>
       </DialogContent>
     </Dialog>
     <DevTool control={form.control} />

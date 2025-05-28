@@ -25,5 +25,5 @@ export function WorkoutFormWrapper({
     date: parseISO(defaultValues.date)
   }
 
-  return <WorkoutForm workoutType={workoutType} defaultValues={defaultValuesProcessed} workoutTags={workoutTags} exerciseTags={exerciseTags} exercises={exercises}/>
+  return <WorkoutForm workoutType={workoutType} defaultValues={defaultValuesProcessed} workoutTags={workoutTags} exerciseTags={exerciseTags} initExercises={exercises}/>
 }
