@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 
-import { deleteExerciseTag, deleteWorkoutTag } from "./delete-tag.action"
+import { deleteExerciseTag, deleteProgramTag, deleteWorkoutTag } from "./delete-tag.action"
 
 type Tag = {
   id: string,
@@ -136,7 +136,7 @@ function Confirmation({
     } else if (type === "workout") {
       deleteFunc = deleteWorkoutTag
     } else {
-      deleteFunc = async (id: string) => {}
+      deleteFunc = deleteProgramTag
     }
 
     await deleteFunc(tag?.id as string)

@@ -2,11 +2,11 @@
 
 import { headers } from "next/headers"
 import { redirect } from "next/navigation"
-import { and, count, eq } from "drizzle-orm"
+import { and, eq } from "drizzle-orm"
 import { z } from "zod"
 
 import { db } from "@/db/db"
-import { exerciseTag, workoutTag } from "@/db/schema"
+import { exerciseTag, programTag, workoutTag } from "@/db/schema"
 import { auth } from "@/lib/auth"
 
 import { tagFormSchema } from "./tag-form.schema"
@@ -47,7 +47,16 @@ export const createTag = async (values: z.infer<typeof tagFormSchema>) => {
     })
 
   } else if (values.type === "program") {
-    console.log("Creating program")
+    const tags = await db.select().from(programTag).where(and(eq(programTag.userId, userId), eq(programTag.name, values.name)))
+
+    if (tags.length > 0) {
+      throw new Error(`Tag name "${values.name}" already exists`)
+    }
+
+    await db.insert(programTag).values({ 
+      userId: userId, 
+      name: values.name
+    })
 
   } else {
     throw new Error(`Tag type invalid: ${values.type}`)

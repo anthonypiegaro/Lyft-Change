@@ -1,17 +1,17 @@
 import { columns } from "./columns"
-import { mockProgramData } from "./mock-data"
+import { getProgramTags } from "./get-program-tags.action"
 import { DataTable } from "../data-table"
 
 export default async function ProgramPage() {
-  await new Promise((resolve) => setTimeout(resolve, 5000))
+  const [programTags] = await Promise.all([getProgramTags()])
 
   return (
     <div className="container mx-auto px-1">
       <DataTable 
         columns={columns} 
-        data={mockProgramData} 
+        data={[]} 
         filterColumnName="name" 
-        tags={[]}
+        tags={programTags}
         type="program"
       />
     </div>
