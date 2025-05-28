@@ -71,8 +71,8 @@ export const exerciseTag = pgTable("exercise_tag", {
 ])
 
 export const exerciseToExerciseTag = pgTable("exercise_to_exercise_tag", {
-  exerciseId: uuid("exercise_id").references(() => exercise.id, { onDelete: "cascade" }),
-  exerciseTagId: uuid("exercise_tag_id").references(() => exerciseTag.id, { onDelete: "cascade" })
+  exerciseId: uuid("exercise_id").notNull().references(() => exercise.id, { onDelete: "cascade" }),
+  exerciseTagId: uuid("exercise_tag_id").notNull().references(() => exerciseTag.id, { onDelete: "cascade" })
 }, (t) => [
   primaryKey({ columns: [t.exerciseId, t.exerciseTagId] })
 ])
@@ -166,6 +166,35 @@ export const timeDistanceInstance = pgTable("time_distance_instance", {
   distance: integer("distance").notNull()
 })
 
+export const program = pgTable("program", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: text("user_id").notNull().references(() => user.id, { onDelete: "cascade" }),
+  name: text("name").notNull(),
+  descritpion: text("description")
+})
+
+export const programTag = pgTable("program_tag", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: text("user_id").notNull().references(() => user.id, { onDelete: "cascade" }),
+  name: text("name").notNull()
+}, (t) => [
+  unique().on(t.userId, t.name)
+])
+
+export const programToProgramTag = pgTable("program_to_program_tag", {
+  programId: uuid("program_id").notNull().references(() => program.id, { onDelete: "cascade" }),
+  programTagId: uuid("program_tag_id").notNull().references(() => programTag.id, { onDelete: "cascade" })
+}, (t) => [
+  primaryKey({ columns: [t.programId, t.programTagId]})
+])
+
+export const programWorkout = pgTable("program_workout", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  programId: uuid("program_id").notNull().references(() => program.id, { onDelete: "cascade" }),
+  workoutId: uuid("workout_id").notNull().references(() => workout.id, { onDelete: "cascade" }),
+  day: integer("day").notNull()
+})
+
 export const schema = {
   user,
   session,
@@ -187,5 +216,9 @@ export const schema = {
   weightRepsTemplate,
   weightRepsInstance,
   timeDistanceTemplate,
-  timeDistanceInstance
+  timeDistanceInstance,
+  program,
+  programTag,
+  programToProgramTag,
+  programWorkout
 };
