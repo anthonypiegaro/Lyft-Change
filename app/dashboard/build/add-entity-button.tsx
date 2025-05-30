@@ -49,7 +49,11 @@ export function AddEntityButton({
           variant="outline"
           size="sm"
           className="hidden h-8 lg:flex capitalize mr-1"
-          onClick={type === "workout" ? () => router.push("/dashboard/workout/template/new") : () => setOpen(true)}
+          onClick={
+            type === "workout" ? () => router.push("/dashboard/workout/template/new") 
+            : type === "program" ? () => router.push("/dashboard/program/new")
+            : () => setOpen(true)
+          }
         >
           Add {type}
         </Button>
