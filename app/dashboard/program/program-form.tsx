@@ -1,9 +1,10 @@
 "use client"
 
-import { useLayoutEffect, useRef, useState } from "react"
+import React, { useLayoutEffect, useMemo, useRef, useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { DndContext, DragEndEvent, DragOverlay, DragStartEvent } from "@dnd-kit/core"
 import { Dumbbell, Hammer } from "lucide-react"
-import { useForm } from "react-hook-form"
+import { useFieldArray, useForm } from "react-hook-form"
 import { z } from "zod"
 
 import { Button } from "@/components/ui/button"
@@ -28,6 +29,8 @@ import { Textarea } from "@/components/ui/textarea"
 
 import { ProgramCalendar } from "./program-calendar"
 import { WorkoutList } from "./workout-list"
+import { WorkoutCardPlain } from "./workout-card"
+import { OverlayCalendarWorkoutEvent } from "./program-calendar"
 
 export type ProgramTag = {
   id: string
@@ -37,6 +40,15 @@ export type ProgramTag = {
 export type WorkoutTag = {
   id: string,
   name: string
+}
+
+export type WorkoutItem = {
+  workoutId: string
+  name: string
+  tags: {
+    id: string
+    name: string
+  }[]
 }
 
 export const programFormSchema = z.object({
@@ -51,19 +63,24 @@ export const programFormSchema = z.object({
   }))
 })
 
+export type ProgramFormSchema = z.infer<typeof programFormSchema>
+
 export function ProgramForm({ 
   defaultValues,
   programTags,
-  workoutTags
+  workoutTags,
+  workouts
 }: {
-  defaultValues?: z.infer<typeof programFormSchema>
+  defaultValues?: ProgramFormSchema
   programTags: ProgramTag[]
   workoutTags: WorkoutTag[]
+  workouts: WorkoutItem[]
 }) {
   const workoutListRef = useRef<HTMLDivElement>(null)
   const [calendarMaxHeight, setCalendarMaxHeight] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [weeks, setWeeks] = useState(1)
+  const [activeWorkout, setActiveWorkout] = useState<{ workout: WorkoutItem, start: number } | null>(null)
 
   useLayoutEffect(() => {
     if (workoutListRef.current) {
@@ -71,9 +88,14 @@ export function ProgramForm({
     }
   }, []);
 
-  const form = useForm<z.infer<typeof programFormSchema>>({
+  const form = useForm<ProgramFormSchema>({
     resolver: zodResolver(programFormSchema),
     defaultValues
+  })
+
+  const { fields, append, remove, update } = useFieldArray({
+    control: form.control,
+    name: "workouts"
   })
 
   const handleAddWeek = () => { setWeeks(prev => prev + 1) }
@@ -86,6 +108,36 @@ export function ProgramForm({
     formWorkouts.forEach(formWorkout => activeDays.add(formWorkout.day))
 
     return activeDays.size
+  }
+
+  const handleRemoveWorkout = (id: string) => {
+    const index = fields.findIndex(field => field.id === id)
+
+    if (index !== -1) remove(index)
+  }
+
+  const handleDragStart = (event: DragStartEvent) => {
+    setActiveWorkout({
+      workout: event.active.data.current?.workout,
+      start: event.active.data.current?.start
+    })
+  }
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const workout = event.active.data.current?.workout
+    const fieldIndex = event.active.data.current?.fieldIndex
+  
+    if (fieldIndex !== undefined && event.over && event.over.id !== null) {
+      update(fieldIndex, { ...workout, day: event.over.id})
+
+    } else if (event.over && event.over.id !== null) {
+      append({
+        ...workout,
+        day: event.over.id
+      })
+    }
+
+    setActiveWorkout(null)
   }
 
   return (
@@ -176,12 +228,31 @@ export function ProgramForm({
         </CardContent>
       </Card>
       <div className="flex gap-x-4 grow">
-        <div ref={workoutListRef}>
-          <WorkoutList workouts={[]} tags={workoutTags}/>
-        </div>
-        <div className="grow" style={{ height: calendarMaxHeight || undefined, maxHeight: calendarMaxHeight || undefined }}>
-          <ProgramCalendar weeks={weeks} onAddWeek={handleAddWeek} maxHeight={calendarMaxHeight}/>
-        </div>
+        <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+          <div ref={workoutListRef}>
+            <WorkoutList 
+              workouts={workouts} 
+              tags={workoutTags}
+            />
+          </div>
+          <div className="grow" style={{ height: calendarMaxHeight || undefined, maxHeight: calendarMaxHeight || undefined }}>
+            <ProgramCalendar 
+              weeks={weeks} 
+              onAddWeek={handleAddWeek} 
+              maxHeight={calendarMaxHeight}
+              workouts={fields}
+              onRemoveWorkout={handleRemoveWorkout}
+            />
+          </div>
+          <DragOverlay dropAnimation={null}>
+            {
+              activeWorkout !== null ?
+              activeWorkout.start ? <WorkoutCardPlain workout={activeWorkout.workout} start={activeWorkout.start} />
+              : <OverlayCalendarWorkoutEvent workoutName={activeWorkout.workout.name} /> 
+              : null
+            }
+          </DragOverlay>
+        </DndContext>
       </div>
     </div>
   )

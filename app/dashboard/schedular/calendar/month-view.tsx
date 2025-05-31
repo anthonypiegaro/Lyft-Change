@@ -66,8 +66,6 @@ export function MonthView({
             {week.map((day) => {
               const isCurrentMonth = day.getMonth() === currentMonth
               const events = getEventsForDate(day)
-              const maxEventsToShow = 3
-              const hasMoreEvents = events.length > maxEventsToShow
 
               return (
                 <div
@@ -92,7 +90,7 @@ export function MonthView({
                   </div>
 
                   <div className="mt-1 space-y-1 max-h-[calc(100%-1.5rem)] overflow-hidden">
-                    {events.slice(0, maxEventsToShow).map((event) => (
+                    {events.map((event) => (
                       <div
                         key={event.id}
                         className="flex justify-between items-center px-1 py-0.5 text-xs rounded bg-zinc-400/80 hover:bg-zinc-400 cursor-pointer"
@@ -108,10 +106,6 @@ export function MonthView({
                         </Button>
                       </div>
                     ))}
-
-                    {hasMoreEvents && (
-                      <div className="px-1 py-0.5 text-xs text-gray-500">+{events.length - maxEventsToShow} more</div>
-                    )}
                   </div>
                 </div>
               )

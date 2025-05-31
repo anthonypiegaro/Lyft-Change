@@ -4,7 +4,6 @@ import { useCallback, useMemo, useRef, useState } from "react"
 import { useVirtualizer } from "@tanstack/react-virtual"
 import { Funnel } from "lucide-react"
 
-import { Badge } from "@/components/ui/badge"
 import { 
   Card,
   CardContent
@@ -13,16 +12,11 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { MultiSelect } from "@/components/ui/multi-select"
 import { Separator } from "@/components/ui/separator"
-import { WorkoutTag } from "./program-form"
+import { cn } from "@/lib/utils"
 
-export type WorkoutItem = {
-  id: string
-  name: string
-  tags: {
-    id: string
-    name: string
-  }[]
-}
+import { WorkoutItem, WorkoutTag } from "./program-form"
+import { WorkoutCard } from "./workout-card"
+import { useDndMonitor } from "@dnd-kit/core"
 
 export function WorkoutList({
   workouts,
@@ -34,6 +28,7 @@ export function WorkoutList({
   const parentRef = useRef(null)
   const [nameFilter, setNameFilter] = useState("")
   const [tagFilter, setTagFilter] = useState<string[]>([])
+  const [isDragging, setIsDragging] = useState(false)
 
   const filteredWorkouts = useMemo(() => {
     return workouts
@@ -43,7 +38,7 @@ export function WorkoutList({
   }, [workouts, nameFilter, tagFilter])
 
   const getItemKey = useCallback(
-    (index: number) => filteredWorkouts[index].id,
+    (index: number) => filteredWorkouts[index].workoutId,
     [filteredWorkouts]
   )
 
@@ -55,6 +50,11 @@ export function WorkoutList({
     paddingStart: 10,
     paddingEnd: 10,
     gap: 8
+  })
+
+  useDndMonitor({
+    onDragStart() { setIsDragging(true) },
+    onDragEnd() { setIsDragging(false) }
   })
 
   return (
@@ -74,7 +74,7 @@ export function WorkoutList({
         <div>
           <Label className="mb-1">Tags</Label>
           <MultiSelect
-            options={tags.map(tag => ({ label: tag.name, value: tag.id}))}
+            options={tags.map(tag => ({ label: tag.name, value: tag.id }))}
             onValueChange={selectedTags => { setTagFilter(selectedTags)}}
             placeholder="Filter tags..."
             defaultValue={tagFilter}
@@ -84,7 +84,10 @@ export function WorkoutList({
         </div>
         <Separator className="my-4" />
         <div
-          className="overflow-auto h-80 mask-b-from-97% mask-t-from-97%"
+          className={cn(
+            "overflow-auto h-80 mask-b-from-97% mask-t-from-97%",
+            isDragging && "overflow-hidden"
+          )}
           ref={parentRef}
         >
           <div
@@ -97,28 +100,7 @@ export function WorkoutList({
             {virtualizer.getVirtualItems().map(virtualItem => {
               const workout = filteredWorkouts[virtualItem.index]
 
-              return (
-                <Card
-                  key={virtualItem.key}
-                  style={{
-                    position: "absolute",
-                    top: 0,
-                    left: 0,
-                    height: "85px",
-                    width: "100%",
-                    transform: `translateY(${virtualItem.start}px)`
-                  }}
-                >
-                  <CardContent>
-                    <h3 className="font-medium">
-                      {workout.name}
-                    </h3>
-                    <p className="truncate">
-                      {workout.tags.map(tag => <Badge key={tag.id} />)}
-                    </p>
-                  </CardContent>
-                </Card>
-              )
+              return <WorkoutCard key={virtualItem.key} start={virtualItem.start} workout={workout} />
             })}
           </div>
         </div>
