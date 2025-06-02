@@ -1,22 +1,19 @@
+import Link from "next/link";
+
 import { Button } from "@/components/ui/button";
 import { ThemeToggleButton } from "@/components/ui/theme-toggle-button";
-import Link from "next/link";
+
+import { Navbar } from "./landing-page/nav-bar/nav-bar";
+import { Hero } from "./landing-page/hero/hero";
 
 export default function Home() {
   return (
-    <div className="flex flex-1">
-      <main className="flex flex-1">
-        <div>ToDo: Landing Page</div>
-        <div>
-        <Button asChild>
-          <Link href="/sign-in">Sign In</Link>
-        </Button>
-        <Button asChild>
-          <Link href="/sign-up">Sign Up</Link>
-        </Button>
-          <ThemeToggleButton />
-        </div>
-      </main>
-    </div>
+    <main className="min-h-screen bg-gradient-to-br from-background via-muted-foreground/50 to-background">
+      <Navbar />
+      <Hero />
+      <div className="fixed bottom-10 right-10">
+        <ThemeToggleButton />
+      </div>
+    </main>
   );
 }
