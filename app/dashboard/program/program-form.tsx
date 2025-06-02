@@ -1,10 +1,12 @@
 "use client"
 
 import React, { useLayoutEffect, useMemo, useRef, useState } from "react"
+import { useRouter } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { DndContext, DragEndEvent, DragOverlay, DragStartEvent } from "@dnd-kit/core"
 import { Dumbbell, Hammer } from "lucide-react"
 import { useFieldArray, useForm } from "react-hook-form"
+import { toast } from "sonner"
 import { z } from "zod"
 
 import { Button } from "@/components/ui/button"
@@ -31,6 +33,7 @@ import { ProgramCalendar } from "./program-calendar"
 import { WorkoutList } from "./workout-list"
 import { WorkoutCardPlain } from "./workout-card"
 import { OverlayCalendarWorkoutEvent } from "./program-calendar"
+import { buildProgram } from "./program-form.action"
 
 export type ProgramTag = {
   id: string
@@ -69,17 +72,19 @@ export function ProgramForm({
   defaultValues,
   programTags,
   workoutTags,
-  workouts
+  workouts,
+  initWeeks
 }: {
   defaultValues?: ProgramFormSchema
   programTags: ProgramTag[]
   workoutTags: WorkoutTag[]
   workouts: WorkoutItem[]
+  initWeeks: number
 }) {
   const workoutListRef = useRef<HTMLDivElement>(null)
   const [calendarMaxHeight, setCalendarMaxHeight] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [weeks, setWeeks] = useState(1)
+  const [weeks, setWeeks] = useState(initWeeks)
   const [activeWorkout, setActiveWorkout] = useState<{ workout: WorkoutItem, start: number } | null>(null)
 
   useLayoutEffect(() => {
@@ -87,6 +92,8 @@ export function ProgramForm({
       setCalendarMaxHeight(workoutListRef.current.offsetHeight);
     }
   }, []);
+
+  const router = useRouter()
 
   const form = useForm<ProgramFormSchema>({
     resolver: zodResolver(programFormSchema),
@@ -97,6 +104,26 @@ export function ProgramForm({
     control: form.control,
     name: "workouts"
   })
+
+  const onSubmit = async (values: ProgramFormSchema) => {
+    setIsSubmitting(true)
+
+    await buildProgram(values)
+      .then(() => {
+        toast.success("Success", {
+          description: `Program "${values.name} has been built successfully`
+        })
+        router.push("/dashboard/build/program")
+        form.reset({})
+      })
+      .catch(error => {
+        toast("Error", {
+          description: error.message
+        })
+      })
+
+    setIsSubmitting(false)
+  }
 
   const handleAddWeek = () => { setWeeks(prev => prev + 1) }
 
@@ -221,7 +248,7 @@ export function ProgramForm({
                 </div>
               </CardContent>
             </Card>
-            <Button type="button" disabled={isSubmitting}>
+            <Button type="button" disabled={isSubmitting} onClick={form.handleSubmit(onSubmit)}>
               <Hammer /> {isSubmitting ? "Building program..." : "Build Program"}
             </Button>
           </div>

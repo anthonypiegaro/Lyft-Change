@@ -1,6 +1,7 @@
 "use client"
 
 import { ColumnDef } from "@tanstack/react-table"
+import { useRouter } from "next/navigation"
 import { ArrowUpDown, MoreHorizontal } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
@@ -11,6 +12,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu"
+import { program } from "@/db/schema"
 
 export type ProgramRowType = {
   id: string,
@@ -52,7 +54,9 @@ export const columns: ColumnDef<ProgramRowType>[] = [
   {
     id: "actions",
     cell: ({ row }) => {
-      const programs = row.original
+      const program = row.original
+
+      const router = useRouter()
 
       return (
         <DropdownMenu>
@@ -68,7 +72,7 @@ export const columns: ColumnDef<ProgramRowType>[] = [
             </div>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
-            <DropdownMenuItem>Edit</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => router.push(`/dashboard/program/${program.id}`)}>Edit</DropdownMenuItem>
             <DropdownMenuItem>Delete</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

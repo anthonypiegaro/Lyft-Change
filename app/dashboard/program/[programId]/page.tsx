@@ -4,6 +4,7 @@ import { ProgramForm } from "../program-form"
 import { getProgramTags } from "../get-program-tags"
 import { getWorkoutTags } from "../get-workout-tags"
 import { getWorkouts } from "../get-workouts"
+import { getProgram } from "./get-program"
 
 export default async function ProgramPage({
   params,
@@ -12,17 +13,16 @@ export default async function ProgramPage({
 }) {
   const { programId } = await params
 
-  const [programTags, workoutTags, workouts] = await Promise.all([getProgramTags(), getWorkoutTags(), getWorkouts()])
+  const [
+    programTags, 
+    workoutTags, 
+    workouts, 
+    programData
+  ] = await Promise.all([getProgramTags(), getWorkoutTags(), getWorkouts(), getProgram(programId)])
 
-  // get program from the db
-  const defaultValues = {
-    name: "",
-    description: "",
-    tagIds: [],
-    workouts: []
-  }
+  const initWeeks = Math.floor(Math.max(...programData.workouts.map(workout => workout.day)) / 7) + 1
 
   return (
-    <ProgramForm defaultValues={defaultValues} programTags={programTags} workoutTags={workoutTags} workouts={workouts}/>
+    <ProgramForm defaultValues={programData} programTags={programTags} workoutTags={workoutTags} workouts={workouts} initWeeks={initWeeks}/>
   )
 }
