@@ -22,6 +22,8 @@ export default async function DashboardLayout({
     redirect("/sign-in")
   }
 
+  const { id, name, email} = session.user
+
   const cookieStore = await cookies()
   const defaultOpen = cookieStore.get("sidebar_state")?.value === "true"
 
@@ -29,7 +31,7 @@ export default async function DashboardLayout({
     <SidebarProvider defaultOpen={defaultOpen}>
       <PopupProvider>
         <MobileWarningBanner />
-        <AppSidebar/>
+        <AppSidebar id={id} name={name} email={email} />
         <div className="fixed top-5 right-4.75">
           <ThemeToggleButton />
         </div>

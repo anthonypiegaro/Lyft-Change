@@ -20,6 +20,8 @@ import {
 } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils"
 
+import { NavUser } from "./nav-user";
+
 const menuItems = [
   {
     title: "Dashboard",
@@ -54,7 +56,15 @@ const menuItems = [
   },
 ]
 
-export function AppSidebar() {
+export function AppSidebar({
+  id,
+  name,
+  email
+}: {
+  id: string
+  name: string
+  email: string
+}) {
   const { state } = useSidebar()
   return (
     <Sidebar variant="floating" collapsible="icon">
@@ -99,7 +109,7 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        {/* Add the users account here, with a dropdown to choose account details or to logout */}
+        <NavUser id={id} name={name} email={email} />
       </SidebarFooter>
     </Sidebar>
   )
