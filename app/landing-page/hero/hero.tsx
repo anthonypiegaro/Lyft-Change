@@ -1,11 +1,14 @@
 import { MoveRight } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
+
+import { MobileReportCard } from "./mobile-report-chart"
+import { DesktopAnalyticsChart } from "./desktop-analytics-chart"
+import { MobileCards } from "./mobile-cards"
 
 export function Hero() {
   return (
-    <section className="px-6 lg:px-12 pt-30 pb-20 lg:pb-32 lg:pt-42">
+    <section id="hero" className="px-6 lg:px-12 pt-30 pb-20 lg:pb-32 lg:pt-42">
       <div className="max-w-7xl mx-auto">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div className="space-y-6">
@@ -42,19 +45,16 @@ export function Hero() {
             </div>
           </div>
           <div className="hidden lg:block relative h-full min-h-[400px]">
-            <Card className="absolute top-0 right-0 z-1 w-19/20 h-4/5">
-              <CardContent>The Analytics Card</CardContent>
-            </Card>
-            <Card className="absolute bottom-0 left-0 z-2 w-1/3 h-3/4">
-              <CardContent>The Workout Card</CardContent>
-            </Card>
+            <div className="absolute inset-0 bg-gradient-to-r from-neutral-500/20 to-stone-500/20 rounded-3xl blur-3xl"></div>
+            <div className="absolute top-0 right-0 z-1 w-19/20 h-4/5">
+              <DesktopAnalyticsChart />
+            </div>
+            <div className="absolute bottom-0 left-0 z-2 w-1/3 h-3/4 lg:h-4/5">
+              <MobileCards />
+            </div>
           </div>
-          <div className="lg:hidden">
-            <Card>
-              <CardContent>
-                Mobile Report Generator, use the raial chart with dots
-              </CardContent>
-            </Card>
+          <div className="lg:hidden mx-auto max-w-xs w-full">
+            <MobileReportCard />
           </div>
         </div>
       </div>
