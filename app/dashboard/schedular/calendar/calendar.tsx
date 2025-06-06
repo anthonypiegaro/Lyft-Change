@@ -15,6 +15,7 @@ import { AddWorkoutForm } from "./add-workout-form"
 import { addWorkouts } from "./add-workouts.action"
 import { DeleteEventConfirmation } from "./delete-event-confirmation"
 import { deleteWorkout } from "./delete-workout.action"
+import { AddProgramForm } from "./add-program-form"
 
 export type WorkoutEvent = {
   id: string
@@ -33,6 +34,17 @@ export type WorkoutTemplate = {
   tags: Tag[]
 }
 
+export type ProgramTag = {
+  id: string
+  name: string
+}
+
+export type Program = {
+  id: string,
+  name: string
+  tags: ProgramTag[]
+}
+
 export function Calendar({
   events = [],
   initialView = "month",
@@ -41,7 +53,9 @@ export function Calendar({
   onDateClick,
   onAddEvent,
   workoutTemplates,
-  tags
+  tags,
+  programs,
+  programTags
 }: {
   events?: CalendarEvent<WorkoutEvent>[]
   initialView?: CalendarView
@@ -51,8 +65,11 @@ export function Calendar({
   onAddEvent?: (event: CalendarEvent<WorkoutEvent> | CalendarEvent<WorkoutEvent>[]) => void
   workoutTemplates: WorkoutTemplate[]
   tags: Tag[]
+  programs: Program[]
+  programTags: ProgramTag[]
 }) {
   const [showAddWorkoutForm, setShowAddWorkoutForm] = useState(false)
+  const [showAddProgramForm, setShowAddProgramForm] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [inEditMode, setInEditMode] = useState(false)
   const [showDeleteWorkoutForm, setShowDeleteWorkoutForm] = useState(false)
@@ -71,6 +88,10 @@ export function Calendar({
 
   const handleAddWorkoutClick = () => {
     setShowAddWorkoutForm(true)
+  }
+
+  const handleAddProgramClick = () => {
+    setShowAddProgramForm(true)
   }
 
   const handleEditClick = () => {
@@ -207,13 +228,17 @@ export function Calendar({
           </Button>
         </div>
 
-        <div>
-          <Button onClick={handleEditClick} className="mr-1">
+        <div className="flex gap-x-1">
+          <Button onClick={handleEditClick}>
             {inEditMode ? <PencilOff className="w-4 h-4" /> : <Pencil className="w-4 h-4"/>}
           </Button>
           <Button onClick={handleAddWorkoutClick}>
             <Plus className="w-4 h-4 sm:mr-1" />
             <p className="hidden sm:block">Add Workout</p>
+          </Button>
+          <Button onClick={handleAddProgramClick}>
+            <Plus className="w-4 h-4 sm:mr-1" />
+            <p className="hidden sm:block">Add Program</p>
           </Button>
         </div>
       </div>
@@ -225,6 +250,13 @@ export function Calendar({
         onOpenChange={setShowAddWorkoutForm}
         onAdd={handleAddWorkoutSubmit}
         disabled={isSubmitting}
+      />
+      <AddProgramForm 
+        open={showAddProgramForm}
+        onOpenChange={setShowAddProgramForm}
+        programs={programs}
+        programTags={programTags}
+        calendar={calendar}
       />
       <DeleteEventConfirmation 
         isOpen={showDeleteWorkoutForm} 

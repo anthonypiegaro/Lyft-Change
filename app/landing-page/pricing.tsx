@@ -35,7 +35,7 @@ const pricePackages = [
   },
   {
     name: "Yearly",
-    price: "$3/mo",
+    price: "$3",
     description:
       "Save 40% with an annual plan—just $36 per year. Includes a 3-month free trial before your discounted yearly payment.",
     features: [
