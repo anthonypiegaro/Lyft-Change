@@ -69,6 +69,8 @@ export function AppSidebar({
   const { state } = useSidebar()
   const pathname = usePathname()
 
+  console.log(pathname)
+
   return (
     <Sidebar variant="floating" collapsible="icon">
       <SidebarHeader>
@@ -85,7 +87,7 @@ export function AppSidebar({
               <SidebarMenu>
                 {menuItems.map(item => (
                   <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild isActive={pathname === item.url}>
+                    <SidebarMenuButton asChild isActive={pathname === item.url && item.title != "Build"}>
                       <Link href={item.url}>
                         <item.icon />
                         <span>{item.title}</span>
@@ -95,7 +97,7 @@ export function AppSidebar({
                       <SidebarMenuSub>
                         {item.subItems.map(subItem => (
                           <SidebarMenuSubItem key={subItem.title}>
-                            <SidebarMenuSubButton asChild isActive={pathname === item.url}>
+                            <SidebarMenuSubButton asChild isActive={pathname === subItem.url}>
                               <Link href={subItem.url}>
                                 {subItem.title}
                               </Link>
