@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Blocks, Calendar, Home } from "lucide-react";
 
 import { 
@@ -66,6 +67,8 @@ export function AppSidebar({
   email: string
 }) {
   const { state } = useSidebar()
+  const pathname = usePathname()
+
   return (
     <Sidebar variant="floating" collapsible="icon">
       <SidebarHeader>
@@ -82,7 +85,7 @@ export function AppSidebar({
               <SidebarMenu>
                 {menuItems.map(item => (
                   <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild>
+                    <SidebarMenuButton asChild isActive={pathname === item.url}>
                       <Link href={item.url}>
                         <item.icon />
                         <span>{item.title}</span>
@@ -92,7 +95,7 @@ export function AppSidebar({
                       <SidebarMenuSub>
                         {item.subItems.map(subItem => (
                           <SidebarMenuSubItem key={subItem.title}>
-                            <SidebarMenuSubButton asChild>
+                            <SidebarMenuSubButton asChild isActive={pathname === item.url}>
                               <Link href={subItem.url}>
                                 {subItem.title}
                               </Link>
