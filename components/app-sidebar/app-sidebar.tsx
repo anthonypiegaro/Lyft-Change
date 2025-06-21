@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Blocks, Calendar, Home } from "lucide-react";
+import { Blocks, Calendar, ChartArea, Home } from "lucide-react";
 
 import { 
   Sidebar,
@@ -54,6 +54,29 @@ const menuItems = [
     url: "/dashboard/schedular",
     icon: Calendar,
     subItems: []
+  },
+  {
+    title: "Analytics",
+    url: "/dashboard/analytics",
+    icon: ChartArea,
+    subItems: [
+      {
+        title: "Metadata",
+        url: "/dashboard/analytics/metadata"
+      },
+      {
+        title: "Reports",
+        url: "/dashboard/analytics/reports"
+      },
+      {
+        title: "History",
+        url: "/dashboard/analytics/history"
+      },
+      {
+        title: "Exercises",
+        url: "/dashboard/analytics/exercises"
+      },
+    ]
   },
 ]
 

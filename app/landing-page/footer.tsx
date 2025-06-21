@@ -39,7 +39,7 @@ export function Footer() {
         </div>
         
         <div className="border-t pt-8 text-center dark:text-muted-foreground">
-          <p>&copy; 2024 LyftChange. All rights reserved.</p>
+          <p>&copy; 2025 LyftChange. All rights reserved.</p>
         </div>
       </div>
     </footer>

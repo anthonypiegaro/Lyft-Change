@@ -245,7 +245,7 @@ export function ProgramForm({
                   left: 0,
                   height:"85px",
                   width: "100%",
-                  transform: `translateY(${virtualItem.start})`
+                  transform: `translateY(${virtualItem.start}px)`
                 }}
                 className={cn(
                   "py-1 border-b hover:bg-accent flex flex-col justify-center",
