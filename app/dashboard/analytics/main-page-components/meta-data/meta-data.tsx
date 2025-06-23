@@ -2,19 +2,19 @@
 
 import { useState } from "react"
 
-import { 
-  Card
-} from "@/components/ui/card"
+import { Card } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 
-import { WorkoutsByDate, MetaDataWorkout } from "./workouts-by-date"
+import { EntitesByDate, MetaDataEntity } from "./entities-by-date"
 
 export function MetaData({
   className,
-  workouts
+  workouts,
+  exercises
 }: {
   className: string
-  workouts: MetaDataWorkout[]
+  workouts: MetaDataEntity[]
+  exercises: MetaDataEntity[]
 }) {
   const [chart, setChart] = useState<"Workouts" | "Exercises">("Workouts")
 
@@ -47,7 +47,7 @@ export function MetaData({
           </div>
         </div>
       </div>
-      {chart === "Workouts" && <WorkoutsByDate workouts={workouts} />}
+      <EntitesByDate entities={chart === "Workouts" ? workouts : exercises} entityName={chart === "Workouts" ? "workouts" : "exercises"} />
     </Card>
   )
 }
