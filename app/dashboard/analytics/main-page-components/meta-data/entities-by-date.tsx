@@ -170,18 +170,18 @@ export function EntitesByDate({
         <Button 
           variant="ghost" 
           onClick={goToPreviousDate}
-          className="absolute left-3 top-1/2 -translate-y-1/2"
+          className="absolute left-3 top-1/2 -translate-y-1/2 z-2"
         >
           <ChevronLeft />
         </Button>
         <Button 
           variant="ghost" 
           onClick={goToNextDate}
-          className="absolute right-3 top-1/2 -translate-y-1/2"
+          className="absolute right-3 top-1/2 -translate-y-1/2 z-2"
         >
           <ChevronRight />
         </Button>
-        <ChartContainer config={chartConfig} className="min-h-0 max-h-100 w-full px-10 py-10">
+        <ChartContainer config={chartConfig} className="min-h-0 max-sm:-translate-y-8 max-h-100 w-full px-10 py-10">
           <BarChart data={chartData} margin={{ top: isMobile ? 20 : 24 }}>
             <XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={10} />
             <Bar dataKey="count" fill="var(--color-count)" radius={isMobile ? 10 : 22}>
