@@ -1,12 +1,12 @@
-import { WeightRepsStatsInside } from "./weight-reps-stats-inside"
+import { StatsInside } from "./stats-inside"
 
-export async function WeightRepsStats({
+export async function Stats({
   exerciseId
 }: {
   exerciseId: string
 }) {
   // use the exercise iD to grab the exercises data. This is where we would grab all its asscoiated data like its type etc.
   return (
-    <WeightRepsStatsInside />
+    <StatsInside />
   )   
 }

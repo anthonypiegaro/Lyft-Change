@@ -1,7 +1,7 @@
 import { Card } from "@/components/ui/card"
 
 import { ExerciseSelect, Exercise } from "./exercise-select"
-import { WeightRepsStats } from "./stats/weight-reps-stats/weight-reps-stats"
+import { Stats } from "./stats/stats"
 
 const exercises: Exercise[] = [
   { name: "Belt Squat", id: "b7d821098f", type: "weightReps" },
@@ -38,7 +38,7 @@ export function ExerciseData() {
       <div className="border-y">
         <ExerciseSelect exercises={exercises} />
       </div>
-      <WeightRepsStats exerciseId="hjasgkd76i7dib7qk" />
+      <Stats exerciseId="hjasgkd76i7dib7qk" />
     </Card>
   )
 }

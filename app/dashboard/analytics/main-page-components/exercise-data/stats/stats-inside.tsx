@@ -1,12 +1,19 @@
 "use client"
 
 import { useState } from "react"
-import { CalendarIcon, TrendingDown, TrendingUp } from "lucide-react"
+import { CalendarIcon } from "lucide-react"
 import { DateRange } from "react-day-picker"
+import {
+  LabelList,
+  Line, 
+  LineChart, 
+  XAxis, 
+  YAxis 
+} from "recharts"
 
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
+import { ChartConfig, ChartContainer } from "@/components/ui/chart"
 import { 
   Drawer, 
   DrawerContent, 
@@ -34,8 +41,8 @@ const getInitialDates = () => {
   };
 };
 
-export function WeightRepsStatsInside() {
-  const [tab, setTab] = useState<"max" | "volume" | "history">("max")
+export function StatsInside() {
+  const [tab, setTab] = useState<"max" | "volume" | "history" | "min">("max")
   const [range, setRange] = useState<DateRange | undefined>(getInitialDates)
 
   return (
@@ -72,9 +79,7 @@ export function WeightRepsStatsInside() {
       <DateRangePicker range={range} setRange={setRange} />
       <div className="">
         {tab === "max" && (
-          <>
-            <p className="text-muted-foreground">One Rep Max</p>
-          </>
+          <MaxStats max={275} unit="lbs" />
         )}
         {tab === "volume" && (
           <>
@@ -217,6 +222,18 @@ function DateRangePicker({
       >
         All Time
       </button>
+    </div>
+  )
+}
+
+function MaxStats({ max, unit }: { max: number, unit: string }) {
+  return (
+    <div className="p-2">
+      <p className="text-muted-foreground">One Rep Max</p>
+      <div className="flex gap-x-2">
+        <h2 className="text-6xl md:text-8xl leading-none tracking-tighter font-bold p-0">{max}</h2>
+        <p className="self-end text-xl font-semibold text-muted-foreground">{unit}</p>
+      </div>
     </div>
   )
 }
