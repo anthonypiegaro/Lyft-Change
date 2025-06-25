@@ -57,26 +57,9 @@ const menuItems = [
   },
   {
     title: "Analytics",
-    url: "/dashboard/analytics",
+    url: "/dashboard/analytics/exercise",
     icon: ChartArea,
-    subItems: [
-      {
-        title: "Metadata",
-        url: "/dashboard/analytics/metadata"
-      },
-      {
-        title: "Reports",
-        url: "/dashboard/analytics/reports"
-      },
-      {
-        title: "History",
-        url: "/dashboard/analytics/history"
-      },
-      {
-        title: "Exercises",
-        url: "/dashboard/analytics/exercises"
-      },
-    ]
+    subItems: []
   },
 ]
 
