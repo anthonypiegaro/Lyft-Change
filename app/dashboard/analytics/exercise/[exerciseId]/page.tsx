@@ -27,13 +27,14 @@ function generateBeltSquatData(): WeightRepsExerciseData {
   const endDate = new Date("2025-06-24")
   const sets: { weight: number; reps: number; date: string }[] = []
 
-  let weight = 70
+  // Convert starting weight to grams (70 lbs ≈ 31,751 g)
+  let weight = 31750
   let weekCount = 0
 
-  // Progression parameters
+  // Progression parameters (convert to grams)
   const weightIncreaseInterval = 6 // weeks
-  const weightIncreaseAmount = 2.5
-  const maxWeight = 180
+  const weightIncreaseAmount = 1135 // 2.5 lbs ≈ 1,135 g
+  const maxWeight = 81650 // 180 lbs ≈ 81,650 g
 
   let currentDate = new Date(startDate)
 
@@ -50,7 +51,8 @@ function generateBeltSquatData(): WeightRepsExerciseData {
         baseReps - set - Math.floor(Math.random() * 2)
       )
       sets.push({
-        weight: Math.round(weight * 2) / 2, // round to nearest 0.5
+        // Round to nearest 500g instead of 0.5 lbs
+        weight: Math.round(weight / 500) * 500,
         reps,
         date: currentDate.toISOString().slice(0, 10),
       })

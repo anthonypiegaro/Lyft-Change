@@ -9,7 +9,7 @@ export function CallToAction() {
             Interested in the app yet?
           </h2>
           <p className="mt-4 text-xl opacity-90 max-w-lg">
-            Join Lyft Change and start mazimizing your training.
+            Join Lyft Change and start maximizing your training.
           </p>
         </div>
       </div>
