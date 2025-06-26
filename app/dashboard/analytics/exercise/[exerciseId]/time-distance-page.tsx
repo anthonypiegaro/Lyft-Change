@@ -2,7 +2,7 @@
 
 import { TimeDistanceExerciseData } from "./page"
 
-export function TimeDIstancePage({
+export function TimeDistancePage({
   exerciseData
 }: {
   exerciseData: TimeDistanceExerciseData

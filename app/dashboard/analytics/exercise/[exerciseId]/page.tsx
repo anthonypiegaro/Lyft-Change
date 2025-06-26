@@ -1,5 +1,5 @@
 import { getExerciseData } from "./get-exercise-data"
-import { TimeDIstancePage } from "./time-distance-page"
+import { TimeDistancePage } from "./time-distance-page"
 import { WeightRepsPage } from "./weight-reps-page"
 
 export type TimeDistanceExerciseData = {
@@ -143,17 +143,13 @@ export default async function ExercisePage({
 }) {
   const { exerciseId } = await params
 
-  // const data = await getExerciseData(exerciseId)
+  const data = await getExerciseData(exerciseId)
 
-  // if (!data) {
-  //   return (
-  //     <div>Exercise does not exist. It may have been deleted.</div>
-  //   )
-  // }
+  if (!data) {
+    return (
+      <div>Exercise does not exist. It may have been deleted.</div>
+    )
+  }
 
-  const data = generateBeltSquatData()
-
-  const other = generateJogData()
-
-  return data.type === "weightReps" ? <WeightRepsPage exerciseData={data} /> : <TimeDIstancePage exerciseData={other} />
+  return data.type === "weightReps" ? <WeightRepsPage exerciseData={data} /> : <TimeDistancePage exerciseData={data} />
 }
