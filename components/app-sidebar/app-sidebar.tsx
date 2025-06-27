@@ -98,7 +98,7 @@ export function AppSidebar({
                       isActive={pathname === item.url && item.title != "Build"}
                       tooltip={{
                         children: item.title,
-                        hidden: false
+                        hidden: state === "expanded"
                       }}
                     >
                       <Link href={item.url}>

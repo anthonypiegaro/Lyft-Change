@@ -21,7 +21,7 @@ export default async function DashboardPage() {
   ])
 
   return (
-    <div className="w-full max-h-screen p-4 pt-10">
+    <div className="w-full max-h-screen p-4 py-20 md:py-15">
       <CalendarWrapper 
         events={workoutEvents} 
         workoutTemplates={workoutTemplates} 

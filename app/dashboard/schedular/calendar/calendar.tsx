@@ -188,7 +188,7 @@ export function Calendar({
   }
 
   return (
-    <div className="flex flex-col h-full border rounded-lg shadow-sm bg-background">
+    <div className="container mx-auto flex flex-col h-full border rounded-lg shadow-sm bg-background">
       <div className="flex items-center justify-between p-4 border-b">
         <div className="flex items-center space-x-2">
           <DatePicker selected={calendar.currentDate} onSelect={calendar.goToDate} />

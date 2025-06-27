@@ -77,7 +77,7 @@ function generateBeltSquatData(): WeightRepsExerciseData {
 
 function generateJogData(): TimeDistanceExerciseData {
   const startDate = new Date("2023-06-01")
-  const endDate = new Date("2025-06-24")
+  const endDate = new Date("2025-06-27")
   const sets: { time: number; distance: number; date: string }[] = []
 
   let time = 20 // minutes
