@@ -407,6 +407,7 @@ function DateRangePicker({
             mode="range"
             selected={dateRange}
             onSelect={setDateRange}
+            defaultMonth={dateRange?.from}
             className="mx-auto [--cell-size:clamp(100px,calc(100vw/7.5),100px)]"
           />
           <Separator className="my-2" />

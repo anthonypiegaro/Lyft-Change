@@ -34,6 +34,7 @@ export function DatePicker({
           mode="single"
           selected={selected}
           onSelect={(date) => date === undefined ? onSelect(new Date()) : onSelect(date)}
+          defaultMonth={selected}
         />
       </PopoverContent>
     </Popover>
