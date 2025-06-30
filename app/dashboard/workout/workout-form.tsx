@@ -85,11 +85,13 @@ import { createWorkoutInstance } from "./create-workout-instance.action"
 import { createWorkoutTemplate } from "./create-workout-template.action"
 
 import { ExerciseSelectExercise } from "./exercise-select";
+import { CreateWorkoutTagForm } from "./create-workout-tag-form";
 
 type WorkoutFormValues = z.infer<typeof workoutFormSchema>
 type WorkoutType = "instance" | "template"
 export type PersonalRecord = string
 export type ExerciseTag = { label: string, value: string }
+export type WorkoutTag = { label: string, value: string }
 
 function Exercise({
   workoutType,
@@ -490,13 +492,13 @@ function Exercise({
 
 export function WorkoutForm({
   initExerciseTags,
-  workoutTags,
+  initWorkoutTags,
   workoutType,
   defaultValues,
   initExercises
 }: {
   initExerciseTags: ExerciseTag[]
-  workoutTags: { label: string, value: string}[]
+  initWorkoutTags: WorkoutTag[]
   workoutType: "instance" | "template"
   defaultValues: z.infer<typeof workoutFormSchema>
   initExercises: ExerciseSelectExercise[]
@@ -505,6 +507,8 @@ export function WorkoutForm({
   const [exerciseSelectionOpen, setExerciseSelectionOpen] = useState(false)
   const [exercises, setExercises] = useState(initExercises)
   const [exerciseTags, setExerciseTags] = useState<ExerciseTag[]>(initExerciseTags)
+  const [workoutTags, setWorkoutTags] = useState<WorkoutTag[]>(initWorkoutTags)
+  const [workoutTagFormOpen, setWorkoutTagFormOpen] = useState(false)
 
   const container = useRef<HTMLFormElement | null>(null)
 
@@ -559,6 +563,10 @@ export function WorkoutForm({
 
   function handleAddExerciseTag(selectedExerciseTag: ExerciseTag) {
     setExerciseTags(prev => [...prev, selectedExerciseTag ])
+  }
+
+  function handleAddWorkoutTag(selectedWorkoutTag: WorkoutTag) {
+    setWorkoutTags(prev => [...prev, selectedWorkoutTag])
   }
 
   function addExercise(selectedExercise: ExerciseSelectExercise) {
@@ -684,25 +692,33 @@ export function WorkoutForm({
           />
         )}
         {workoutType === "template" && (
-          <FormField
-            control={form.control}
-            name="tagIds"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Tags</FormLabel>
-                <FormControl>
-                  <MultiSelect
-                    options={workoutTags}
-                    onValueChange={selectedTags => field.onChange(selectedTags)}
-                    placeholder="Select tags..."
-                    defaultValue={field.value}
-                    maxCount={3}
-                    className="max-w-sm dark:bg-input/30"
-                  />
-                </FormControl>
-              </FormItem>
-            )}
-          />
+          <div className="flex gap-x-2">
+            <FormField
+              control={form.control}
+              name="tagIds"
+              render={({ field }) => (
+                <FormItem className="flex-1 max-w-sm">
+                  <FormLabel>Tags</FormLabel>
+                  <FormControl>
+                    <MultiSelect
+                      options={workoutTags}
+                      onValueChange={selectedTags => field.onChange(selectedTags)}
+                      placeholder="Select tags..."
+                      defaultValue={field.value}
+                      maxCount={3}
+                      className="dark:bg-input/30"
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <CreateWorkoutTagForm 
+              open={workoutTagFormOpen} 
+              setOpen={setWorkoutTagFormOpen} 
+              onAddTag={handleAddWorkoutTag}
+              className="self-end"
+            />
+          </div>
         )}
         <FormField 
           control={form.control}
