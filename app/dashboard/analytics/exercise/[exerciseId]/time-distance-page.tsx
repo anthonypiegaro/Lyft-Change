@@ -34,7 +34,7 @@ import {
 import { cn } from "@/lib/utils"
 
 import { TimeDistanceExerciseData } from "./page"
-import { DateRangePicker } from "./date-range-picker"
+import { DateRangePicker } from "../../date-range-picker"
 
 export function TimeDistancePage({
   exerciseData

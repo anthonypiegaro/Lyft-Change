@@ -23,7 +23,7 @@ import { gramsToKilograms, gramsToOunces, gramsToPounds } from "@/lib/unit-conve
 import { cn } from "@/lib/utils"
 
 import { WeightRepsExerciseData } from "./page"
-import { DateRangePicker } from "./date-range-picker"
+import { DateRangePicker } from "../../date-range-picker"
 
 export function WeightRepsPage({
   exerciseData

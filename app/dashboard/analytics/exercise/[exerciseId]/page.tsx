@@ -147,7 +147,7 @@ export default async function ExercisePage({
 
   if (!data) {
     return (
-      <div>Exercise does not exist. It may have been deleted.</div>
+      <div className="mx-auto text-xl font-semibold" >Exercise does not exist. It may have been deleted.</div>
     )
   }
 
