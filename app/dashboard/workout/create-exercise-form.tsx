@@ -35,21 +35,26 @@ import { Textarea } from "@/components/ui/textarea"
 import { createExercise } from "./create-exercise-form.action"
 import { createExerciseFormSchema } from "./create-exercise-form.schema"
 import { ExerciseSelectExercise } from "./exercise-select"
+import { CreateExerciseTagForm } from "./create-exercise-tag-form"
+import { ExerciseTag } from "./workout-form"
 
 export function CreateExerciseForm({
   defaultValues,
   tagOptions,
+  onAddTag,
   onAdd,
   open,
   onOpenChange
 }: {
   defaultValues: z.infer<typeof createExerciseFormSchema>
   tagOptions: { label: string, value: string }[]
+  onAddTag: (tag: ExerciseTag) => void
   onAdd: (exercise: ExerciseSelectExercise) => void
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [tagFormOpen, setTagFormOpen] = useState(false)
 
   const form = useForm<z.infer<typeof createExerciseFormSchema>>({
     resolver: zodResolver(createExerciseFormSchema),
@@ -136,25 +141,28 @@ export function CreateExerciseForm({
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="tags"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Tags</FormLabel>
-                  <FormControl>
-                    <MultiSelect
-                      options={tagOptions}
-                      onValueChange={selectedTags => field.onChange(selectedTags)}
-                      placeholder="Select tags..."
-                      defaultValue={field.value}
-                      maxCount={3}
-                      className="max-w-sm dark:bg-input/30"
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
+            <div className="flex gap-x-2 w-full">
+              <FormField
+                control={form.control}
+                name="tags"
+                render={({ field }) => (
+                  <FormItem className="flex-1">
+                    <FormLabel>Tags</FormLabel>
+                    <FormControl>
+                      <MultiSelect
+                        options={tagOptions}
+                        onValueChange={selectedTags => field.onChange(selectedTags)}
+                        placeholder="Select tags..."
+                        defaultValue={field.value}
+                        maxCount={3}
+                        className="max-w-sm dark:bg-input/30"
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              <CreateExerciseTagForm className="self-end" open={tagFormOpen} setOpen={setTagFormOpen} onAddTag={onAddTag} />
+            </div>
             <FormField 
               control={form.control}
               name="description"

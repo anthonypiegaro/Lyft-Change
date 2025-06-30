@@ -18,7 +18,7 @@ export default async function NewWorkoutTemplatePage() {
 
   return (
     <div className="flex justify-center w-full py-10 pb-20 md:pb-10 md:px-0 px-4">
-      <WorkoutForm workoutType="template" defaultValues={defaultValues} workoutTags={workoutTags} exerciseTags={exerciseTags} initExercises={exercises}/>
+      <WorkoutForm workoutType="template" defaultValues={defaultValues} workoutTags={workoutTags} initExerciseTags={exerciseTags} initExercises={exercises}/>
     </div>
   )
 }

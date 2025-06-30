@@ -89,6 +89,7 @@ import { ExerciseSelectExercise } from "./exercise-select";
 type WorkoutFormValues = z.infer<typeof workoutFormSchema>
 type WorkoutType = "instance" | "template"
 export type PersonalRecord = string
+export type ExerciseTag = { label: string, value: string }
 
 function Exercise({
   workoutType,
@@ -488,13 +489,13 @@ function Exercise({
 }
 
 export function WorkoutForm({
-  exerciseTags,
+  initExerciseTags,
   workoutTags,
   workoutType,
   defaultValues,
   initExercises
 }: {
-  exerciseTags: { label: string, value: string }[]
+  initExerciseTags: ExerciseTag[]
   workoutTags: { label: string, value: string}[]
   workoutType: "instance" | "template"
   defaultValues: z.infer<typeof workoutFormSchema>
@@ -503,6 +504,7 @@ export function WorkoutForm({
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [exerciseSelectionOpen, setExerciseSelectionOpen] = useState(false)
   const [exercises, setExercises] = useState(initExercises)
+  const [exerciseTags, setExerciseTags] = useState<ExerciseTag[]>(initExerciseTags)
 
   const container = useRef<HTMLFormElement | null>(null)
 
@@ -553,6 +555,10 @@ export function WorkoutForm({
     }
 
     setIsSubmitting(false)
+  }
+
+  function handleAddExerciseTag(selectedExerciseTag: ExerciseTag) {
+    setExerciseTags(prev => [...prev, selectedExerciseTag ])
   }
 
   function addExercise(selectedExercise: ExerciseSelectExercise) {
@@ -772,7 +778,13 @@ export function WorkoutForm({
         <DialogHeader>
           <DialogTitle className="text-3xl">Exercise Select</DialogTitle>
         </DialogHeader>
-        <ExerciseSelect exercises={exercises} tagOptions={exerciseTags} onAdd={handleAddExercises} onExerciseCreation={handleExerciseCreation}/>
+        <ExerciseSelect 
+          exercises={exercises} 
+          tagOptions={exerciseTags} 
+          onAdd={handleAddExercises}
+          onAddTag={handleAddExerciseTag}
+          onExerciseCreation={handleExerciseCreation}
+        />
       </DialogContent>
     </Dialog>
     <DevTool control={form.control} />

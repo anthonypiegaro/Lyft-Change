@@ -119,6 +119,8 @@ interface MultiSelectProps
   className?: string;
 
   showSelectAll?: boolean
+
+  emptyComponent?: React.ReactNode
 }
 
 export const MultiSelect = React.forwardRef<
@@ -137,6 +139,7 @@ export const MultiSelect = React.forwardRef<
       modalPopover = false,
       asChild = false,
       showSelectAll = false,
+      emptyComponent = "No options found.",
       className,
       ...props
     },
@@ -295,7 +298,9 @@ export const MultiSelect = React.forwardRef<
               onKeyDown={handleInputKeyDown}
             />
             <CommandList>
-              <CommandEmpty>No results found.</CommandEmpty>
+              <CommandEmpty>
+                {emptyComponent}
+              </CommandEmpty>
               <CommandGroup>
                 {
                   showSelectAll &&

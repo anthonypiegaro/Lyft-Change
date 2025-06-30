@@ -17,6 +17,7 @@ import { MultiSelect } from "@/components/ui/multi-select"
 import { cn } from "@/lib/utils"
 
 import { CreateExerciseForm } from "./create-exercise-form"
+import { ExerciseTag } from "./workout-form"
 
 export type ExerciseSelectExercise = {
   id: string
@@ -40,11 +41,13 @@ export function ExerciseSelect({
   exercises,
   tagOptions,
   onAdd,
+  onAddTag,
   onExerciseCreation
 }: {
   exercises: ExerciseSelectExercise[]
   tagOptions: { label: string, value: string }[]
   onAdd: (exercises: ExerciseSelectExercise[]) => void
+  onAddTag: (tag: ExerciseTag) => void
   onExerciseCreation: (exercise: ExerciseSelectExercise) => void
 }) {
   const parentRef = useRef(null)
@@ -118,7 +121,8 @@ export function ExerciseSelect({
   return (
     <div className="flex flex-col h-full">
       <CreateExerciseForm 
-        onAdd={handleExerciseAdd} 
+        onAdd={handleExerciseAdd}
+        onAddTag={onAddTag}
         open={showCreateExerciseForm} 
         onOpenChange={setShowCreateExerciseForm} 
         defaultValues={{ 
