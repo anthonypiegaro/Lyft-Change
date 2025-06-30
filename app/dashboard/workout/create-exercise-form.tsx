@@ -155,6 +155,7 @@ export function CreateExerciseForm({
                         placeholder="Select tags..."
                         defaultValue={field.value}
                         maxCount={3}
+                        modalPopover
                         className="max-w-sm dark:bg-input/30"
                       />
                     </FormControl>
