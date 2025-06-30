@@ -16,6 +16,6 @@ export default async function ProgramPage() {
   }
 
   return (
-    <ProgramForm defaultValues={defaultValues} programTags={programTags} workoutTags={workoutTags} workouts={workouts} initWeeks={1}/>
+    <ProgramForm defaultValues={defaultValues} initProgramTags={programTags} workoutTags={workoutTags} workouts={workouts} initWeeks={1}/>
   )
 }

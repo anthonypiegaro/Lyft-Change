@@ -34,6 +34,7 @@ import { WorkoutList } from "./workout-list"
 import { WorkoutCardPlain } from "./workout-card"
 import { OverlayCalendarWorkoutEvent } from "./program-calendar"
 import { buildProgram } from "./program-form.action"
+import { CreateProgramTagForm } from "./create-program-tag-form"
 
 export type ProgramTag = {
   id: string
@@ -70,13 +71,13 @@ export type ProgramFormSchema = z.infer<typeof programFormSchema>
 
 export function ProgramForm({ 
   defaultValues,
-  programTags,
+  initProgramTags,
   workoutTags,
   workouts,
   initWeeks
 }: {
   defaultValues?: ProgramFormSchema
-  programTags: ProgramTag[]
+  initProgramTags: ProgramTag[]
   workoutTags: WorkoutTag[]
   workouts: WorkoutItem[]
   initWeeks: number
@@ -86,6 +87,8 @@ export function ProgramForm({
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [weeks, setWeeks] = useState(initWeeks)
   const [activeWorkout, setActiveWorkout] = useState<{ workout: WorkoutItem, start: number } | null>(null)
+  const [programTags, setProgramTags] = useState<ProgramTag[]>(initProgramTags)
+  const [tagFormOpen, setTagFormOpen] = useState(false)
 
   useLayoutEffect(() => {
     if (workoutListRef.current) {
@@ -167,6 +170,10 @@ export function ProgramForm({
     setActiveWorkout(null)
   }
 
+  const handleAddTag = (tag: ProgramTag) => {
+    setProgramTags(prev => [...prev, tag])
+  }
+
   return (
     <div className="flex flex-col gap-y-4 w-full h-full mx-auto max-w-7xl py-7 px-2 md:pl-0 md:pr-2">
       <Card className="w-full">
@@ -196,24 +203,32 @@ export function ProgramForm({
                   </FormItem>
                 )}
               />
-              <FormField 
-                control={form.control}
-                name="tagIds"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Tags</FormLabel>
-                    <FormControl>
-                      <MultiSelect 
-                        options={programTags.map(tag => ({ label: tag.name, value: tag.id }))}
-                        onValueChange={selectedTags => field.onChange(selectedTags)}
-                        defaultValue={field.value}
-                        maxCount={5}
-                        className="dark:bg-input/30"
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
+              <div className="flex gap-x-2">
+                <FormField 
+                  control={form.control}
+                  name="tagIds"
+                  render={({ field }) => (
+                    <FormItem className="flex-1">
+                      <FormLabel>Tags</FormLabel>
+                      <FormControl>
+                        <MultiSelect 
+                          options={programTags.map(tag => ({ label: tag.name, value: tag.id }))}
+                          onValueChange={selectedTags => field.onChange(selectedTags)}
+                          defaultValue={field.value}
+                          maxCount={5}
+                          className="dark:bg-input/30"
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <CreateProgramTagForm  
+                  open={tagFormOpen} 
+                  setOpen={setTagFormOpen} 
+                  onAddTag={handleAddTag}
+                  className="self-end"
+                />
+              </div>
               <FormField 
                 control={form.control}
                 name="description"

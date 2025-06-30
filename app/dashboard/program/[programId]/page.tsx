@@ -23,6 +23,6 @@ export default async function ProgramPage({
   const initWeeks = Math.floor(Math.max(...programData.workouts.map(workout => workout.day)) / 7) + 1
 
   return (
-    <ProgramForm defaultValues={programData} programTags={programTags} workoutTags={workoutTags} workouts={workouts} initWeeks={initWeeks}/>
+    <ProgramForm defaultValues={programData} initProgramTags={programTags} workoutTags={workoutTags} workouts={workouts} initWeeks={initWeeks}/>
   )
 }
