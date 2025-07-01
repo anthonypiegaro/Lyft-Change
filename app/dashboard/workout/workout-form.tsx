@@ -198,7 +198,19 @@ function Exercise({
               name={`exercises.${exerciseIndex}.units.weight`}
               render={({ field }) => (
                 <FormItem className="flex justify-center">
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select 
+                    onValueChange={value => {
+                      if (value === "g") {
+                        form.watch(`exercises.${exerciseIndex}.sets`).forEach((set, setIndex) => {
+                          if ("weight" in set) {
+                            form.setValue(`exercises.${exerciseIndex}.sets.${setIndex}.weight`, Math.trunc(set.weight))
+                          }
+                        })
+                      }
+                      field.onChange(value)
+                    }}
+                    defaultValue={field.value}
+                  >
                     <FormControl>
                       <SelectTrigger disabled={isSubmitting}>
                         <SelectValue />
@@ -247,7 +259,19 @@ function Exercise({
               name={`exercises.${exerciseIndex}.units.time`}
               render={({ field }) => (
                 <FormItem className="flex justify-center">
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select 
+                    onValueChange={value => {
+                        if (value === "ms") {
+                          form.watch(`exercises.${exerciseIndex}.sets`).forEach((set, setIndex) => {
+                            if ("time" in set) {
+                              form.setValue(`exercises.${exerciseIndex}.sets.${setIndex}.time`, Math.trunc(set.time))
+                            }
+                          })
+                        }
+                        field.onChange(value)
+                    }}
+                    defaultValue={field.value}
+                  >
                     <FormControl>
                       <SelectTrigger disabled={isSubmitting}>
                         <SelectValue />
@@ -269,7 +293,19 @@ function Exercise({
               name={`exercises.${exerciseIndex}.units.distance`}
               render={({ field }) => (
                 <FormItem className="flex justify-center">
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select 
+                    onValueChange={value => {
+                      if (value === "mm") {
+                        form.watch(`exercises.${exerciseIndex}.sets`).forEach((set, setIndex) => {
+                          if ("distance" in set) {
+                            form.setValue(`exercises.${exerciseIndex}.sets.${setIndex}.distance`, Math.trunc(set.distance))
+                          }
+                        })
+                      }
+                      field.onChange(value)
+                    }}
+                    defaultValue={field.value}
+                  >
                     <FormControl>
                       <SelectTrigger disabled={isSubmitting}>
                         <SelectValue />
@@ -305,7 +341,7 @@ function Exercise({
                   <FormControl>
                     <Input 
                       {...field} 
-                      onChange={e => { field.onChange(e.target.value === ""  ? "" : Number(e.target.value))} }
+                      onChange={e => { field.onChange(e.target.value === ""  ? "" : form.watch(`exercises.${exerciseIndex}.units.weight`) === "g" ? Math.trunc(Number(e.target.value)) : Math.trunc(Number(e.target.value) * 100) / 100) } }
                       onWheel={e => { e.currentTarget.blur() }}
                       onFocus={e => e.target.select()}
                       disabled={isSubmitting} type="number" 
@@ -324,7 +360,7 @@ function Exercise({
                   <FormControl>
                     <Input 
                       {...field} 
-                      onChange={e => { field.onChange(e.target.value === ""  ? "" : Number(e.target.value))} }
+                      onChange={e => { field.onChange(e.target.value === ""  ? "" : Math.trunc(Number(e.target.value)))}}
                       onWheel={e => { e.currentTarget.blur() }}
                       onFocus={e => e.target.select()}
                       disabled={isSubmitting} type="number" 
@@ -348,7 +384,7 @@ function Exercise({
                   <FormControl>
                     <Input 
                       {...field} 
-                      onChange={e => { field.onChange(e.target.value === ""  ? "" : Number(e.target.value))} }
+                      onChange={e => { field.onChange(e.target.value === ""  ? "" : form.watch(`exercises.${exerciseIndex}.units.time`) === "ms" ? Math.trunc(Number(e.target.value)) : Math.trunc(Number(e.target.value) * 100) / 100) }}
                       onWheel={e => { e.currentTarget.blur() }}
                       onFocus={e => e.target.select()}
                       disabled={isSubmitting} type="number" 
@@ -367,7 +403,7 @@ function Exercise({
                   <FormControl>
                     <Input 
                       {...field} 
-                      onChange={e => { field.onChange(e.target.value === ""  ? "" : Number(e.target.value))} }
+                      onChange={e => { field.onChange(e.target.value === ""  ? "" : form.watch(`exercises.${exerciseIndex}.units.distance`) === "mm" ? Math.trunc(Number(e.target.value)) :  Math.trunc(Number(e.target.value) * 100) / 100) }}
                       onWheel={e => { e.currentTarget.blur() }}
                       onFocus={e => e.target.select()}
                       disabled={isSubmitting} type="number" 
