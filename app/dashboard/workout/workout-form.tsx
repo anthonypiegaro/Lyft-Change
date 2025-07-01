@@ -73,7 +73,8 @@ import {
   repsUnits, 
   timeUnits, 
   weightUnits, 
-  workoutFormSchema 
+  workoutFormSchema,
+  WorkoutFormSchema
 } from "@/app/dashboard/workout/workout-form.schema"
 import { cn } from "@/lib/utils"
 
@@ -87,7 +88,6 @@ import { createWorkoutTemplate } from "./create-workout-template.action"
 import { ExerciseSelectExercise } from "./exercise-select";
 import { CreateWorkoutTagForm } from "./create-workout-tag-form";
 
-type WorkoutFormValues = z.infer<typeof workoutFormSchema>
 type WorkoutType = "instance" | "template"
 export type PersonalRecord = string
 export type ExerciseTag = { label: string, value: string }
@@ -103,8 +103,8 @@ function Exercise({
   containerRef
 }: {
   workoutType: WorkoutType
-  form: UseFormReturn<WorkoutFormValues>
-  exerciseField: FieldArrayWithId<WorkoutFormValues, "exercises", "id">
+  form: UseFormReturn<WorkoutFormSchema>
+  exerciseField: FieldArrayWithId<WorkoutFormSchema, "exercises", "id">
   exerciseIndex: number
   isSubmitting: boolean,
   onDelete: () => void

@@ -18,10 +18,8 @@ import {
 } from "@/db/schema"
 import { auth } from "@/lib/auth"
 
-import { workoutFormSchema } from "../../workout-form.schema"
+import { WorkoutFormSchema } from "../../workout-form.schema"
 import { distanceFromMillimeters, timeFromMilliseconds, weightFromGrams } from "../../unit-converter"
-
-type WorkoutFormSchema = z.infer<typeof workoutFormSchema>
 
 export const getWorkoutTemplate = async (id: string): Promise<WorkoutFormSchema> => {
   const session = await auth.api.getSession({
@@ -95,7 +93,7 @@ export const getWorkoutTemplate = async (id: string): Promise<WorkoutFormSchema>
             reps: "reps"
           },
           sets: setsRes.map(set => ({
-            weight: Math.round(weightFromGrams["lb"](set.weight)),
+            weight: Math.round(weightFromGrams["lb"](set.weight) * 100) / 100,
             reps: set.reps,
             completed: false
           }))
@@ -120,8 +118,8 @@ export const getWorkoutTemplate = async (id: string): Promise<WorkoutFormSchema>
             distance: "mi"
           },
           sets: setsRes.map(set => ({
-            time: Math.round(timeFromMilliseconds["m"](set.time)),
-            distance: Math.round(distanceFromMillimeters["mi"](set.distance)),
+            time: Math.round(timeFromMilliseconds["m"](set.time) * 100) / 100,
+            distance: Math.round(distanceFromMillimeters["mi"](set.distance) * 100) / 100,
             completed: false
           }))
         })

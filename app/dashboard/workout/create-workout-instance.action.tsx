@@ -2,22 +2,21 @@
 
 import { headers } from "next/headers"
 import { redirect } from "next/navigation"
-import { z } from "zod"
 import { and, eq, sql } from "drizzle-orm"
 
 import { db } from "@/db/db"
 import { exerciseInstance, setInstance, timeDistanceInstance, weightRepsInstance, workoutInstance } from "@/db/schema"
 import { auth } from "@/lib/auth"
 
-import { workoutFormSchema } from "./workout-form.schema"
 import { PersonalRecord } from "./workout-form"
 import { distanceToMillimeters, timeToMilliseconds, weightToGrams } from "./unit-converter"
+import { WorkoutFormSchema } from "./workout-form.schema"
 
 type CreateWorkoutReturn = {
   personalRecords: PersonalRecord[]
 }
 
-export const createWorkoutInstance = async (values: z.infer<typeof workoutFormSchema>): Promise<CreateWorkoutReturn> => {
+export const createWorkoutInstance = async (values: WorkoutFormSchema): Promise<CreateWorkoutReturn> => {
   const session = await auth.api.getSession({
     headers: await headers()
   })

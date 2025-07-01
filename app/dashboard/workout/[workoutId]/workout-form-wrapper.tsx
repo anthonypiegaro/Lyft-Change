@@ -1,10 +1,9 @@
 "use client"
 
 import { parseISO } from "date-fns"
-import { z } from "zod"
 
 import { WorkoutForm } from "../workout-form"
-import { workoutFormSchema } from "../workout-form.schema"
+import { WorkoutFormSchema } from "../workout-form.schema"
 import { ExerciseSelectExercise } from "../exercise-select"
 
 export function WorkoutFormWrapper({
@@ -17,7 +16,7 @@ export function WorkoutFormWrapper({
   exerciseTags: { label: string, value: string }[]
   workoutTags: { label: string, value: string}[]
   workoutType: "instance" | "template"
-  defaultValues: Omit<z.infer<typeof workoutFormSchema>, "date"> & { date: string }
+  defaultValues: Omit<WorkoutFormSchema, "date"> & { date: string }
   exercises: ExerciseSelectExercise[]
 }) {
   const defaultValuesProcessed = {

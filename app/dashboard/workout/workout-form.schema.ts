@@ -96,3 +96,5 @@ export const workoutFormSchema = z.object({
   notes: z.string(),
   exercises: z.array(exerciseSchema)
 })
+
+export type WorkoutFormSchema = z.infer<typeof workoutFormSchema>

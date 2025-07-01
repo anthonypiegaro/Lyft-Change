@@ -3,7 +3,6 @@
 import { headers } from "next/headers"
 import { redirect } from "next/navigation"
 import { eq } from "drizzle-orm"
-import { z } from "zod"
 
 import { db } from "@/db/db"
 import { 
@@ -16,14 +15,14 @@ import {
 } from "@/db/schema"
 import { auth } from "@/lib/auth"
 
-import { workoutFormSchema } from "./workout-form.schema"
 import { 
   distanceToMillimeters, 
   timeToMilliseconds, 
   weightToGrams 
 } from "./unit-converter"
+import { WorkoutFormSchema } from "./workout-form.schema"
 
-export const createWorkoutTemplate = async (values: z.infer<typeof workoutFormSchema>) => {
+export const createWorkoutTemplate = async (values: WorkoutFormSchema) => {
   const session = await auth.api.getSession({
     headers: await headers()
   })
