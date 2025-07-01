@@ -2,7 +2,7 @@
 
 import { RefObject, useLayoutEffect, useRef, useState } from "react"
 import { useRouter } from "next/navigation";
-import { z } from "zod"
+import * as z from "zod/v4"
 import { DevTool } from "@hookform/devtools";
 import { zodResolver } from "@hookform/resolvers/zod"
 import {
@@ -199,16 +199,7 @@ function Exercise({
               render={({ field }) => (
                 <FormItem className="flex justify-center">
                   <Select 
-                    onValueChange={value => {
-                      if (value === "g") {
-                        form.watch(`exercises.${exerciseIndex}.sets`).forEach((set, setIndex) => {
-                          if ("weight" in set) {
-                            form.setValue(`exercises.${exerciseIndex}.sets.${setIndex}.weight`, Math.trunc(set.weight))
-                          }
-                        })
-                      }
-                      field.onChange(value)
-                    }}
+                    onValueChange={field.onChange}
                     defaultValue={field.value}
                   >
                     <FormControl>
@@ -260,16 +251,7 @@ function Exercise({
               render={({ field }) => (
                 <FormItem className="flex justify-center">
                   <Select 
-                    onValueChange={value => {
-                        if (value === "ms") {
-                          form.watch(`exercises.${exerciseIndex}.sets`).forEach((set, setIndex) => {
-                            if ("time" in set) {
-                              form.setValue(`exercises.${exerciseIndex}.sets.${setIndex}.time`, Math.trunc(set.time))
-                            }
-                          })
-                        }
-                        field.onChange(value)
-                    }}
+                    onValueChange={field.onChange}
                     defaultValue={field.value}
                   >
                     <FormControl>
@@ -294,16 +276,7 @@ function Exercise({
               render={({ field }) => (
                 <FormItem className="flex justify-center">
                   <Select 
-                    onValueChange={value => {
-                      if (value === "mm") {
-                        form.watch(`exercises.${exerciseIndex}.sets`).forEach((set, setIndex) => {
-                          if ("distance" in set) {
-                            form.setValue(`exercises.${exerciseIndex}.sets.${setIndex}.distance`, Math.trunc(set.distance))
-                          }
-                        })
-                      }
-                      field.onChange(value)
-                    }}
+                    onValueChange={field.onChange}
                     defaultValue={field.value}
                   >
                     <FormControl>
