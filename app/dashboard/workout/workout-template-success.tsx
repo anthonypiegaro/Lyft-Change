@@ -5,7 +5,7 @@ import { z } from "zod"
 
 import successAnimation from "@/public/lottie/success-animation.json"
 
-import { workoutFormSchema } from "./workout-form.schema"
+import { WorkoutFormSchema } from "./workout-form.schema"
 
 const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
@@ -19,7 +19,7 @@ export function WorkoutTemplateSuccess({
   formValues,
   newTemplate
 }: {
-  formValues: z.infer<typeof workoutFormSchema>
+  formValues: WorkoutFormSchema
   newTemplate: boolean
 }) {
 

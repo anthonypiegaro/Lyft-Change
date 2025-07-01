@@ -7,7 +7,7 @@ import { LottieRefCurrentProps } from "lottie-react"
 import starAnimation from "@/public/lottie/star-animation.json"
 import successAnimation from "@/public/lottie/success-animation.json"
 
-import { workoutFormSchema } from "./workout-form.schema"
+import { WorkoutFormSchema } from "./workout-form.schema"
 import { PersonalRecord } from "./workout-form"
 
 const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
@@ -22,7 +22,7 @@ export function WorkoutInstanceSuccess({
   formValues,
   personalRecords
 }: {
-  formValues: z.infer<typeof workoutFormSchema>
+  formValues: WorkoutFormSchema
   personalRecords: PersonalRecord[]
 }) {
 

@@ -1,14 +1,10 @@
 import { z } from "zod"
 
 import { 
-  distanceUnits, 
-  timeUnits, 
-  weightUnits
+  DistanceUnits,
+  TimeUnits,
+  WeightUnits
 } from "./workout-form.schema";
-
-type DistanceUnits = z.infer<typeof distanceUnits>
-type TimeUnits = z.infer<typeof timeUnits>
-type WeightUnits = z.infer<typeof weightUnits>
 
 // Distance: to millimeters
 export const distanceToMillimeters: Record<DistanceUnits, (v: number) => number> = {

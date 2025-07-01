@@ -2,15 +2,19 @@ import * as z from "zod/v4"
 
 const distanceValidation = z.number().nonnegative()
 export const distanceUnits = z.enum(["mm", "m", "km", "in", "ft", "yd", "mi"])
+export type DistanceUnits = z.infer<typeof distanceUnits>
 
 const repsValidation = z.number().nonnegative().int()
 export const repsUnits = z.enum(["reps"])
+export type repsUnits = z.infer<typeof repsUnits>
 
 const timeValidation = z.number().nonnegative()
 export const timeUnits = z.enum(["ms", "s", "m", "h"])
+export type TimeUnits = z.infer<typeof timeUnits>
 
 const weightValidation = z.number().nonnegative()
 export const weightUnits = z.enum(["g", "kg", "oz", "lb"])
+export type WeightUnits = z.infer<typeof weightUnits>
 
 const exerciseSchemas = [
   z.object({
