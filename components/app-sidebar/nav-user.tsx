@@ -41,7 +41,7 @@ export function NavUser({
             <DropdownMenuItem>
               <span>Settings</span>
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={handleSignOut}>
+            <DropdownMenuItem variant="destructive" onClick={handleSignOut}>
               <span>Sign Out</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
