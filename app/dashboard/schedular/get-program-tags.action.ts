@@ -21,10 +21,14 @@ export const getProgramTags = async (): Promise<ProgramTag[]> => {
 
   const userId = session.user.id
 
-  const programTags = await db.select({ 
+  const programTags = await db
+  .select({ 
     id: programTag.id,
     name: programTag.name
-  }).from(programTag).where(eq(programTag.userId, userId))
+  })
+  .from(programTag)
+  .where(eq(programTag.userId, userId))
+  .orderBy(programTag.name)
 
   return programTags
 }

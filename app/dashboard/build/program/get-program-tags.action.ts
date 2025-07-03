@@ -19,5 +19,5 @@ export const getProgramTags = async () => {
 
   const userId = session.user.id
 
-  return db.select({ id: programTag.id, name: programTag.name }).from(programTag).where(eq(programTag.userId, userId))
+  return db.select({ id: programTag.id, name: programTag.name }).from(programTag).where(eq(programTag.userId, userId)).orderBy(programTag.name)
 }

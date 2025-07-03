@@ -20,10 +20,14 @@ export const getWorkoutTags = async (): Promise<Tag[]> => {
 
   const userId = session.user.id
 
-  const workoutTags = await db.select({
+  const workoutTags = await db
+  .select({
     label: workoutTag.name,
     value: workoutTag.id
-  }).from(workoutTag).where(eq(workoutTag.userId, userId))
+  })
+  .from(workoutTag)
+  .where(eq(workoutTag.userId, userId))
+  .orderBy(workoutTag.name)
 
   return workoutTags
 }

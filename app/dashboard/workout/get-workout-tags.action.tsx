@@ -20,9 +20,10 @@ export const getWorkoutTags = async () => {
   const userId = session.user.id
 
   const tags = await db
-      .select({ value: workoutTag.id, label: workoutTag.name })
-      .from(workoutTag)
-      .where(eq(workoutTag.userId, userId))
+    .select({ value: workoutTag.id, label: workoutTag.name })
+    .from(workoutTag)
+    .where(eq(workoutTag.userId, userId))
+    .orderBy(workoutTag.name)
   
   return tags;
 }

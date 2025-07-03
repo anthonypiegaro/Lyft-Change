@@ -23,6 +23,7 @@ export const getExerciseTags = async () => {
       .select({ value: exerciseTag.id, label: exerciseTag.name })
       .from(exerciseTag)
       .where(eq(exerciseTag.userId, userId))
+      .orderBy(exerciseTag.name)
   
   return tags;
 }

@@ -56,5 +56,5 @@ export const getWorkoutTemplates = async (): Promise<WorkoutTemplate[]> => {
     return acc
   }, {} as Record<string, WorkoutTemplate>)
 
-  return Object.values(workouts)
+  return Object.values(workouts).sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()))
 }

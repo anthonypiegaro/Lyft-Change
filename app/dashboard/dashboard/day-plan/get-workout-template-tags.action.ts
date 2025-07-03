@@ -19,7 +19,7 @@ export const getWorkoutTemplateTags = async () => {
 
   const userId = session.user.id
 
-  const tags = await db.select({ id: workoutTag.id, name: workoutTag.name }).from(workoutTag).where(eq(workoutTag.userId, userId))
+  const tags = await db.select({ id: workoutTag.id, name: workoutTag.name }).from(workoutTag).where(eq(workoutTag.userId, userId)).orderBy(workoutTag.name)
 
   return tags
 }

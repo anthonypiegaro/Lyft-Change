@@ -43,7 +43,6 @@ export function TemplateList({
   const [nameFilter, setNameFilter] = useState("")
   const [tagFilter, setTagFilter] = useState<string[]>([])
 
-  const sortedTemplateTags = useMemo(() => templateTags.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase())), [templateTags])
   const sortedWorkoutTemlpates = useMemo(() => workoutTemplates.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase())), [workoutTemplates])
 
   const filteredTemplates = useMemo(() => {
@@ -112,7 +111,7 @@ export function TemplateList({
           <Label htmlFor="tag-ids-filter" className="mb-1.5">Tags</Label>
           <MultiSelect
             id="tag-ids-filter"
-            options={sortedTemplateTags.map(tag => ({ label: tag.name, value: tag.id}))}
+            options={templateTags.map(tag => ({ label: tag.name, value: tag.id}))}
             maxCount={3}
             onValueChange={setTagFilter}
             className="dark:bg-input/30"
