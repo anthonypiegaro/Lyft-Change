@@ -72,10 +72,8 @@ export function AppSidebar({
   name: string
   email: string
 }) {
-  const { state } = useSidebar()
+  const { state, setOpenMobile } = useSidebar()
   const pathname = usePathname()
-
-  console.log(pathname)
 
   return (
     <Sidebar variant="floating" collapsible="icon">
@@ -100,6 +98,7 @@ export function AppSidebar({
                         children: item.title,
                         hidden: state === "expanded"
                       }}
+                      onClick={() => setOpenMobile(false)}
                     >
                       <Link href={item.url}>
                         <item.icon />
@@ -110,7 +109,7 @@ export function AppSidebar({
                       <SidebarMenuSub>
                         {item.subItems.map(subItem => (
                           <SidebarMenuSubItem key={subItem.title}>
-                            <SidebarMenuSubButton asChild isActive={pathname === subItem.url}>
+                            <SidebarMenuSubButton asChild isActive={pathname === subItem.url} onClick={() => setOpenMobile(false)}>
                               <Link href={subItem.url}>
                                 {subItem.title}
                               </Link>
