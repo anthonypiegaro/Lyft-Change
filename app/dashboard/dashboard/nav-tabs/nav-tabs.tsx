@@ -33,8 +33,8 @@ export function NavTabs() {
   return (
     <>
       {navTabs.map(tab => (
-        <Link key={tab.name} href={tab.url} className="flex-1">
-          <Card className="h-full">
+        <Link key={tab.name} href={tab.url} className="group flex-1">
+          <Card className="h-full transition-all group-hover:bg-neutral-100 dark:group-hover:bg-neutral-800">
             <CardHeader>
               <CardTitle className="flex gap-x-2 items-center">
                 {<tab.icon />}

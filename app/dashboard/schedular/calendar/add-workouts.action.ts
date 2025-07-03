@@ -5,7 +5,20 @@ import { redirect } from "next/navigation"
 import { eq } from "drizzle-orm"
 
 import { db } from "@/db/db"
-import { exercise, exerciseInstance, exerciseTemplate, exerciseType, setInstance, setTemplate, timeDistanceInstance, timeDistanceTemplate, weightRepsInstance, weightRepsTemplate, workout, workoutInstance } from "@/db/schema"
+import { 
+  exercise, 
+  exerciseInstance, 
+  exerciseTemplate, 
+  exerciseType, 
+  setInstance, 
+  setTemplate, 
+  timeDistanceInstance, 
+  timeDistanceTemplate, 
+  weightRepsInstance, 
+  weightRepsTemplate,
+  workout, 
+  workoutInstance 
+} from "@/db/schema"
 import { auth } from "@/lib/auth"
 
 import { WorkoutEvent } from "./calendar"

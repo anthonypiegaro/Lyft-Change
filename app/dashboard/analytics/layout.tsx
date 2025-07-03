@@ -6,7 +6,7 @@ export default function AnalyticsLayout({
   children: React.ReactNode
 }) {
   return (
-    <div className="w-full h-full py-5 md:py-10">
+    <div className="container mx-auto py-5 md:py-10">
       <AnalyticsTabs />
       {children}
     </div>
