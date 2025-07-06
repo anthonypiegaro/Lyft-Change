@@ -9,7 +9,7 @@ import { exercise, exerciseInstance, setInstance, workoutInstance } from "@/db/s
 import { auth } from "@/lib/auth"
 import { Workout } from "./day-plan"
 
-export const getTodaysWorkouts = async (): Promise<Workout[]> => {
+export const getTodaysWorkouts = async (date: string): Promise<Workout[]> => {
   const session = await auth.api.getSession({
     headers: await headers()
   })
@@ -19,8 +19,6 @@ export const getTodaysWorkouts = async (): Promise<Workout[]> => {
   }
 
   const userId = session.user.id
-
-  const today = new Date().toISOString().slice(0, 10);
 
   const workoutDataRaw = await db
     .select({
@@ -36,7 +34,7 @@ export const getTodaysWorkouts = async (): Promise<Workout[]> => {
     .innerJoin(setInstance, eq(exerciseInstance.id, setInstance.exerciseInstanceId))
     .where(and(
       eq(workoutInstance.userId, userId),
-      eq(workoutInstance.date, today)
+      eq(workoutInstance.date, date)
     ))
   
   const workoutData = workoutDataRaw.reduce((acc, row) => {
