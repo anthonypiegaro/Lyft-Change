@@ -1,4 +1,8 @@
-import { pgTable, primaryKey, text, timestamp, boolean, uuid, unique, date, integer } from "drizzle-orm/pg-core";
+import { pgEnum, pgTable, primaryKey, text, timestamp, boolean, uuid, unique, date, integer } from "drizzle-orm/pg-core";
+
+export const weightUnitsEnum = pgEnum("weight_units", ["g", "kg", "oz", "lb"])
+export const timeUnitsEnum = pgEnum("time_units", ["ms", "s", "m", "h"])
+export const distanceUnitsEnum = pgEnum("distance_units", ["mm", "m", "km", "in", "ft", "yd", "mi"])
 			
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
@@ -51,6 +55,17 @@ export const verification = pgTable("verification", {
 export const exerciseType = pgTable("exercise_type", {
   id: uuid("id").primaryKey().defaultRandom(),
   name: text("name").notNull().unique()
+})
+
+export const weightRepsDefaultUnits = pgTable("weight_reps_default_units", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  weightUnit: weightUnitsEnum().notNull()
+})
+
+export const timeDistanceDefaultUnits = pgTable("time_distance_default_units", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  timeUnit: timeUnitsEnum().notNull(),
+  distanceUnit: distanceUnitsEnum().notNull()
 })
 
 export const exercise = pgTable("exercise", {
@@ -142,28 +157,34 @@ export const weightRepsTemplate = pgTable("weight_reps_template", {
   id: uuid("id").primaryKey().defaultRandom(),
   setTemplateId: uuid("set_template_id").notNull().references(() => setTemplate.id, { onDelete: "cascade" }),
   weight: integer("weight").notNull(),
-  reps: integer("reps").notNull()
+  reps: integer("reps").notNull(),
+  weightUnit: weightUnitsEnum().notNull()
 })
 
 export const weightRepsInstance = pgTable("weight_reps_instance", {
   id: uuid("id").primaryKey().defaultRandom(),
   setInstanceId: uuid("set_instance_id").notNull().references(() => setInstance.id, { onDelete: "cascade" }),
   weight: integer("weight").notNull(),
-  reps: integer("reps").notNull()
+  reps: integer("reps").notNull(),
+  weightUnit: weightUnitsEnum().notNull()
 })
 
 export const timeDistanceTemplate = pgTable("time_distance_template", {
   id: uuid("id").primaryKey().defaultRandom(),
   setTemplateId: uuid("set_template_id").notNull().references(() => setTemplate.id, { onDelete: "cascade" }),
   time: integer("time").notNull(),
-  distance: integer("distance").notNull()
+  distance: integer("distance").notNull(),
+  timeUnit: timeUnitsEnum().notNull(),
+  distanceUnit: distanceUnitsEnum().notNull()
 })
 
 export const timeDistanceInstance = pgTable("time_distance_instance", {
   id: uuid("id").primaryKey().defaultRandom(),
   setInstanceId: uuid("set_instance_id").notNull().references(() => setInstance.id, { onDelete: "cascade" }),
   time: integer("time").notNull(),
-  distance: integer("distance").notNull()
+  distance: integer("distance").notNull(),
+  timeUnit: timeUnitsEnum().notNull(),
+  distanceUnit: distanceUnitsEnum().notNull()
 })
 
 export const program = pgTable("program", {
