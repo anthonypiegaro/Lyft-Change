@@ -4,7 +4,6 @@ import { useEffect, useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
-import { z } from "zod"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -33,7 +32,7 @@ import {
 import { Textarea } from "@/components/ui/textarea"
 
 import { createExercise } from "./create-exercise-form.action"
-import { createExerciseFormSchema } from "./create-exercise-form.schema"
+import { CreateExerciseFormSchema, createExerciseFormSchema } from "./create-exercise-form.schema"
 import { ExerciseSelectExercise } from "./exercise-select"
 import { CreateExerciseTagForm } from "./create-exercise-tag-form"
 import { ExerciseTag } from "./workout-form"
@@ -46,7 +45,7 @@ export function CreateExerciseForm({
   open,
   onOpenChange
 }: {
-  defaultValues: z.infer<typeof createExerciseFormSchema>
+  defaultValues: CreateExerciseFormSchema
   tagOptions: { label: string, value: string }[]
   onAddTag: (tag: ExerciseTag) => void
   onAdd: (exercise: ExerciseSelectExercise) => void
@@ -56,7 +55,7 @@ export function CreateExerciseForm({
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [tagFormOpen, setTagFormOpen] = useState(false)
 
-  const form = useForm<z.infer<typeof createExerciseFormSchema>>({
+  const form = useForm<CreateExerciseFormSchema>({
     resolver: zodResolver(createExerciseFormSchema),
     defaultValues
   })
@@ -67,7 +66,7 @@ export function CreateExerciseForm({
     }
   }, [open, defaultValues, form])
 
-  const onSubmit = async (values: z.infer<typeof createExerciseFormSchema>) => {
+  const onSubmit = async (values: CreateExerciseFormSchema) => {
     setIsSubmitting(true)
 
     await createExercise(values)
@@ -96,6 +95,17 @@ export function CreateExerciseForm({
     setIsSubmitting(false)
   }
 
+  const handleTypeChange = (value: string, onChange: (value: string) => void) => {
+    if (value === "weightReps") {
+      form.setValue("weightUnit", "lb")
+    } else if (value === "timeDistance") {
+      form.setValue("timeUnit", "m")
+      form.setValue("distanceUnit", "mi")
+    }
+
+    onChange(value)
+  }
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
@@ -111,7 +121,7 @@ export function CreateExerciseForm({
                 <FormItem>
                   <FormLabel>Type</FormLabel>
                   <Select
-                    onValueChange={field.onChange}
+                    onValueChange={value => handleTypeChange(value, field.onChange)} 
                     defaultValue={field.value}
                     disabled={isSubmitting}
                   >
@@ -128,6 +138,97 @@ export function CreateExerciseForm({
                 </FormItem>
               )}
             />
+            {
+              form.watch("type") === "weightReps" && (
+                <FormField 
+                  control={form.control}
+                  name="weightUnit"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Weight unit</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        disabled={isSubmitting}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="w-20">
+                            <SelectValue />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="g">g</SelectItem>
+                          <SelectItem value="kg">kg</SelectItem>
+                          <SelectItem value="oz">oz</SelectItem>
+                          <SelectItem value="lb">lb</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </FormItem>
+                  )}
+                />
+              )
+            }
+            {
+              form.watch("type") === "timeDistance" && (
+                <div className="flex gap-x-4">
+                  <FormField 
+                    control={form.control}
+                    name="timeUnit"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Time unit</FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                          disabled={isSubmitting}
+                        >
+                          <FormControl>
+                            <SelectTrigger className="w-20">
+                              <SelectValue />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="ms">ms</SelectItem>
+                            <SelectItem value="s">s</SelectItem>
+                            <SelectItem value="m">m</SelectItem>
+                            <SelectItem value="h">h</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </FormItem>
+                    )}
+                  />
+                  <FormField 
+                    control={form.control}
+                    name="distanceUnit"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Distance unit</FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                          disabled={isSubmitting}
+                        >
+                          <FormControl>
+                            <SelectTrigger className="w-20">
+                              <SelectValue />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="mm">mm</SelectItem>
+                            <SelectItem value="m">m</SelectItem>
+                            <SelectItem value="km">km</SelectItem>
+                            <SelectItem value="in">in</SelectItem>
+                            <SelectItem value="ft">ft</SelectItem>
+                            <SelectItem value="yd">yd</SelectItem>
+                            <SelectItem value="mi">mi</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              )
+            }
             <FormField 
               control={form.control}
               name="name"

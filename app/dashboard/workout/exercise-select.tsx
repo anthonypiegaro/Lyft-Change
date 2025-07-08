@@ -125,12 +125,32 @@ export function ExerciseSelect({
         onAddTag={onAddTag}
         open={showCreateExerciseForm} 
         onOpenChange={setShowCreateExerciseForm} 
-        defaultValues={{ 
-          name: nameFilter,
-          tags: tagFilter, 
-          type: "weightReps", 
-          description: "" 
-        }}
+        defaultValues={
+          typeFilter.has("weightReps")
+          ? { 
+              name: nameFilter,
+              tags: tagFilter, 
+              type: "weightReps", 
+              description: "",
+              weightUnit: "lb"
+            }
+          : typeFilter.has("timeDistance")
+          ? {
+              name: nameFilter,
+              tags: tagFilter, 
+              type: "timeDistance", 
+              description: "",
+              timeUnit: "m",
+              distanceUnit: "mi"
+            }
+          : {
+              name: nameFilter,
+              tags: tagFilter, 
+              type: "weightReps", 
+              description: "",
+              weightUnit: "lb"
+            }
+        }
         tagOptions={tagOptions}
       />
       <div className="flex flex-col items-center gap-2 py-4">
