@@ -11,17 +11,7 @@ import { getExerciseTags } from "./get-exercise-tags.action";
 import { getExercises } from "./get-exercises.action";
 
 export default async function ExercisePage() {
-  const session = await auth.api.getSession({
-    headers: await headers()
-  })
-
-  if (!session) {
-    redirect("/sign-in")
-  }
-
-  const userId = session.user.id
-
-  const [exerciseTags, exercises] = await Promise.all([getExerciseTags({ userId }), getExercises({ userId })])
+  const [exerciseTags, exercises] = await Promise.all([getExerciseTags(), getExercises()])
 
   return (
     <div className="container mx-auto px-1">

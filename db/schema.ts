@@ -59,11 +59,13 @@ export const exerciseType = pgTable("exercise_type", {
 
 export const weightRepsDefaultUnits = pgTable("weight_reps_default_units", {
   id: uuid("id").primaryKey().defaultRandom(),
+  exerciseId: uuid("exercise_id").notNull().unique().references(() => exercise.id, { onDelete: "cascade" }),
   weightUnit: weightUnitsEnum().notNull()
 })
 
 export const timeDistanceDefaultUnits = pgTable("time_distance_default_units", {
   id: uuid("id").primaryKey().defaultRandom(),
+  exerciseId: uuid("exercise_id").notNull().unique().references(() => exercise.id, { onDelete: "cascade" }),
   timeUnit: timeUnitsEnum().notNull(),
   distanceUnit: distanceUnitsEnum().notNull()
 })

@@ -38,7 +38,21 @@ export function AddEntityButton({
   }
 
   const form = type === "exercise" 
-    ? <ExerciseMutationForm tags={tags} onError={handleError} onSuccess={handleSuccess} /> 
+    ? (
+        <ExerciseMutationForm 
+          tags={tags} 
+          onError={handleError}
+          onSuccess={handleSuccess}
+          defaultValues={{
+            id: undefined,
+            type: "weightReps",
+            name: "",
+            tags: [],
+            description: "",
+            weightUnit: "lb"
+          }}
+        /> 
+      )
     : type === "workout" ? "Workout Form" 
     : "Program Form"
 

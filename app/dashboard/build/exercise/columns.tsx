@@ -27,32 +27,46 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu"
+import { ExerciseMutationFormSchema } from "@/components/forms/mutate-exercise-form/exercise-mutation-form.schema"
 
 import { EditExerciseForm } from "./edit-exercise-form"
 import { HideExerciseForm } from "./hide-exercise-form"
 
-export type ExerciseRowType = {
+// export type ExerciseRowType = {
+//   id: string
+//   name: string
+//   type: "weightReps" | "timeDistance"
+//   tags: { id: string, name: string }[]
+//   description: string
+// }
+
+export type ExerciseRowType = 
+{
   id: string
   name: string
-  type: "weightReps" | "timeDistance"
+  type: "weightReps"
   tags: { id: string, name: string }[]
   description: string
-}
-
-export type ExerciseMutationType = {
+  weightUnit: "g" | "kg" | "oz" | "lb"
+} | 
+{
   id: string
   name: string
-  type: "weightReps" | "timeDistance"
-  tags: string[]
+  type: "timeDistance"
+  tags: { id: string, name: string }[]
   description: string
+  timeUnit: "ms" | "s" | "m" | "h"
+  distanceUnit: "mm" | "m" | "km" | "in" | "ft" | "yd" | "mi"
 }
 
-const typeMap: Record<ExerciseRowType["type"], string> = {
+const typeMap: Record<"weightReps" | "timeDistance", string> = {
   "weightReps": "Weight Reps",
   "timeDistance": "Time Distance"
 }
 
-const allTypes: ExerciseRowType["type"][] = ["weightReps", "timeDistance"]
+type ExerciseType = "weightReps" | "timeDistance"
+
+const allTypes: ExerciseType[] = ["weightReps", "timeDistance"]
 
 export const columns: ColumnDef<ExerciseRowType>[] = [
   {
@@ -71,9 +85,9 @@ export const columns: ColumnDef<ExerciseRowType>[] = [
     accessorKey: "type",
     header: ({ column }) => {
       const selectedTypes = 
-        (column.getFilterValue() as ExerciseRowType["type"][]) ?? allTypes
+        (column.getFilterValue() as ExerciseType[]) ?? allTypes
 
-      const handleCheckChange = (value: ExerciseRowType["type"]) => {
+      const handleCheckChange = (value: ExerciseType) => {
         if (selectedTypes.includes(value)) {
           column.setFilterValue(
             selectedTypes.filter(val => val !== value)
@@ -109,7 +123,7 @@ export const columns: ColumnDef<ExerciseRowType>[] = [
         </DropdownMenu>
       )
     },
-    cell: ({ row }) => <div>{typeMap[row.getValue("type") as ExerciseRowType["type"]]}</div>,
+    cell: ({ row }) => <div>{typeMap[row.getValue("type") as ExerciseType]}</div>,
     filterFn: (row, columnId, filterValue) => {
       if (typeof filterValue === "undefined") return true;
       if (Array.isArray(filterValue) && filterValue.length === 0) return false;
@@ -139,7 +153,7 @@ export const columns: ColumnDef<ExerciseRowType>[] = [
     cell: ({ row }) => {
       const exerciseRow = row.original
 
-      const exercise: ExerciseMutationType = {
+      const exercise: ExerciseMutationFormSchema = {
         ...exerciseRow,
         tags: exerciseRow.tags.map(tag => tag.id)
       }
@@ -187,7 +201,14 @@ export const columns: ColumnDef<ExerciseRowType>[] = [
             </DialogHeader>
             {form === "Edit Exercise" && <EditExerciseForm exercise={exercise} onSuccess={handleEditExerciseSuccess} />}
             {form === "Hide Exercise" 
-              && <HideExerciseForm exerciseId={exercise.id} exerciseName={exercise.name} onSuccess={handleHideExerciseSuccess} close={() => setOpen(false)} />
+              && (
+                <HideExerciseForm 
+                  exerciseId={exerciseRow.id} 
+                  exerciseName={exercise.name} 
+                  onSuccess={handleHideExerciseSuccess} 
+                  close={() => setOpen(false)} 
+                />
+              )
             }
           </DialogContent>
         </Dialog>

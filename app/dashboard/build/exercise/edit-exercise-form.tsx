@@ -1,18 +1,17 @@
 "use client"
 
-import { 
-  useQuery
-} from "@tanstack/react-query"
+import { useQuery } from "@tanstack/react-query"
+import { toast } from "sonner"
 
 import { ExerciseMutationForm } from "@/components/forms/mutate-exercise-form/exercise-mutation-form"
+import { ExerciseMutationFormSchema } from "@/components/forms/mutate-exercise-form/exercise-mutation-form.schema"
 import { ExerciseMutationFormSkeleton } from "@/components/forms/mutate-exercise-form/exercise-mutation-form-skeleton"
 
 import { getExerciseWithoutUserId } from "./get-exercise-tags.action"
-import { ExerciseMutationType } from "./columns"
-import { toast } from "sonner"
 
 
-export function EditExerciseForm({ exercise, onSuccess }: { exercise: ExerciseMutationType, onSuccess: () => void }) {
+
+export function EditExerciseForm({ exercise, onSuccess }: { exercise: ExerciseMutationFormSchema, onSuccess: () => void }) {
   const { isPending, error, data } = useQuery({
     queryKey: ['exerciseTags'],
     queryFn: getExerciseWithoutUserId

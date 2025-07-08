@@ -3,15 +3,14 @@
 import { headers } from "next/headers"
 import { redirect } from "next/navigation"
 import { eq } from "drizzle-orm"
-import { z } from "zod"
 
 import { db } from "@/db/db"
-import { exercise, exerciseToExerciseTag, exerciseType } from "@/db/schema"
+import { exercise, exerciseToExerciseTag, exerciseType, timeDistanceDefaultUnits, weightRepsDefaultUnits } from "@/db/schema"
 import { auth } from "@/lib/auth"
 
-import { exerciseMutationFormSchema } from "./exercise-mutation-form.schema"
+import { ExerciseMutationFormSchema } from "./exercise-mutation-form.schema"
 
-export const mutateExercise = async (values: z.infer<typeof exerciseMutationFormSchema>) => {
+export const mutateExercise = async (values: ExerciseMutationFormSchema) => {
   const session = await auth.api.getSession({
     headers: await headers()
   })
@@ -58,6 +57,34 @@ export const mutateExercise = async (values: z.infer<typeof exerciseMutationForm
 
     if (exerciseToExerciseTagValues.length > 0) {
       await tx.insert(exerciseToExerciseTag).values(exerciseToExerciseTagValues)
+    }
+
+    if (values.type === "weightReps") {
+      await tx
+        .insert(weightRepsDefaultUnits)
+        .values({
+          exerciseId,
+          weightUnit: values.weightUnit
+        })
+        .onConflictDoUpdate({
+          target: weightRepsDefaultUnits.exerciseId,
+          set: { weightUnit: values.weightUnit }
+        })
+    } else if (values.type === "timeDistance") {
+      await tx
+        .insert(timeDistanceDefaultUnits)
+        .values({
+          exerciseId,
+          timeUnit: values.timeUnit,
+          distanceUnit: values.distanceUnit
+        })
+        .onConflictDoUpdate({
+          target: timeDistanceDefaultUnits.exerciseId,
+          set: { 
+            timeUnit: values.timeUnit,
+            distanceUnit: values.distanceUnit
+          }
+        })
     }
 
   })

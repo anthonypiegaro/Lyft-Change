@@ -1,7 +1,6 @@
 "use client"
 
 import { useState } from "react"
-import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 
@@ -26,7 +25,7 @@ import {
 import { Textarea } from "@/components/ui/textarea"
 
 import { mutateExercise } from "./exercise-mutation-form.action"
-import { exerciseMutationFormSchema } from "./exercise-mutation-form.schema"
+import { exerciseMutationFormSchema, ExerciseMutationFormSchema } from "./exercise-mutation-form.schema"
 
 export function ExerciseMutationForm({
   tags,
@@ -35,24 +34,18 @@ export function ExerciseMutationForm({
   onError
 }: {
   tags: { id: string, name: string }[]
-  defaultValues?: z.infer<typeof exerciseMutationFormSchema>
+  defaultValues: ExerciseMutationFormSchema
   onSuccess?: () => void
   onError?: (error: Error) => void
 }) {
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const form = useForm<z.infer<typeof exerciseMutationFormSchema>>({
+  const form = useForm<ExerciseMutationFormSchema>({
     resolver: zodResolver(exerciseMutationFormSchema),
-    defaultValues: {
-      id: defaultValues?.id,
-      type: defaultValues?.type ?? "weightReps",
-      name: defaultValues?.name ?? "",
-      tags: defaultValues?.tags ?? [],
-      description: defaultValues?.description ?? "",
-    }
+    defaultValues
   })
 
-  const onSubmit = async (values: z.infer<typeof exerciseMutationFormSchema>) => {
+  const onSubmit = async (values: ExerciseMutationFormSchema) => {
     setIsSubmitting(true)
 
     await mutateExercise(values)
@@ -63,7 +56,8 @@ export function ExerciseMutationForm({
           type: "weightReps",
           name: "",
           tags: [],
-          description: ""
+          description: "",
+          weightUnit: "lb"
         })
       })
       .catch(e => { 
@@ -79,6 +73,17 @@ export function ExerciseMutationForm({
     value: tag.id
   }))
 
+  const handleTypeChange = (value: string, onChange: (value: string) => void) => {
+    if (value === "weightReps") {
+      form.setValue("weightUnit", "lb")
+    } else if (value === "timeDistance") {
+      form.setValue("timeUnit", "m")
+      form.setValue("distanceUnit", "mi")
+    }
+
+    onChange(value)
+  }
+
   return (
     <Form {...form}>
       <form className="flex flex-col gap-y-4">
@@ -89,7 +94,7 @@ export function ExerciseMutationForm({
             <FormItem>
               <FormLabel>Type</FormLabel>
               <Select 
-                onValueChange={field.onChange} 
+                onValueChange={value => handleTypeChange(value, field.onChange)} 
                 defaultValue={field.value}
                 disabled={isSubmitting || defaultValues?.id !== undefined}
               >
@@ -107,6 +112,97 @@ export function ExerciseMutationForm({
             </FormItem>
           )}
         />
+        {
+          form.watch("type") === "weightReps" && (
+            <FormField 
+              control={form.control}
+              name="weightUnit"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Weight unit</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                    disabled={isSubmitting}
+                  >
+                    <FormControl>
+                      <SelectTrigger className="w-20">
+                        <SelectValue />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="g">g</SelectItem>
+                      <SelectItem value="kg">kg</SelectItem>
+                      <SelectItem value="oz">oz</SelectItem>
+                      <SelectItem value="lb">lb</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </FormItem>
+              )}
+            />
+          )
+        }
+        {
+          form.watch("type") === "timeDistance" && (
+            <div className="flex gap-x-4">
+              <FormField 
+                control={form.control}
+                name="timeUnit"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Time unit</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                      disabled={isSubmitting}
+                    >
+                      <FormControl>
+                        <SelectTrigger className="w-20">
+                          <SelectValue />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="ms">ms</SelectItem>
+                        <SelectItem value="s">s</SelectItem>
+                        <SelectItem value="m">m</SelectItem>
+                        <SelectItem value="h">h</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </FormItem>
+                )}
+              />
+              <FormField 
+                control={form.control}
+                name="distanceUnit"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Distance unit</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                      disabled={isSubmitting}
+                    >
+                      <FormControl>
+                        <SelectTrigger className="w-20">
+                          <SelectValue />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="mm">mm</SelectItem>
+                        <SelectItem value="m">m</SelectItem>
+                        <SelectItem value="km">km</SelectItem>
+                        <SelectItem value="in">in</SelectItem>
+                        <SelectItem value="ft">ft</SelectItem>
+                        <SelectItem value="yd">yd</SelectItem>
+                        <SelectItem value="mi">mi</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </FormItem>
+                )}
+              />
+            </div>
+          )
+        }
         <FormField 
           control={form.control}
           name="name"
@@ -164,7 +260,7 @@ export function ExerciseMutationForm({
           className="self-start"
         >
           {
-            defaultValues 
+            defaultValues.id
               ? (isSubmitting ? "Updating" : "Update") 
               : (isSubmitting ? "Creating" : "Create")
           }
