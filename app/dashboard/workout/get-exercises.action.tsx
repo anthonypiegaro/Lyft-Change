@@ -5,7 +5,7 @@ import { redirect } from "next/navigation"
 import { and, eq } from "drizzle-orm"
 
 import { db } from "@/db/db"
-import { exercise, exerciseTag, exerciseToExerciseTag, exerciseType } from "@/db/schema"
+import { exercise, exerciseTag, exerciseToExerciseTag, exerciseType, timeDistanceDefaultUnits, weightRepsDefaultUnits } from "@/db/schema"
 import { auth } from "@/lib/auth"
 
 import { ExerciseSelectExercise } from "./exercise-select"
@@ -27,24 +27,40 @@ export const getExercises = async (): Promise<ExerciseSelectExercise[]> => {
     typeId: exerciseType.id,
     type: exerciseType.name,
     tagId: exerciseTag.id,
-    tag: exerciseTag.name
+    tag: exerciseTag.name,
+    weightUnit: weightRepsDefaultUnits.weightUnit,
+    timeUnit: timeDistanceDefaultUnits.timeUnit,
+    distanceUnit: timeDistanceDefaultUnits.distanceUnit
   })
   .from(exercise)
-  .leftJoin(exerciseType, eq(exercise.typeId, exerciseType.id))
+  .innerJoin(exerciseType, eq(exercise.typeId, exerciseType.id))
   .leftJoin(exerciseToExerciseTag, eq(exercise.id, exerciseToExerciseTag.exerciseId))
   .leftJoin(exerciseTag, eq(exerciseToExerciseTag.exerciseTagId, exerciseTag.id))
+  .leftJoin(weightRepsDefaultUnits, eq(exercise.id, weightRepsDefaultUnits.exerciseId))
+  .leftJoin(timeDistanceDefaultUnits, eq(exercise.id, timeDistanceDefaultUnits.exerciseId))
   .where(and(eq(exercise.userId, userId), eq(exercise.hidden, false)))
 
   const exercises = exerciseRows.reduce((acc, row) => {
     if (!(row.id in acc)) {
-      acc[row.id] = {
-        id: row.id,
-        name: row.name,
-        type: {
-            id: row.typeId,
-            name: row.type
-        },
-        tags: []
+      if (row.type === "weightReps") {
+        acc[row.id] = {
+          id: row.id,
+          name: row.name,
+          typeId: row.typeId,
+          typeName: row.type,
+          tags: [],
+          weightUnit: row.weightUnit!
+        }
+      } else if (row.type === "timeDistance") {
+        acc[row.id] = {
+          id: row.id,
+          name: row.name,
+          typeId: row.typeId,
+          typeName: row.type,
+          tags: [],
+          timeUnit: row.timeUnit!,
+          distanceUnit: row.distanceUnit!
+        }
       }
     }
 
@@ -56,7 +72,7 @@ export const getExercises = async (): Promise<ExerciseSelectExercise[]> => {
     }
 
     return acc
-  }, {} as Record<string, any>)
+  }, {} as Record<string, ExerciseSelectExercise>)
 
   return Object.values(exercises)
 }

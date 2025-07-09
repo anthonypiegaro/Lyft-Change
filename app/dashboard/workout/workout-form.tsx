@@ -2,7 +2,6 @@
 
 import { RefObject, useLayoutEffect, useRef, useState } from "react"
 import { useRouter } from "next/navigation";
-import * as z from "zod/v4"
 import { DevTool } from "@hookform/devtools";
 import { zodResolver } from "@hookform/resolvers/zod"
 import {
@@ -509,7 +508,7 @@ export function WorkoutForm({
   initExerciseTags: ExerciseTag[]
   initWorkoutTags: WorkoutTag[]
   workoutType: "instance" | "template"
-  defaultValues: z.infer<typeof workoutFormSchema>
+  defaultValues: WorkoutFormSchema
   initExercises: ExerciseSelectExercise[]
 }) {
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -525,7 +524,7 @@ export function WorkoutForm({
 
   const { showPopup } = usePopup()
 
-  const form = useForm<z.infer<typeof workoutFormSchema>>({
+  const form = useForm<WorkoutFormSchema>({
     resolver: zodResolver(workoutFormSchema),
     defaultValues
   })
@@ -535,7 +534,7 @@ export function WorkoutForm({
     name: "exercises"
   })
 
-  const onSubmit = async (values: z.infer<typeof workoutFormSchema>) => {
+  const onSubmit = async (values: WorkoutFormSchema) => {
     setIsSubmitting(true)
 
     if (workoutType === "instance") {
@@ -579,14 +578,14 @@ export function WorkoutForm({
   }
 
   function addExercise(selectedExercise: ExerciseSelectExercise) {
-    if (selectedExercise.type.name === "weightReps") {
+    if (selectedExercise.typeName === "weightReps") {
       append({
         exerciseId: selectedExercise.id,
         name: selectedExercise.name,
         type: "weightReps",
         notes: "",
         units: {
-          weight: "lb",
+          weight: selectedExercise.weightUnit,
           reps: "reps"
         },
         sets: []
@@ -595,15 +594,15 @@ export function WorkoutForm({
           shouldFocus: false
         }
       )
-    } else if (selectedExercise.type.name === "timeDistance") {
+    } else if (selectedExercise.typeName === "timeDistance") {
       append({
         exerciseId: selectedExercise.id,
         name: selectedExercise.name,
         type: "timeDistance",
         notes: "",
         units: {
-          time: "m",
-          distance: "mi"
+          time: selectedExercise.timeUnit,
+          distance: selectedExercise.distanceUnit
         },
         sets: []
         },

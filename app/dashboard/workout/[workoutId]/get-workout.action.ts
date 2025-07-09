@@ -3,7 +3,6 @@
 import { headers } from "next/headers"
 import { notFound, redirect } from "next/navigation"
 import { eq } from "drizzle-orm"
-import { z } from "zod"
 
 import { db } from "@/db/db"
 import {

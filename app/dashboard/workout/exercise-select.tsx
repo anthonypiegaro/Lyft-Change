@@ -18,24 +18,34 @@ import { cn } from "@/lib/utils"
 
 import { CreateExerciseForm } from "./create-exercise-form"
 import { ExerciseTag } from "./workout-form"
+import { DistanceUnits, TimeUnits, WeightUnits } from "./workout-form.schema"
 
-export type ExerciseSelectExercise = {
+type WeightRepsExercise = {
   id: string
   name: string
-  type: {
-    id: string
-    name: "weightReps" | "timeDistance"
-  }
+  typeId: string
+  typeName: "weightReps"
+  weightUnit: WeightUnits
   tags: {
     id: string
     name: string
   }[]
 }
 
-const typeMap: Record<ExerciseSelectExercise["type"]["name"], string> = {
-  "weightReps": "Weight Reps",
-  "timeDistance": "Time Distance"
+type TimeDistanceExercise = {
+  id: string
+  name: string
+  typeId: string
+  typeName: "timeDistance"
+  timeUnit: TimeUnits
+  distanceUnit: DistanceUnits
+  tags: {
+    id: string
+    name: string
+  }[]
 }
+
+export type ExerciseSelectExercise = WeightRepsExercise | TimeDistanceExercise
 
 export function ExerciseSelect({
   exercises,
@@ -59,7 +69,7 @@ export function ExerciseSelect({
   const [nameFilter, setNameFilter] = useState<string>("")
 
   // the "type name" is used for the typeFilter
-  const [typeFilter, setTypeFilter] = useState<Set<string>>(new Set<string>(Object.keys(typeMap)))
+  const [typeFilter, setTypeFilter] = useState<Set<string>>(new Set<"weightReps" | "timeDistance">(["weightReps", "timeDistance"]))
 
   // a list of "tag ids" are used for the tagFilter
   const [tagFilter, setTagFilter] = useState<string[]>([])
@@ -67,7 +77,7 @@ export function ExerciseSelect({
   const filteredExercises = useMemo(() => {
     return exercises
       .filter(exercise => exercise.name.toLowerCase().includes(nameFilter.toLowerCase()))
-      .filter(exercise => typeFilter.has(exercise.type.name))
+      .filter(exercise => typeFilter.has(exercise.typeName))
       .filter(exercise => tagFilter.every(
         tagId => exercise.tags.some(tag => tag.id === tagId)
       ))
@@ -168,15 +178,20 @@ export function ExerciseSelect({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-              {Object.keys(typeMap).map(type => (
-                <DropdownMenuCheckboxItem
-                  key={type}
-                  checked={typeFilter.has(type)}
-                  onCheckedChange={() => handleTypeFilterChange(type)}
-                >
-                  {typeMap[type as ExerciseSelectExercise["type"]["name"]]}
-                </DropdownMenuCheckboxItem>
-              ))}
+              <DropdownMenuCheckboxItem
+                key="weightReps"
+                checked={typeFilter.has("weightReps")}
+                onCheckedChange={() => handleTypeFilterChange("weightReps")}
+              >
+                Weight Reps
+              </DropdownMenuCheckboxItem>
+              <DropdownMenuCheckboxItem
+                key="timeDistance"
+                checked={typeFilter.has("timeDistance")}
+                onCheckedChange={() => handleTypeFilterChange("timeDistance")}
+              >
+                TimeDistance
+              </DropdownMenuCheckboxItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
@@ -230,7 +245,7 @@ export function ExerciseSelect({
                   onClick={() => handleSelect(exercise)}
                 >
                   <div className="text-lg font-medium truncate">{exercise.name}</div>
-                  <div className="text-muted-foreground text-sm truncate">{typeMap[exercise.type.name]}</div>
+                  <div className="text-muted-foreground text-sm truncate">{exercise.typeName === "weightReps" ? "Weight Reps" : "Time Distance"}</div>
                   <div className="truncate">
                     {exercise.tags.map(tag => (
                       <Badge key={tag.id} className="mr-1">{tag.name}</Badge>
