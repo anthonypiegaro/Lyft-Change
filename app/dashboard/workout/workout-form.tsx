@@ -787,13 +787,24 @@ export function WorkoutForm({
               Add Exercise
           </Button>
       )}
-        <Button
-          type="button"
-          onClick={form.handleSubmit(onSubmit)}
-          disabled={isSubmitting}
-        >
-          {workoutType === "instance" ? isSubmitting ? "Finsishing Workout..." : "Finish Workout" : isSubmitting ? "Creating Workout..." : "Create Workout"}
-        </Button>
+        {workoutType === "instance" && (
+          <Button
+            type="button"
+            onClick={form.handleSubmit(onSubmit)}
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "Finsishing Workout..." : "Finish Workout"}
+          </Button>
+        )}
+        {workoutType === "template" && (
+          <Button
+            type="button"
+            onClick={form.handleSubmit(onSubmit)}
+            disabled={isSubmitting}
+          >
+            {form.watch("id") ? isSubmitting ? "Updating Workout..." : "Update Workout" : isSubmitting ? "Creating Workout..." : "Create Workout"}
+          </Button>
+        )}
       </form>
     </Form>
 

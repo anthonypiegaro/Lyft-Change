@@ -10,7 +10,9 @@ import {
   exerciseInstance,
   exerciseType,
   setInstance,
+  timeDistanceExerciseInstanceUnits,
   timeDistanceInstance,
+  weightRepsExerciseInstanceUnits,
   weightRepsInstance,
   workoutInstance
 } from "@/db/schema"
@@ -59,11 +61,16 @@ export const getWorkout = async (id: string): Promise<Omit<WorkoutFormSchema, "d
     exerciseId: exerciseInstance.exerciseId,
     name: exercise.name,
     type: exerciseType.name,
-    notes: exerciseInstance.notes
+    notes: exerciseInstance.notes,
+    weightUnit: weightRepsExerciseInstanceUnits.weightUnit,
+    timeUnit: timeDistanceExerciseInstanceUnits.timeUnit,
+    distanceUnit: timeDistanceExerciseInstanceUnits.distanceUnit
   })
   .from(exerciseInstance)
   .innerJoin(exercise, eq(exerciseInstance.exerciseId, exercise.id))
   .innerJoin(exerciseType, eq(exercise.typeId, exerciseType.id))
+  .leftJoin(weightRepsExerciseInstanceUnits, eq(exerciseInstance.id, weightRepsExerciseInstanceUnits.exerciseInstanceId))
+  .leftJoin(timeDistanceExerciseInstanceUnits, eq(exerciseInstance.id, timeDistanceExerciseInstanceUnits.exerciseInstanceId))
   .where(eq(exerciseInstance.workoutInstanceId, id))
   .orderBy(exerciseInstance.orderNumber)
 
@@ -85,11 +92,11 @@ export const getWorkout = async (id: string): Promise<Omit<WorkoutFormSchema, "d
         type: "weightReps",
         notes: exerciseRes.notes ?? "",
         units: {
-          weight: "lb",
+          weight: exerciseRes.weightUnit!,
           reps: "reps"
         },
         sets: setsRes.map(set => ({
-          weight: Math.round(weightFromGrams["lb"](set.weight) * 100) / 100,
+          weight: Math.round(weightFromGrams[exerciseRes.weightUnit!](set.weight) * 100) / 100,
           reps: set.reps,
           completed: set.completed
         }))
@@ -111,12 +118,12 @@ export const getWorkout = async (id: string): Promise<Omit<WorkoutFormSchema, "d
         type: "timeDistance",
         notes: exerciseRes.notes ?? "",
         units: {
-          time: "m",
-          distance: "mi"
+          time: exerciseRes.timeUnit!,
+          distance: exerciseRes.distanceUnit!
         },
         sets: setsRes.map(set => ({
-          time: Math.round(timeFromMilliseconds["m"](set.time) * 100) / 100,
-          distance: Math.round(distanceFromMillimeters["mi"](set.distance) * 100) / 100,
+          time: Math.round(timeFromMilliseconds[exerciseRes.timeUnit!](set.time) * 100) / 100,
+          distance: Math.round(distanceFromMillimeters[exerciseRes.distanceUnit!](set.distance) * 100) / 100,
           completed: set.completed
         }))
       })

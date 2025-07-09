@@ -5,7 +5,7 @@ import { redirect } from "next/navigation"
 import { and, eq, sql } from "drizzle-orm"
 
 import { db } from "@/db/db"
-import { exerciseInstance, setInstance, timeDistanceInstance, weightRepsInstance, workoutInstance } from "@/db/schema"
+import { exerciseInstance, setInstance, timeDistanceExerciseInstanceUnits, timeDistanceInstance, weightRepsExerciseInstanceUnits, weightRepsInstance, workoutInstance } from "@/db/schema"
 import { auth } from "@/lib/auth"
 
 import { PersonalRecord } from "./workout-form"
@@ -54,6 +54,11 @@ export const createWorkoutInstance = async (values: WorkoutFormSchema): Promise<
         }).returning({ id: exerciseInstance.id })
 
         const exerciseInstanceId = exerciseRes[0].id
+
+        await tx.insert(weightRepsExerciseInstanceUnits).values({
+          exerciseInstanceId: exerciseInstanceId,
+          weightUnit: exercise.units.weight
+        })
 
         const maxWeightQuery = await tx
           .select({ maxWeight: sql`MAX(weight)` })
@@ -111,6 +116,12 @@ export const createWorkoutInstance = async (values: WorkoutFormSchema): Promise<
         }).returning({ id: exerciseInstance.id })
 
         const exerciseInstanceId = exerciseRes[0].id
+
+        await tx.insert(timeDistanceExerciseInstanceUnits).values({
+          exerciseInstanceId: exerciseInstanceId,
+          timeUnit: exercise.units.time,
+          distanceUnit: exercise.units.distance
+        })
 
         for (let setIndex = 0; setIndex < exercise.sets.length; setIndex++) {
           const set = exercise.sets[setIndex]
