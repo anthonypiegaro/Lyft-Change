@@ -71,20 +71,38 @@ export function CreateExerciseForm({
 
     await createExercise(values)
       .then(data => {
-        const newExercise: ExerciseSelectExercise = {
-          id: data.id,
-          name: values.name,
-          type: {
-            id: data.typeId,
-            name: values.type
-          },
-          tags: values.tags.map(tag => ({
-            id: tag,
-            name: tagOptions.find(tagOption => tagOption.value === tag)?.label as string
-          }))
-        }
+        let newExercise: ExerciseSelectExercise
 
-        onAdd(newExercise)
+        if (values.type === "weightReps") {
+          newExercise = {
+            id: data.id,
+            name: values.name,
+            typeId: data.typeId,
+            typeName: "weightReps",
+            weightUnit: values.weightUnit,
+            tags: values.tags.map(tag => ({
+              id: tag,
+              name: tagOptions.find(tagOption => tagOption.value === tag)?.label as string
+            }))
+          }
+
+          onAdd(newExercise)
+        } else if (values.type === "timeDistance") {
+          newExercise = {
+            id: data.id,
+            name: values.name,
+            typeId: data.typeId,
+            typeName: "timeDistance",
+            timeUnit: values.timeUnit,
+            distanceUnit: values.distanceUnit,
+            tags: values.tags.map(tag => ({
+              id: tag,
+              name: tagOptions.find(tagOption => tagOption.value === tag)?.label as string
+            }))
+          }
+
+          onAdd(newExercise)
+        }
       })
       .catch(error => {
         toast.error("Error", {
