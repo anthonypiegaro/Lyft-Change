@@ -57,7 +57,7 @@ export function AddEntityButton({
     : "Program Form"
 
   return (
-    <Dialog open={type === "workout" ? false : open} onOpenChange={setOpen}>
+    <Dialog open={(type === "workout" || type === "program") ? false : open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button
           variant="outline"

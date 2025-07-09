@@ -14,8 +14,12 @@ import {
   programWorkout, 
   setInstance, 
   setTemplate, 
+  timeDistanceExerciseInstanceUnits, 
+  timeDistanceExerciseTemplateUnits, 
   timeDistanceInstance, 
   timeDistanceTemplate, 
+  weightRepsExerciseInstanceUnits, 
+  weightRepsExerciseTemplateUnits, 
   weightRepsInstance, 
   weightRepsTemplate, 
   workout,
@@ -86,11 +90,16 @@ export const addProgramToCalendar = async (values: AddProgramFormSchema): Promis
           exerciseId: exerciseTemplate.exerciseId,
           type: exerciseType.name,
           notes: exerciseTemplate.notes,
-          orderNumber: exerciseTemplate.orderNumber
+          orderNumber: exerciseTemplate.orderNumber,
+          weightUnit: weightRepsExerciseTemplateUnits.weightUnit,
+          timeUnit: timeDistanceExerciseTemplateUnits.timeUnit,
+          distanceUnit: timeDistanceExerciseTemplateUnits.distanceUnit
         })
         .from(exerciseTemplate)
         .innerJoin(exercise, eq(exerciseTemplate.exerciseId, exercise.id))
         .innerJoin(exerciseType, eq(exercise.typeId, exerciseType.id))
+        .leftJoin(weightRepsExerciseTemplateUnits, eq(exerciseTemplate.id, weightRepsExerciseTemplateUnits.exerciseTemplateId))
+        .leftJoin(timeDistanceExerciseTemplateUnits, eq(exerciseTemplate.id, timeDistanceExerciseTemplateUnits.exerciseTemplateId))
         .where(eq(exerciseTemplate.workoutId, workoutRes.workoutId))
       
       for (const workoutExercise of workoutExercises) {
@@ -107,6 +116,19 @@ export const addProgramToCalendar = async (values: AddProgramFormSchema): Promis
         
 
         const exerciseInstanceId = exerciseInstanceRes[0].id
+
+        if (workoutExercise.type === "weightReps") {
+          await tx.insert(weightRepsExerciseInstanceUnits).values({
+            exerciseInstanceId: exerciseInstanceId,
+            weightUnit: workoutExercise.weightUnit!
+          })
+        } else if (workoutExercise.type === "timeDistance") {
+          await tx.insert(timeDistanceExerciseInstanceUnits).values({
+            exerciseInstanceId: exerciseInstanceId,
+            timeUnit: workoutExercise.timeUnit!,
+            distanceUnit: workoutExercise.distanceUnit!
+          })
+        }
 
         const templateSets = await tx.select({
             id: setTemplate.id,
