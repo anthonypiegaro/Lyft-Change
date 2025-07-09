@@ -8,7 +8,9 @@ import { db } from "@/db/db"
 import { 
   exerciseTemplate, 
   setTemplate,
+  timeDistanceExerciseTemplateUnits,
   timeDistanceTemplate,
+  weightRepsExerciseTemplateUnits,
   weightRepsTemplate,
   workout, 
   workoutToWorkoutTag 
@@ -32,8 +34,6 @@ export const createWorkoutTemplate = async (values: WorkoutFormSchema) => {
   }
 
   const userId = session.user.id
-
-  console.log(JSON.stringify(values))
 
   await db.transaction(async tx => {
     if (values.id != undefined) {
@@ -69,6 +69,11 @@ export const createWorkoutTemplate = async (values: WorkoutFormSchema) => {
 
         const exerciseTemplateId = exerciseTemplateRes[0].id
 
+        await tx.insert(weightRepsExerciseTemplateUnits).values({
+          exerciseTemplateId: exerciseTemplateId,
+          weightUnit: exercise.units.weight
+        })
+
         for (const [index, set] of exercise.sets.entries()) {
           const setTemplateRes = await tx.insert(setTemplate).values({
             exerciseTemplateId: exerciseTemplateId,
@@ -84,7 +89,7 @@ export const createWorkoutTemplate = async (values: WorkoutFormSchema) => {
           await tx.insert(weightRepsTemplate).values({
             setTemplateId: setTemplateId,
             weight: Math.round(weightInGrams),
-            reps: set.reps
+            reps: set.reps,
           })
         }
 
@@ -99,6 +104,12 @@ export const createWorkoutTemplate = async (values: WorkoutFormSchema) => {
         }).returning({ id: exerciseTemplate.id })
 
         const exerciseTemplateId = exerciseTemplateRes[0].id
+
+        await tx.insert(timeDistanceExerciseTemplateUnits).values({
+          exerciseTemplateId: exerciseTemplateId,
+          timeUnit: exercise.units.time,
+          distanceUnit: exercise.units.distance
+        })
 
         for (const [index, set] of exercise.sets.entries()) {
           const setTemplateRes = await tx.insert(setTemplate).values({
@@ -118,7 +129,7 @@ export const createWorkoutTemplate = async (values: WorkoutFormSchema) => {
           await tx.insert(timeDistanceTemplate).values({
             setTemplateId: setTemplateId,
             time: Math.round(timeInMilliseconds),
-            distance: Math.round(distanceInMillimeters)
+            distance: Math.round(distanceInMillimeters),
           })
         }
 

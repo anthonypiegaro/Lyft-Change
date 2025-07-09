@@ -3,7 +3,6 @@
 import { headers } from "next/headers"
 import { notFound, redirect } from "next/navigation"
 import { eq } from "drizzle-orm"
-import { z } from "zod"
 
 import { db } from "@/db/db"
 import { 
@@ -11,7 +10,9 @@ import {
   exerciseTemplate, 
   exerciseType,
   setTemplate,
+  timeDistanceExerciseTemplateUnits,
   timeDistanceTemplate,
+  weightRepsExerciseTemplateUnits,
   weightRepsTemplate,
   workout,
   workoutToWorkoutTag 
@@ -64,11 +65,16 @@ export const getWorkoutTemplate = async (id: string): Promise<WorkoutFormSchema>
     exerciseId: exercise.id,
     name: exercise.name,
     type: exerciseType.name,
-    notes: exerciseTemplate.notes
+    notes: exerciseTemplate.notes,
+    weightUnit: weightRepsExerciseTemplateUnits.weightUnit,
+    timeUnit: timeDistanceExerciseTemplateUnits.timeUnit,
+    distanceUnit: timeDistanceExerciseTemplateUnits.distanceUnit
   })
   .from(exerciseTemplate)
   .innerJoin(exercise, eq(exerciseTemplate.exerciseId, exercise.id))
   .innerJoin(exerciseType, eq(exercise.typeId, exerciseType.id))
+  .leftJoin(weightRepsExerciseTemplateUnits, eq(exerciseTemplate.id, weightRepsExerciseTemplateUnits.exerciseTemplateId))
+  .leftJoin(timeDistanceExerciseTemplateUnits, eq(exerciseTemplate.id, timeDistanceExerciseTemplateUnits.exerciseTemplateId))
   .where(eq(exerciseTemplate.workoutId, workoutId))
   .orderBy(exerciseTemplate.orderNumber)
 
@@ -89,11 +95,11 @@ export const getWorkoutTemplate = async (id: string): Promise<WorkoutFormSchema>
           type: "weightReps",
           notes: exerciseRes.notes ?? "",
           units: {
-            weight: "lb",
+            weight: exerciseRes.weightUnit!,
             reps: "reps"
           },
           sets: setsRes.map(set => ({
-            weight: Math.round(weightFromGrams["lb"](set.weight) * 100) / 100,
+            weight: Math.round(weightFromGrams[exerciseRes.weightUnit!](set.weight) * 100) / 100,
             reps: set.reps,
             completed: false
           }))
@@ -114,12 +120,12 @@ export const getWorkoutTemplate = async (id: string): Promise<WorkoutFormSchema>
           type: "timeDistance",
           notes: exerciseRes.notes ?? "",
           units: {
-            time: "m",
-            distance: "mi"
+            time: exerciseRes.timeUnit!,
+            distance: exerciseRes.distanceUnit!
           },
           sets: setsRes.map(set => ({
-            time: Math.round(timeFromMilliseconds["m"](set.time) * 100) / 100,
-            distance: Math.round(distanceFromMillimeters["mi"](set.distance) * 100) / 100,
+            time: Math.round(timeFromMilliseconds[exerciseRes.timeUnit!](set.time) * 100) / 100,
+            distance: Math.round(distanceFromMillimeters[exerciseRes.distanceUnit!](set.distance) * 100) / 100,
             completed: false
           }))
         })

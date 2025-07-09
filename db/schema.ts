@@ -133,6 +133,19 @@ export const exerciseTemplate = pgTable("exercise_template", {
   orderNumber: integer("order_number").notNull()
 })
 
+export const weightRepsExerciseTemplateUnits = pgTable("weight_reps_exercise_template_units", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  exerciseTemplateId: uuid("exercise_template_id").notNull().unique().references(() => exerciseTemplate.id, { onDelete: "cascade" }),
+  weightUnit: weightUnitsEnum().notNull()
+})
+
+export const timeDistanceExerciseTemplateUnits = pgTable("time_distance_exercise_template_units", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  exerciseTemplateId: uuid("exercise_template_id").notNull().unique().references(() => exerciseTemplate.id, { onDelete: "cascade" }),
+  timeUnit: timeUnitsEnum().notNull(),
+  distanceUnit: distanceUnitsEnum().notNull()
+})
+
 export const exerciseInstance = pgTable("exercise_instance", {
   id: uuid("id").primaryKey().defaultRandom(),
   userId: text("user_id").notNull().references(() => user.id, { onDelete: "cascade" }),
@@ -140,6 +153,19 @@ export const exerciseInstance = pgTable("exercise_instance", {
   workoutInstanceId: uuid("workout_instance_id").notNull().references(() => workoutInstance.id, { onDelete: "cascade" }),
   notes: text("notes"),
   orderNumber: integer("order_number").notNull()
+})
+
+export const weightRepsExerciseInstanceUnits = pgTable("weight_reps_exercise_instance_units", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  exerciseInstanceId: uuid("exercise_instance_id").notNull().unique().references(() => exerciseInstance.id, { onDelete: "cascade" }),
+  weightUnit: weightUnitsEnum().notNull()
+})
+
+export const timeDistanceExerciseInstanceUnits = pgTable("time_distance_exercise_instance_units", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  exerciseInstanceId: uuid("exercise_instance_id").notNull().unique().references(() => exerciseInstance.id, { onDelete: "cascade" }),
+  timeUnit: timeUnitsEnum().notNull(),
+  distanceUnit: distanceUnitsEnum().notNull()
 })
 
 export const setTemplate = pgTable("set_template", {
@@ -160,7 +186,6 @@ export const weightRepsTemplate = pgTable("weight_reps_template", {
   setTemplateId: uuid("set_template_id").notNull().references(() => setTemplate.id, { onDelete: "cascade" }),
   weight: integer("weight").notNull(),
   reps: integer("reps").notNull(),
-  weightUnit: weightUnitsEnum().notNull()
 })
 
 export const weightRepsInstance = pgTable("weight_reps_instance", {
@@ -168,7 +193,6 @@ export const weightRepsInstance = pgTable("weight_reps_instance", {
   setInstanceId: uuid("set_instance_id").notNull().references(() => setInstance.id, { onDelete: "cascade" }),
   weight: integer("weight").notNull(),
   reps: integer("reps").notNull(),
-  weightUnit: weightUnitsEnum().notNull()
 })
 
 export const timeDistanceTemplate = pgTable("time_distance_template", {
@@ -176,8 +200,6 @@ export const timeDistanceTemplate = pgTable("time_distance_template", {
   setTemplateId: uuid("set_template_id").notNull().references(() => setTemplate.id, { onDelete: "cascade" }),
   time: integer("time").notNull(),
   distance: integer("distance").notNull(),
-  timeUnit: timeUnitsEnum().notNull(),
-  distanceUnit: distanceUnitsEnum().notNull()
 })
 
 export const timeDistanceInstance = pgTable("time_distance_instance", {
@@ -185,8 +207,6 @@ export const timeDistanceInstance = pgTable("time_distance_instance", {
   setInstanceId: uuid("set_instance_id").notNull().references(() => setInstance.id, { onDelete: "cascade" }),
   time: integer("time").notNull(),
   distance: integer("distance").notNull(),
-  timeUnit: timeUnitsEnum().notNull(),
-  distanceUnit: distanceUnitsEnum().notNull()
 })
 
 export const program = pgTable("program", {
@@ -225,6 +245,8 @@ export const schema = {
   verification,
   // Tables above this comment were built by 'Better Auth' for their service
   exerciseType,
+  weightRepsDefaultUnits,
+  timeDistanceDefaultUnits,
   exercise,
   exerciseTag,
   exerciseToExerciseTag,
