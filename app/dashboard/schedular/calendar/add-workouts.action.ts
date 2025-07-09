@@ -12,8 +12,12 @@ import {
   exerciseType, 
   setInstance, 
   setTemplate, 
+  timeDistanceExerciseInstanceUnits, 
+  timeDistanceExerciseTemplateUnits, 
   timeDistanceInstance, 
   timeDistanceTemplate, 
+  weightRepsExerciseInstanceUnits, 
+  weightRepsExerciseTemplateUnits, 
   weightRepsInstance, 
   weightRepsTemplate,
   workout, 
@@ -64,11 +68,16 @@ export const addWorkouts = async ({
         exerciseId: exerciseTemplate.exerciseId,
         exerciseType: exerciseType.name,
         notes: exerciseTemplate.notes,
-        orderNumber: exerciseTemplate.orderNumber
+        orderNumber: exerciseTemplate.orderNumber,
+        weightUnit: weightRepsExerciseTemplateUnits.weightUnit,
+        timeUnit: timeDistanceExerciseTemplateUnits.timeUnit,
+        distanceUnit: timeDistanceExerciseTemplateUnits.distanceUnit
       })
       .from(exerciseTemplate)
       .leftJoin(exercise, eq(exerciseTemplate.exerciseId, exercise.id))
       .leftJoin(exerciseType, eq(exercise.typeId, exerciseType.id))
+      .leftJoin(weightRepsExerciseTemplateUnits, eq(exerciseTemplate.id, weightRepsExerciseTemplateUnits.exerciseTemplateId))
+      .leftJoin(timeDistanceExerciseTemplateUnits, eq(exerciseTemplate.id, timeDistanceExerciseTemplateUnits.exerciseTemplateId))
       .where(eq(exerciseTemplate.workoutId, templateId))
 
       for (const exerciseTemp of exercises) {
@@ -83,6 +92,11 @@ export const addWorkouts = async ({
         const exerciseInstanceId = exerciseInstanceRes[0].id
 
         if (exerciseTemp.exerciseType === "weightReps") {
+          await tx.insert(weightRepsExerciseInstanceUnits).values({
+            exerciseInstanceId: exerciseInstanceId,
+            weightUnit: exerciseTemp.weightUnit!
+          })
+
           const templateSets = await tx.select().from(setTemplate).where(eq(setTemplate.exerciseTemplateId, exerciseTemp.id))
 
           for (const templateSet of templateSets) {
@@ -103,6 +117,12 @@ export const addWorkouts = async ({
           }
 
         } else if (exerciseTemp.exerciseType === "timeDistance") {
+          await tx.insert(timeDistanceExerciseInstanceUnits).values({
+            exerciseInstanceId: exerciseInstanceId,
+            timeUnit: exerciseTemp.timeUnit!,
+            distanceUnit: exerciseTemp.distanceUnit!
+          })
+
           const templateSets = await tx.select().from(setTemplate).where(eq(setTemplate.exerciseTemplateId, exerciseTemp.id))
 
           for (const templateSet of templateSets) {
