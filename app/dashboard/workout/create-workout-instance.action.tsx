@@ -38,7 +38,8 @@ export const createWorkoutInstance = async (values: WorkoutFormSchema): Promise<
       userId: userId,
       name: values.name,
       notes: values.notes,
-      date: values.date.toISOString().slice(0, 10)
+      date: values.date.toISOString().slice(0, 10),
+      completed: true
     }).returning({ workoutId: workoutInstance.id })
 
     const workoutId = workout[0].workoutId

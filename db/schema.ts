@@ -121,7 +121,8 @@ export const workoutInstance = pgTable("workout_instance", {
   userId: text("user_id").notNull().references(() => user.id, { onDelete: "cascade" }),
   name: text("name").notNull(),
   notes: text("notes"),
-  date: date("date").notNull()
+  date: date("date").notNull(),
+  completed: boolean("completed").default(false)
 })
 
 export const exerciseTemplate = pgTable("exercise_template", {
