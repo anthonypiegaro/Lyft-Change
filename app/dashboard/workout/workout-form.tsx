@@ -2,7 +2,6 @@
 
 import { RefObject, useLayoutEffect, useRef, useState } from "react"
 import { useRouter } from "next/navigation";
-import { DevTool } from "@hookform/devtools";
 import { zodResolver } from "@hookform/resolvers/zod"
 import {
   FieldArrayWithId,
@@ -822,7 +821,6 @@ export function WorkoutForm({
         />
       </DialogContent>
     </Dialog>
-    <DevTool control={form.control} />
     </>
   )
 }
