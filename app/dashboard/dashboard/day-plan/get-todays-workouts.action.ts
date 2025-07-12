@@ -9,6 +9,8 @@ import { exercise, exerciseInstance, setInstance, workoutInstance } from "@/db/s
 import { auth } from "@/lib/auth"
 import { Workout } from "./day-plan"
 
+// Currently only grabbong exercises that have at least one set????
+
 export const getTodaysWorkouts = async (date: string): Promise<Workout[]> => {
   const session = await auth.api.getSession({
     headers: await headers()
@@ -24,14 +26,15 @@ export const getTodaysWorkouts = async (date: string): Promise<Workout[]> => {
     .select({
       id: workoutInstance.id,
       name: workoutInstance.name,
+      completed: workoutInstance.completed,
       exerciseName: exercise.name,
       exerciseOrder: exerciseInstance.orderNumber,
       setId: setInstance.id
     })
     .from(workoutInstance)
-    .innerJoin(exerciseInstance, eq(exerciseInstance.workoutInstanceId, workoutInstance.id))
+    .leftJoin(exerciseInstance, eq(exerciseInstance.workoutInstanceId, workoutInstance.id))
     .innerJoin(exercise, eq(exerciseInstance.exerciseId, exercise.id))
-    .innerJoin(setInstance, eq(exerciseInstance.id, setInstance.exerciseInstanceId))
+    .leftJoin(setInstance, eq(exerciseInstance.id, setInstance.exerciseInstanceId))
     .where(and(
       eq(workoutInstance.userId, userId),
       eq(workoutInstance.date, date)
@@ -42,11 +45,12 @@ export const getTodaysWorkouts = async (date: string): Promise<Workout[]> => {
       acc[row.id] = {
         id: row.id,
         name: row.name,
+        completed: row.completed,
         exercises: {}
       }
     }
 
-    if (!(row.exerciseOrder in acc[row.id].exercises)) {
+    if (row.exerciseOrder && !(row.exerciseOrder in acc[row.id].exercises)) {
       acc[row.id].exercises[row.exerciseOrder] = {
         orderNumber: row.exerciseOrder,
         name: row.exerciseName,
@@ -54,18 +58,22 @@ export const getTodaysWorkouts = async (date: string): Promise<Workout[]> => {
       }
     }
 
-    acc[row.id].exercises[row.exerciseOrder].sets++
+    if (row.exerciseOrder) {
+      acc[row.id].exercises[row.exerciseOrder].sets++
+    }
 
     return acc
   }, {} as Record<string, {
     id: string,
     name: string,
+    completed: boolean,
     exercises: Record<number, { name: string, sets: number, orderNumber: number }>
   }>)
 
   const processedData = Object.values(workoutData).map(workout => ({
     id: workout.id,
     name: workout.name,
+    completed: workout.completed,
     exercises: Object
       .values(workout.exercises)
       .sort((a, b) => a.orderNumber - b.orderNumber)

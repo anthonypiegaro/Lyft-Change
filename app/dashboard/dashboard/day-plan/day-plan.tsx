@@ -1,3 +1,4 @@
+import Link from "next/link"
 import { Calendar, Calendar1, Plus, Zap } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -10,7 +11,8 @@ import {
   CardTitle
 } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
-import Link from "next/link"
+import { cn } from "@/lib/utils"
+
 import { TemplateList } from "./template-list"
 import { WorkoutByTemplateDialog } from "./workout-by-template-dialog"
 
@@ -279,6 +281,7 @@ import { WorkoutByTemplateDialog } from "./workout-by-template-dialog"
 export type Workout = {
   id: string
   name: string
+  completed: boolean
   exercises: {
     name: string
     sets: number
@@ -327,7 +330,13 @@ export function DayPlan({
           {todaysWorkouts.length === 0 && <p className="w-full text-center text-2xl font-medium">No workouts for today</p>}
           {todaysWorkouts.map(workout => (
             <Link key={workout.id} href={`/dashboard/workout/${workout.id}`} className="group">
-              <Card className="gap-2 transition-all group-hover:bg-neutral-100 dark:group-hover:bg-neutral-800">
+              <Card className="relative gap-2 transition-all group-hover:bg-neutral-100 dark:group-hover:bg-neutral-800">
+                <div className={cn(
+                  "absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-card border rounded-full p-1 text-sm",
+                  !workout.completed && "hidden"
+                )}>
+                  Completed
+                </div>
                 <CardHeader>
                   <CardTitle className="text-lg">
                     {workout.name}

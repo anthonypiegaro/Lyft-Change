@@ -85,6 +85,8 @@ export const getWorkout = async (id: string): Promise<Omit<WorkoutFormSchema, "d
       .innerJoin(weightRepsInstance, eq(setInstance.id, weightRepsInstance.setInstanceId))
       .where(eq(setInstance.exerciseInstanceId, exerciseRes.id))
       .orderBy(setInstance.orderNumber)
+    
+      console.log("The Unit:", exerciseRes.weightUnit)
 
       workout.exercises.push({
         exerciseId: exerciseRes.exerciseId,
