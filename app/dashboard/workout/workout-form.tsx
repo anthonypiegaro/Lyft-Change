@@ -537,7 +537,17 @@ export function WorkoutForm({
     setIsSubmitting(true)
 
     if (workoutType === "instance") {
-      await createWorkoutInstance(values)
+      const year = values.date.getFullYear()
+      const month = String(values.date.getMonth() + 1).padStart(2, "0")
+      const day = String(values.date.getDate()).padStart(2, "0")
+      const date = `${year}-${month}-${day}`
+
+      const workoutData = {
+        ...values,
+        date
+      }
+
+      await createWorkoutInstance(workoutData)
         .then(data => {
           showPopup(<WorkoutInstanceSuccess formValues={values} personalRecords={data.personalRecords} />)
           router.push("/dashboard")

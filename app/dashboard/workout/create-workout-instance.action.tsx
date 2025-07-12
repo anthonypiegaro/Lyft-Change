@@ -16,7 +16,7 @@ type CreateWorkoutReturn = {
   personalRecords: PersonalRecord[]
 }
 
-export const createWorkoutInstance = async (values: WorkoutFormSchema): Promise<CreateWorkoutReturn> => {
+export const createWorkoutInstance = async (values: Omit<WorkoutFormSchema, "date"> & { date: string }): Promise<CreateWorkoutReturn> => {
   const session = await auth.api.getSession({
     headers: await headers()
   })
@@ -38,7 +38,7 @@ export const createWorkoutInstance = async (values: WorkoutFormSchema): Promise<
       userId: userId,
       name: values.name,
       notes: values.notes,
-      date: values.date.toISOString().slice(0, 10),
+      date: values.date,
       completed: true
     }).returning({ workoutId: workoutInstance.id })
 

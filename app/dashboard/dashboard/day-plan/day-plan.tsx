@@ -332,7 +332,7 @@ export function DayPlan({
             <Link key={workout.id} href={`/dashboard/workout/${workout.id}`} className="group">
               <Card className="relative gap-2 transition-all group-hover:bg-neutral-100 dark:group-hover:bg-neutral-800">
                 <div className={cn(
-                  "absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-card border rounded-full p-1 text-sm",
+                  "absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-card border rounded-full py-1 px-3 text-sm",
                   !workout.completed && "hidden"
                 )}>
                   Completed
@@ -352,6 +352,9 @@ export function DayPlan({
                       }
                     </span>
                   ))}
+                  {workout.exercises.length === 0 && (
+                    <div>No exercises</div>
+                  )}
                 </CardContent>
               </Card>
             </Link>

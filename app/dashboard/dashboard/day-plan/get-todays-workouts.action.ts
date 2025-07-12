@@ -9,8 +9,6 @@ import { exercise, exerciseInstance, setInstance, workoutInstance } from "@/db/s
 import { auth } from "@/lib/auth"
 import { Workout } from "./day-plan"
 
-// Currently only grabbong exercises that have at least one set????
-
 export const getTodaysWorkouts = async (date: string): Promise<Workout[]> => {
   const session = await auth.api.getSession({
     headers: await headers()
@@ -33,12 +31,14 @@ export const getTodaysWorkouts = async (date: string): Promise<Workout[]> => {
     })
     .from(workoutInstance)
     .leftJoin(exerciseInstance, eq(exerciseInstance.workoutInstanceId, workoutInstance.id))
-    .innerJoin(exercise, eq(exerciseInstance.exerciseId, exercise.id))
+    .leftJoin(exercise, eq(exerciseInstance.exerciseId, exercise.id))
     .leftJoin(setInstance, eq(exerciseInstance.id, setInstance.exerciseInstanceId))
     .where(and(
       eq(workoutInstance.userId, userId),
       eq(workoutInstance.date, date)
     ))
+  
+  console.log(JSON.stringify(workoutDataRaw))
   
   const workoutData = workoutDataRaw.reduce((acc, row) => {
     if (!(row.id in acc)) {
@@ -50,15 +50,15 @@ export const getTodaysWorkouts = async (date: string): Promise<Workout[]> => {
       }
     }
 
-    if (row.exerciseOrder && !(row.exerciseOrder in acc[row.id].exercises)) {
+    if (row.exerciseOrder !== null && !(row.exerciseOrder in acc[row.id].exercises)) {
       acc[row.id].exercises[row.exerciseOrder] = {
         orderNumber: row.exerciseOrder,
-        name: row.exerciseName,
+        name: row.exerciseName!,
         sets: 0
       }
     }
 
-    if (row.exerciseOrder) {
+    if (row.exerciseOrder !== null && row.setId !== null) {
       acc[row.id].exercises[row.exerciseOrder].sets++
     }
 
