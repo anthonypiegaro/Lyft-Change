@@ -7,7 +7,7 @@ export default function BuildLayout({
 }>) {
   return (
     <div className="w-full">
-      <div className="flex justify-center w-full py-20">
+      <div className="flex justify-center w-full mt-20 mb-10 xl:mb-15">
         <BuildTabs />
       </div>
       {children}

@@ -63,7 +63,10 @@ export function TagForm({
             <FormItem>
               <FormLabel>Name</FormLabel>
               <FormControl>
-                <Input {...field} disabled={isSubmitting} />
+                <Input 
+                  {...field} 
+                  disabled={isSubmitting}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>

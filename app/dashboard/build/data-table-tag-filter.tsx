@@ -3,18 +3,23 @@
 import { Table } from "@tanstack/react-table"
 
 import { MultiSelect } from "@/components/ui/multi-select"
+import { cn } from "@/lib/utils"
 
 interface DataTableTagFilterProps<TData> {
   table: Table<TData>
   tagOptions: {
-    label: string,
+    label: string
     value: string
   }[]
+  className?: string
+  maxCount?: number
 }
 
 export function DataTableTagFilter<TData>({ 
   table,
-  tagOptions
+  tagOptions,
+  className,
+  maxCount=3
 }: DataTableTagFilterProps<TData>) {
 
   return (
@@ -25,8 +30,8 @@ export function DataTableTagFilter<TData>({
       }}
       placeholder="Filter tags..."
       defaultValue={table.getColumn("tags")?.getFilterValue() as string[] || []}
-      maxCount={3}
-      className="max-w-sm dark:bg-input/30"
+      maxCount={maxCount}
+      className={cn("max-w-sm dark:bg-input/30", className)}
     />
   )
 }

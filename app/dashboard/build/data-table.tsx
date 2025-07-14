@@ -81,14 +81,37 @@ export function DataTable<TData, TValue>({
   return (
     <>
     <QueryClientProvider client={queryClient}>
-      <div className="flex items-center gap-x-4 pb-4">
+      <div className="md:hidden w-full flex flex-col items-center gap-y-4 mb-4">
+        <DataTableSearchFilter table={table} columnName={filterColumnName} className="w-sm" />
+        <DataTableTagFilter table={table} tagOptions={tagOptions} className="w-sm" maxCount={1}/>
+        <div className="flex gap-x-4 w-full justify-center">
+          <DataTableViewOptions table={table} />
+          <ExtraOptions size="small" tags={tags} type={type} />
+        </div>
+      </div>
+      <div className="max-md:hidden lg:hidden w-full flex items-center gap-x-4 mb-4">
+        <DataTableSearchFilter table={table} columnName={filterColumnName} className="w-xs" />
+        <DataTableTagFilter table={table} tagOptions={tagOptions} className="w-85" maxCount={1}/>
+        <DataTableViewOptions table={table} />
+        <ExtraOptions tags={tags} type={type} className="ml-auto" />
+      </div>
+      <div className="max-lg:hidden xl:hidden w-full flex items-center gap-x-4 mb-4">
         <DataTableSearchFilter table={table} columnName={filterColumnName} />
         <DataTableViewOptions table={table} />
         <DataTableTagFilter table={table} tagOptions={tagOptions} />
-        <div className=" flex items-center ml-auto flex">
-          <AddTagButton type={type} className="mr-4" />
-          <AddEntityButton type={type} tags={tags} />
-          <ExtraOptions tags={tags} type={type} />
+        <AddEntityButton type={type} tags={tags} />
+        <ExtraOptions tags={tags} type={type} options={["add tag", "delete tag"]} />
+      </div>
+      <div className="max-xl:hidden w-full">
+        <div className="flex items-center flex-wrap gap-x-4 gap-y-4 pb-4">
+          <DataTableSearchFilter table={table} columnName={filterColumnName} />
+          <DataTableViewOptions table={table} />
+          <DataTableTagFilter table={table} tagOptions={tagOptions} />
+          <div className="flex items-center ml-auto flex">
+            <AddTagButton type={type} className="mr-4" />
+            <AddEntityButton type={type} tags={tags} />
+            <ExtraOptions options={["delete tag"]} tags={tags} type={type} />
+          </div>
         </div>
       </div>
       <div className="rounded-md border mb-4">

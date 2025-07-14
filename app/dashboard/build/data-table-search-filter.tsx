@@ -3,15 +3,18 @@
 import { Table } from "@tanstack/react-table"
 
 import { Input } from "@/components/ui/input"
+import { cn } from "@/lib/utils"
 
 interface DataTableSearchFilterProps<TData> {
-  columnName: string,
+  columnName: string
   table: Table<TData>
+  className?: string
 }
 
 export function DataTableSearchFilter<TData>({ 
   columnName,
-  table
+  table,
+  className
 }: DataTableSearchFilterProps<TData>) {
   return (
     <Input
@@ -20,7 +23,7 @@ export function DataTableSearchFilter<TData>({
       onChange={(event) =>
         table.getColumn(columnName)?.setFilterValue(event.target.value)
       }
-      className="max-w-sm"
+      className={cn("max-w-sm", className)}
     />
   )
 }

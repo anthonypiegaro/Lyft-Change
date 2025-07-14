@@ -44,7 +44,7 @@ export function AddTagButton({
         <Button
           variant="outline"
           size="sm"
-          className={cn("hidden h-8 lg:flex", className)}
+          className={cn("h-8", className)}
           onClick={() => setOpen(true)}
         >
           Add Tag
