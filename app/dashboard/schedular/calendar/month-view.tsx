@@ -1,13 +1,21 @@
 "use client"
 
-import React, { useState } from "react"
+import React, { useMemo, useState } from "react"
 import { Trash } from "lucide-react"
 
+import { CalendarEvent, UseCalendarReturn } from "@/components/calendar/use-calendar"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
 import { WorkoutEvent } from "./calendar"
-import { CalendarEvent, UseCalendarReturn } from "../../../../components/calendar/use-calendar"
+import { DailyEventsDialog } from "./daily-events-dialog"
+
+function formatDate(date: Date): string {
+  const month = date.toLocaleString('en-US', { month: 'long' });
+  const day = date.getDate();
+  const year = date.getFullYear();
+  return `${month}, ${day}, ${year}`;
+}
 
 export function MonthView({
   calendar,
@@ -22,7 +30,11 @@ export function MonthView({
   onDeleteClick?: (id: string, name: string) => void
   inEditMode: boolean
 }) {
+  const [dailyEventsDate, setDailyEventsDate] = useState<Date | null>()
+
   const { days, isToday, getEventsForDate, currentDate } = calendar
+
+  const dailyEvents = dailyEventsDate ? getEventsForDate(dailyEventsDate) : []
 
   const currentMonth = currentDate.getMonth()
 
@@ -50,6 +62,12 @@ export function MonthView({
     e.stopPropagation()
     onDeleteClick?.(event.id, event.name)
   }
+
+  const handleDailyEventsOpenChange = (open: boolean) => {
+    if (!open) {
+      setDailyEventsDate(null)
+    }
+  }
   
   return (
     <div className="flex flex-col h-full">
@@ -71,12 +89,16 @@ export function MonthView({
                 <div
                   key={day.toISOString()}
                   className={cn(
-                    "border-t border-r p-1 min-h-24 overflow-hidden",
+                    "relative border-t border-r p-1 min-h-24 overflow-hidden",
                     weekIndex === 0 && "border-t",
                     !isCurrentMonth && "bg-input",
                   )}
                   onClick={() => handleDateClick(day)}
                 >
+                  <div 
+                    className="md:hidden absolute top-0 left-0 w-full h-full z-10"
+                    onClick={() => setDailyEventsDate(day)}
+                  />
                   <div className="flex justify-between">
                     <span
                       className={cn(
@@ -91,9 +113,10 @@ export function MonthView({
 
                   <div className="mt-1 space-y-1 max-h-[calc(100%-1.5rem)] overflow-hidden">
                     {events.map((event) => (
+                      <React.Fragment key={event.id}>
                       <div
                         key={event.id}
-                        className="flex justify-between items-center px-1 py-0.5 text-xs rounded bg-zinc-400/80 hover:bg-zinc-400 cursor-pointer"
+                        className="max-md:hidden flex justify-between items-center px-1 py-0.5 text-xs rounded bg-zinc-400/80 hover:bg-zinc-400 cursor-pointer"
                         onClick={(e) => handleEventClick(event, e)}
                       >
                         <p className="text-sm truncate">{event.name}</p>
@@ -105,6 +128,8 @@ export function MonthView({
                           <Trash className="text-destructive w-1 h-1" />
                         </Button>
                       </div>
+                      <div className="md:hidden h-3 w-3 rounded-full bg-zinc-400/80" />
+                      </React.Fragment>
                     ))}
                   </div>
                 </div>
@@ -113,6 +138,14 @@ export function MonthView({
           </React.Fragment>
         ))}
       </div>
+      <DailyEventsDialog 
+        open={dailyEventsDate ? true : false}
+        onOpenChange={handleDailyEventsOpenChange}
+        events={dailyEvents}
+        date={formatDate(dailyEventsDate ?? new Date())}
+        onEventClick={handleEventClick}
+        onDeleteClick={handleDeleteClick}
+      />
     </div>
   )
 }

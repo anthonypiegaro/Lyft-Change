@@ -37,7 +37,7 @@ export function AddWorkoutForm({
 }) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-full max-w-3xl mx-2">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>Add Workout</DialogTitle>
         </DialogHeader>
@@ -63,6 +63,7 @@ function Form({
   const [date, setDate] = useState<Date | undefined>(new Date())
   const [nameFilter, setNameFilter] = useState<string>("")
   const [tagIdsFilter, setTagIdsFilter] = useState<string[]>([])
+  const [dateInputOpen, setDateInputOpen] = useState(false)
 
   const filteredWorkouts = useMemo(() => {
     return workoutTemplates
@@ -74,7 +75,7 @@ function Form({
         ))
       ))
     },
-    [nameFilter, tagIdsFilter]
+    [nameFilter, tagIdsFilter, workoutTemplates]
   )
 
   const getItemKey = useCallback(
@@ -110,7 +111,12 @@ function Form({
   return (
     <>
       <div>
-        <DateInput date={date} onChange={setDate} disabled={disabled} />
+        <DateInput 
+          open={dateInputOpen} 
+          onOpenChange={setDateInputOpen} 
+          date={date} onChange={setDate} 
+          disabled={disabled}
+        />
       </div>
       <div>
         <Label htmlFor="name-filter" className="mb-1.5">Name Filter</Label>
@@ -127,7 +133,7 @@ function Form({
           disabled={disabled}
         />
       </div>
-      <div ref={parentRef} className={cn("h-86 relative w-full overflow-auto mask-b-from-95% mask-t-from-95%", disabled && "overflow-hidden")}>
+      <div ref={parentRef} className={cn("h-80 relative w-full overflow-auto mask-b-from-95% mask-t-from-95%", disabled && "overflow-hidden")}>
         <div
           style={{
             height: `${rowVirtualizer.getTotalSize()}px`,

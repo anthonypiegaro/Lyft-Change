@@ -1,16 +1,24 @@
 "use client"
 
 import { useState } from "react"
-import { ChevronLeft, ChevronRight, Pencil, PencilOff, Plus } from "lucide-react"
+import {
+  BookText,
+  ChevronLeft, 
+  ChevronRight,
+  Dumbbell,
+  Pencil, 
+  PencilOff, 
+  Plus 
+} from "lucide-react"
 import { toast } from "sonner"
 
+import { CalendarEvent, CalendarView, useCalendar } from "@/components/calendar/use-calendar"
 import { Button } from "@/components/ui/button"
 
 import { DatePicker } from "./date-picker"
 import { DayView } from "./day-view"
 import { WeekView } from "./week-view"
 import { MonthView } from "./month-view"
-import { CalendarEvent, CalendarView, useCalendar } from "@/components/calendar/use-calendar"
 import { AddWorkoutForm } from "./add-workout-form"
 import { addWorkouts } from "./add-workouts.action"
 import { DeleteEventConfirmation } from "./delete-event-confirmation"
@@ -188,7 +196,7 @@ export function Calendar({
   }
 
   return (
-    <div className="container mx-auto flex flex-col h-full border rounded-lg shadow-sm bg-background">
+    <div className="container max-md:w-full mx-auto flex flex-col border rounded-lg shadow-sm bg-background">
       <div className="flex items-center justify-between p-4 border-b">
         <div className="flex items-center space-x-2">
           <DatePicker selected={calendar.currentDate} onSelect={calendar.goToDate} />
@@ -229,16 +237,18 @@ export function Calendar({
         </div>
 
         <div className="flex gap-x-1">
-          <Button onClick={handleEditClick}>
+          <Button onClick={handleEditClick} className="max-md:hidden">
             {inEditMode ? <PencilOff className="w-4 h-4" /> : <Pencil className="w-4 h-4"/>}
           </Button>
           <Button onClick={handleAddWorkoutClick}>
             <Plus className="w-4 h-4 sm:mr-1" />
-            <p className="hidden sm:block">Add Workout</p>
+            <Dumbbell className="w-4 h-4 sm:hidden" />
+            <p className="max-sm:hidden">Add Workout</p>
           </Button>
           <Button onClick={handleAddProgramClick}>
             <Plus className="w-4 h-4 sm:mr-1" />
-            <p className="hidden sm:block">Add Program</p>
+            <BookText className="w-4 h-4 sm:hidden" />
+            <p className="max-sm:hidden">Add Program</p>
           </Button>
         </div>
       </div>

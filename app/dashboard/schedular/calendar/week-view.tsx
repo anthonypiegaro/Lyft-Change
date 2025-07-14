@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import { isSameDay } from "date-fns"
 import { Trash } from "lucide-react"
 
@@ -8,6 +9,14 @@ import { CalendarEvent, UseCalendarReturn } from "@/components/calendar/use-cale
 import { cn } from "@/lib/utils"
 
 import { WorkoutEvent } from "./calendar"
+import { DailyEventsDialog } from "./daily-events-dialog"
+
+function formatDate(date: Date): string {
+  const month = date.toLocaleString('en-US', { month: 'long' });
+  const day = date.getDate();
+  const year = date.getFullYear();
+  return `${month}, ${day}, ${year}`;
+}
 
 export function WeekView({
   calendar,
@@ -20,7 +29,11 @@ export function WeekView({
   onDeleteClick?: (id: string, name: string) => void
   inEditMode: boolean
 }) {
-  const { days, isToday, isSelected, getEventsForWeek } = calendar
+  const [dailyEventsDate, setDailyEventsDate] = useState<Date | null>()
+
+  const { days, isToday, isSelected, getEventsForDate, getEventsForWeek } = calendar
+
+  const dailyEvents = dailyEventsDate ? getEventsForDate(dailyEventsDate) : []
 
   const startOfWeek = days[0]
   const events = getEventsForWeek(startOfWeek)
@@ -35,13 +48,24 @@ export function WeekView({
     onDeleteClick?.(event.id, event.name)
   }
 
+  const handleDailyDialogOpen = (date: Date, e: React.MouseEvent) => {
+    e.stopPropagation()
+    setDailyEventsDate(date)
+  }
+
+  const handleDailyEventsOpenChange = (open: boolean) => {
+    if (!open) {
+      setDailyEventsDate(null)
+    }
+  }
+
   return (
     <div className="flex flex-col h-full">
       <div className="grid grid-cols-7 h-full">
         {days.map((day, index) => (
           <div
             key={day.toISOString()}
-            className={cn("text-center text-sm font-medium border-r",
+            className={cn("relative text-center text-sm font-medium border-r min-h-40",
               isToday(day) ? "bg-blue-50/10" : ""
             )}
           >
@@ -57,25 +81,39 @@ export function WeekView({
                 {day.getDate()}
               </div>
             </div>
-            {events.filter(event => isSameDay(day, event.date)).map(event => (
+            <div>
               <div
-                key={event.id}
-                className="flex justify-between items-center h-10 rounded-md px-2 py-1 m-1 text-sm truncate font-medium bg-zinc-400/80 hover:bg-zinc-400 cursor-pointer"
-                onClick={e => handleEventClick(event, e)}
-              >
-                {event.name}
-                <Button 
-                  variant="ghost" 
-                  className={cn("h-auto w-auto min-w-0 min-h-0 cursor-pointer", !inEditMode && "hidden")}
-                  onClick={e => handleDeleteClick(event, e)}
+                className="md:hidden absolute top-0 left-0 w-full h-full z-10"
+                onClick={e => handleDailyDialogOpen(day, e)}
+              />
+              {events.filter(event => isSameDay(day, event.date)).map(event => (
+                <div
+                  key={event.id}
+                  className="flex justify-between items-center truncate md:h-10 rounded-md pl-1 md:px-2 py-1 m-1 max-md:text-xs max-md:font-normal text-sm truncate font-medium bg-zinc-400/80 hover:bg-zinc-400 cursor-pointer"
+                  onClick={e => handleEventClick(event, e)}
                 >
-                  <Trash className="text-destructive w-1 h-1" />
-                </Button>
-              </div>
-            ))}
+                  {event.name}
+                  <Button 
+                    variant="ghost" 
+                    className={cn("h-auto w-auto min-w-0 min-h-0 cursor-pointer", !inEditMode && "hidden")}
+                    onClick={e => handleDeleteClick(event, e)}
+                  >
+                    <Trash className="text-destructive w-1 h-1" />
+                  </Button>
+                </div>
+              ))}
+            </div>
           </div>
         ))}
       </div>
+      <DailyEventsDialog 
+        open={dailyEventsDate ? true : false}
+        onOpenChange={handleDailyEventsOpenChange}
+        events={dailyEvents}
+        date={formatDate(dailyEventsDate ?? new Date())}
+        onEventClick={handleEventClick}
+        onDeleteClick={handleDeleteClick}
+      />
     </div>
   )
 }

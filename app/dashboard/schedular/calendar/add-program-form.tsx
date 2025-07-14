@@ -227,7 +227,7 @@ export function ProgramForm({
         </div>
         <div
           ref={parentRef}
-          className="h-86 relative w-full overflow-auto mask-b-from-95% mask-t-from-95%"
+          className="h-80 relative w-full overflow-auto mask-b-from-95% mask-t-from-95%"
         >
           <div
             style={{
@@ -267,15 +267,15 @@ export function ProgramForm({
           {submitting && <div className="absolute top-0 left-0 w-full h-full bg-black/40 z-50 pointer-events-auto" />}
         </div>
         <Button className="w-full" disabled={submitting || form.watch("name").length < 1} onClick={form.handleSubmit(onSubmit)} >
-            {submitting ? "Adding Program..." : "Add Program" }
-            <Lottie 
-              lottieRef={lottieRef}
-              animationData={shapeAnimation} 
-              style={{ width: "5%", height: "100%" }} 
-              loop={true} 
-              autoplay={false}
-            />
-          </Button>
+          {submitting ? "Adding Program..." : "Add Program" }
+          <Lottie 
+            lottieRef={lottieRef}
+            animationData={shapeAnimation} 
+            style={{ width: "5%", height: "100%" }} 
+            loop={true} 
+            autoplay={false}
+          />
+        </Button>
       </form>
     </Form>
   )

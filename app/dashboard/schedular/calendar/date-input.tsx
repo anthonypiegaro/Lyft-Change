@@ -16,14 +16,23 @@ import {
 export function DateInput({
   date,
   onChange,
-  disabled
+  disabled,
+  open,
+  onOpenChange
 }: {
   date: Date | undefined
   onChange: (date: Date | undefined) => void
   disabled: boolean
+  open: boolean
+  onOpenChange: (open: boolean) => void
 }) {
+  const handleSelect = (date: Date | undefined) => {
+    onChange(date)
+    onOpenChange(false)
+  }
+
   return (
-    <Popover>
+    <Popover open={open} onOpenChange={onOpenChange}>
       <PopoverTrigger asChild>
         <Button
           variant={"outline"}
@@ -37,11 +46,12 @@ export function DateInput({
           {date ? format(date, "PPP") : <span>Pick a date</span>}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-auto p-0">
+      <PopoverContent className="w-auto p-0" portalRemoved>
         <Calendar
           mode="single"
           selected={date}
-          onSelect={onChange}
+          onSelect={handleSelect}
+          defaultMonth={date}
           initialFocus
         />
       </PopoverContent>
