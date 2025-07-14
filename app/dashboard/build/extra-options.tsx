@@ -1,10 +1,13 @@
 "use client"
 
 import { useState } from "react"
+import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { EllipsisVertical } from "lucide-react"
 import { toast } from "sonner"
 
+import { TagForm } from "@/components/forms/create-tag-form/tag-form"
+import { ExerciseMutationForm } from "@/components/forms/mutate-exercise-form/exercise-mutation-form"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -22,7 +25,7 @@ import {
 import { cn } from "@/lib/utils"
 
 import { DeleteTags } from "./delete-tags"
-import { TagForm } from "@/components/forms/create-tag-form/tag-form"
+
 
 type Option = "delete tag" | "add tag" | "add entity";
 
@@ -31,13 +34,13 @@ export function ExtraOptions({
   type,
   options=["add entity", "add tag", "delete tag"],
   className,
-  size="large"
+  size="chevron"
 }: {
   tags: { id: string, name: string }[]
   type: "exercise" | "workout" | "program"
   options?: Option[]
   className?: string
-  size?: "small" | "large"
+  size?: "options" | "chevron"
 }) {
   const [open, setOpen] = useState(false)
   const [formType, setFormType] = useState<"Delete Tags" | "Add Tag" | "Add Entity" | "">("")
@@ -56,12 +59,25 @@ export function ExtraOptions({
     });
   }
 
+  const handleExerciseSuccess = () => {
+    toast.success("Success", {
+      description: "Exercise added successfully"
+    })
+    router.refresh()
+  }
+
+  const handleExerciseError = (e: Error) => {
+    toast.error("Failed to save exercise", {
+      description: e.message,
+    });
+  }
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-            <Button variant={size === "small" ? "outline" : "ghost"} className={cn(size === "large" && "w-8 h-8", className)}>
-              {size === "small" ? <div>Options</div> : (
+            <Button variant={size === "options" ? "outline" : "ghost"} className={cn(size === "chevron" && "w-8 h-8", className)}>
+              {size === "options" ? <div>Options</div> : (
                 <>
                   <span className="sr-only">Open extra options</span>
                   <EllipsisVertical className="w-4 h-4" />
@@ -70,8 +86,12 @@ export function ExtraOptions({
             </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="align-end">
-          <DialogTrigger className={cn("block w-full", !options.includes("add entity") && "hidden")} onClick={() => setFormType("Add Entity")}>
-            <DropdownMenuItem className="capitalize">Add {type}</DropdownMenuItem>
+          <DialogTrigger className={cn("block w-full", !options.includes("add entity") && "hidden")} onClick={type === "exercise" ? () => setFormType("Add Entity") : () => null}>
+            <DropdownMenuItem className="capitalize">
+              {type === "exercise" && "Add Exercise"}
+              {type === "workout" && <Link href="/dashboard/workout/new">Add Workout</Link>}
+              {type === "program" && <Link href="/dashboard/program/new">Add Program</Link>}
+            </DropdownMenuItem>
           </DialogTrigger>
           <DialogTrigger className={cn("block w-full", !options.includes("add tag") && "hidden")} onClick={() => setFormType("Add Tag")}>
             <DropdownMenuItem>Add Tag</DropdownMenuItem>
@@ -95,6 +115,21 @@ export function ExtraOptions({
         )}
         {formType === "Add Tag" && (
           <TagForm type={type} onSuccess={handleTagSuccess} onError={handleTagError} />
+        )}
+        {formType === "Add Entity" && (
+          <ExerciseMutationForm 
+            tags={tags} 
+            onError={handleExerciseError}
+            onSuccess={handleExerciseSuccess}
+            defaultValues={{
+              id: undefined,
+              type: "weightReps",
+              name: "",
+              tags: [],
+              description: "",
+              weightUnit: "lb"
+            }}
+          /> 
         )}
       </DialogContent>
     </Dialog>

@@ -86,7 +86,7 @@ export function DataTable<TData, TValue>({
         <DataTableTagFilter table={table} tagOptions={tagOptions} className="w-sm" maxCount={1}/>
         <div className="flex gap-x-4 w-full justify-center">
           <DataTableViewOptions table={table} />
-          <ExtraOptions size="small" tags={tags} type={type} />
+          <ExtraOptions size="options" tags={tags} type={type} />
         </div>
       </div>
       <div className="max-md:hidden lg:hidden w-full flex items-center gap-x-4 mb-4">
