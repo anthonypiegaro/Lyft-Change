@@ -72,14 +72,14 @@ export function AppSidebar({
   name: string
   email: string
 }) {
-  const { state, setOpenMobile } = useSidebar()
+  const { state, setOpenMobile, openMobile, isMobile } = useSidebar()
   const pathname = usePathname()
 
   return (
     <Sidebar variant="floating" collapsible="icon">
       <SidebarHeader>
         <h1 className={cn("flex h-8 shrink-0 items-center justify-center text-lg font-semibold transition-opacity duration-75 delay-0", 
-          state == "collapsed" ? "opacity-0" : "opacity-100 delay-100"
+          state == "expanded" || (isMobile && openMobile) ? "opacity-100 delay-100" : "opacity-0"
         )}>
           <Link href="/dashboard">Lyft Change</Link>
         </h1>
