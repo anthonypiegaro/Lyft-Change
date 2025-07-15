@@ -28,6 +28,7 @@ import { Input } from "@/components/ui/input"
 import { MultiSelect } from "@/components/ui/multi-select"
 import { Separator } from "@/components/ui/separator"
 import { Textarea } from "@/components/ui/textarea"
+import { useIsLargeScreen } from "@/hooks/use-large-screen"
 
 import { ProgramCalendar } from "./program-calendar"
 import { WorkoutList } from "./workout-list"
@@ -89,6 +90,8 @@ export function ProgramForm({
   const [activeWorkout, setActiveWorkout] = useState<{ workout: WorkoutItem, start: number } | null>(null)
   const [programTags, setProgramTags] = useState<ProgramTag[]>(initProgramTags)
   const [tagFormOpen, setTagFormOpen] = useState(false)
+
+  const isLargeScreen = useIsLargeScreen()
 
   useLayoutEffect(() => {
     if (workoutListRef.current) {
@@ -271,13 +274,19 @@ export function ProgramForm({
       </Card>
       <div className="flex gap-x-4 grow">
         <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-          <div ref={workoutListRef}>
+          <div ref={workoutListRef} className="max-lg:hidden">
             <WorkoutList 
               workouts={workouts} 
               tags={workoutTags}
             />
           </div>
-          <div className="grow" style={{ height: calendarMaxHeight || undefined, maxHeight: calendarMaxHeight || undefined }}>
+          <div 
+            className="grow" 
+            style={{ 
+              height: isLargeScreen ? (calendarMaxHeight || undefined) : "fit-content", 
+              maxHeight: isLargeScreen ? (calendarMaxHeight || undefined) : "fit-content"
+            }}
+          >
             <ProgramCalendar 
               weeks={weeks} 
               onAddWeek={handleAddWeek} 

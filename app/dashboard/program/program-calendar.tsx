@@ -45,8 +45,8 @@ export function ProgramCalendar({
   }, [weeks]);
 
   return (
-    <Card className="max-h-full py-[12px]">
-      <CardContent className="max-h-full py-0 my-0">
+    <Card className={"lg:max-h-full py-[12px]"}>
+      <CardContent className="lg:max-h-full py-0 my-0">
         <div ref={headerRef} className="mb-[8px]">
           <div className="flex justify-between">
             <div className="flex items-center gap-x-2">
