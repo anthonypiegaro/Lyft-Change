@@ -7,7 +7,6 @@ import { getExerciseTags } from "./get-exercise-tags.action";
 import { getExercises } from "./get-exercises.action";
 
 export default async function ExercisePage() {
-  await new Promise(resolve => setTimeout(resolve, 5000))
   const [exerciseTags, exercises] = await Promise.all([getExerciseTags(), getExercises()])
 
   return (

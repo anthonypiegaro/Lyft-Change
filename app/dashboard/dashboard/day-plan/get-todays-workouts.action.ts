@@ -38,8 +38,6 @@ export const getTodaysWorkouts = async (date: string): Promise<Workout[]> => {
       eq(workoutInstance.date, date)
     ))
   
-  console.log(JSON.stringify(workoutDataRaw))
-  
   const workoutData = workoutDataRaw.reduce((acc, row) => {
     if (!(row.id in acc)) {
       acc[row.id] = {

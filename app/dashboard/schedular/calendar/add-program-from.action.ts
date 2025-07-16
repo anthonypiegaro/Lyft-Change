@@ -181,7 +181,6 @@ export const addProgramToCalendar = async (values: AddProgramFormSchema): Promis
           } else {
             console.log(workoutExercise.type)
             throw new Error("Exercise not of valid type")
-
           }
         }
       }
