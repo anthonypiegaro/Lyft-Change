@@ -32,14 +32,6 @@ import { ExerciseMutationFormSchema } from "@/components/forms/mutate-exercise-f
 import { EditExerciseForm } from "./edit-exercise-form"
 import { HideExerciseForm } from "./hide-exercise-form"
 
-// export type ExerciseRowType = {
-//   id: string
-//   name: string
-//   type: "weightReps" | "timeDistance"
-//   tags: { id: string, name: string }[]
-//   description: string
-// }
-
 export type ExerciseRowType = 
 {
   id: string
@@ -185,13 +177,11 @@ export const columns: ColumnDef<ExerciseRowType>[] = [
               </div>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem>Details</DropdownMenuItem>
-              <DropdownMenuSeparator />
               <DialogTrigger className="w-full" onClick={() => setForm("Edit Exercise")}>
                 <DropdownMenuItem>Edit</DropdownMenuItem>
               </DialogTrigger>
               <DialogTrigger className="w-full" onClick={() => setForm("Hide Exercise")}>
-                <DropdownMenuItem className="text-destructive">Hide</DropdownMenuItem>
+                <DropdownMenuItem variant="destructive">Hide</DropdownMenuItem>
               </DialogTrigger>
             </DropdownMenuContent>
           </DropdownMenu>

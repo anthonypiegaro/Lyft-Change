@@ -86,7 +86,7 @@ export const columns: ColumnDef<ProgramRowType>[] = [
             <DropdownMenuContent>
               <DropdownMenuItem onClick={() => router.push(`/dashboard/program/${program.id}`)}>Edit</DropdownMenuItem>
               <DialogTrigger className="w-full">
-                <DropdownMenuItem className="text-destructive">
+                <DropdownMenuItem variant="destructive">
                   Delete
                 </DropdownMenuItem>
               </DialogTrigger>

@@ -96,7 +96,7 @@ export const columns: ColumnDef<WorkoutRowType>[] = [
                 className="w-full" 
                 onClick={() => setForm("Delete Workout")}
               >
-                <DropdownMenuItem className="text-destructive">Delete</DropdownMenuItem>
+                <DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>
               </DialogTrigger>
             </DropdownMenuContent>
           </DropdownMenu>
