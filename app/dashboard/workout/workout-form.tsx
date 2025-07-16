@@ -312,7 +312,7 @@ function Exercise({
                   <FormControl>
                     <Input 
                       {...field} 
-                      onChange={e => { field.onChange(e.target.value === ""  ? "" : form.watch(`exercises.${exerciseIndex}.units.weight`) === "g" ? Math.trunc(Number(e.target.value)) : Math.trunc(Number(e.target.value) * 100) / 100) } }
+                      onChange={e => { field.onChange(e.target.value === ""  ? "" : form.watch(`exercises.${exerciseIndex}.units.weight`) === "g" ? Math.trunc(Number(e.target.value)) : form.watch(`exercises.${exerciseIndex}.units.weight`) === "oz" ? Math.round(Number(e.target.value)) : Math.trunc(Number(e.target.value) * 100) / 100) } }
                       onWheel={e => { e.currentTarget.blur() }}
                       onFocus={e => e.target.select()}
                       disabled={isSubmitting} type="number" 

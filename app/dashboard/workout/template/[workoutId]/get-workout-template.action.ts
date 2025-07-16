@@ -99,7 +99,7 @@ export const getWorkoutTemplate = async (id: string): Promise<WorkoutFormSchema>
             reps: "reps"
           },
           sets: setsRes.map(set => ({
-            weight: Math.round(weightFromGrams[exerciseRes.weightUnit!](set.weight) * 100) / 100,
+            weight: exerciseRes.weightUnit === "oz" ? Math.round(weightFromGrams["oz"](set.weight)) :  Math.round(weightFromGrams[exerciseRes.weightUnit!](set.weight) * 100) / 100,
             reps: set.reps,
             completed: false
           }))
