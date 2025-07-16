@@ -106,6 +106,9 @@ interface MultiSelectProps
    */
   modalPopover?: boolean;
 
+  // If true, removes the portal from the popover content
+  portalRemoved?: boolean
+
   /**
    * If true, renders the multi-select component as a child of another component.
    * Optional, defaults to false.
@@ -137,6 +140,7 @@ export const MultiSelect = React.forwardRef<
       animation = 0,
       maxCount = 3,
       modalPopover = false,
+      portalRemoved = false,
       asChild = false,
       showSelectAll = false,
       emptyComponent = "No options found.",
@@ -291,6 +295,7 @@ export const MultiSelect = React.forwardRef<
           className="w-auto p-0"
           align="start"
           onEscapeKeyDown={() => setIsPopoverOpen(false)}
+          portalRemoved={portalRemoved}
         >
           <Command>
             <CommandInput

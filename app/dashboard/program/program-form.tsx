@@ -1,10 +1,10 @@
 "use client"
 
-import React, { useLayoutEffect, useMemo, useRef, useState } from "react"
+import React, { useLayoutEffect, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { DndContext, DragEndEvent, DragOverlay, DragStartEvent } from "@dnd-kit/core"
-import { Dumbbell, Hammer } from "lucide-react"
+import { Dumbbell, Hammer, Plus } from "lucide-react"
 import { useFieldArray, useForm } from "react-hook-form"
 import { toast } from "sonner"
 import { z } from "zod"
@@ -36,6 +36,7 @@ import { WorkoutCardPlain } from "./workout-card"
 import { OverlayCalendarWorkoutEvent } from "./program-calendar"
 import { buildProgram } from "./program-form.action"
 import { CreateProgramTagForm } from "./create-program-tag-form"
+import { AddWorkoutDialog } from "./add-workout-dialog"
 
 export type ProgramTag = {
   id: string
@@ -90,6 +91,7 @@ export function ProgramForm({
   const [activeWorkout, setActiveWorkout] = useState<{ workout: WorkoutItem, start: number } | null>(null)
   const [programTags, setProgramTags] = useState<ProgramTag[]>(initProgramTags)
   const [tagFormOpen, setTagFormOpen] = useState(false)
+  const [openAddWorkoutDialog, setOpenAddWorkoutDialog] = useState(false)
 
   const isLargeScreen = useIsLargeScreen()
 
@@ -177,8 +179,12 @@ export function ProgramForm({
     setProgramTags(prev => [...prev, tag])
   }
 
+  const handleAddWorkout = (workout: { name: string, workoutId: string, day: number }) => {
+    append(workout)
+  }
+
   return (
-    <div className="flex flex-col gap-y-4 w-full h-full mx-auto max-w-7xl py-7 px-2 md:pl-0 md:pr-2">
+    <div className="flex flex-col gap-y-4 w-full h-full mx-auto max-w-7xl py-7 px-2 md:pl-0 md:pr-2 max-md:mb-10">
       <Card className="w-full">
         <CardHeader>
           <CardTitle className="flex items-center gap-x-4">
@@ -248,7 +254,7 @@ export function ProgramForm({
               />
             </form>
           </Form>
-          <div className="flex flex-col justify-between">
+          <div className="flex flex-col gap-y-4 justify-between">
             <Card>
               <CardContent className="md:min-w-xs lg:min-w-sm">
                 <h2 className="text-xl mb-2">Program Stats</h2>
@@ -272,7 +278,7 @@ export function ProgramForm({
           </div>
         </CardContent>
       </Card>
-      <div className="flex gap-x-4 grow">
+      <div className="flex max-lg:flex-col gap-4 grow">
         <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
           <div ref={workoutListRef} className="max-lg:hidden">
             <WorkoutList 
@@ -280,6 +286,14 @@ export function ProgramForm({
               tags={workoutTags}
             />
           </div>
+          <Card className="flex flex-row justify-center lg:hidden sticky top-0 z-20">
+            <Button onClick={() => setOpenAddWorkoutDialog(true)}>
+              <Plus /> Add Workout
+            </Button>
+            <Button onClick={handleAddWeek}>
+              <Plus /> Add Week
+            </Button>
+          </Card>
           <div 
             className="grow" 
             style={{ 
@@ -290,7 +304,7 @@ export function ProgramForm({
             <ProgramCalendar 
               weeks={weeks} 
               onAddWeek={handleAddWeek} 
-              maxHeight={calendarMaxHeight}
+              maxHeight={isLargeScreen ? calendarMaxHeight : 10000000}
               workouts={fields}
               onRemoveWorkout={handleRemoveWorkout}
             />
@@ -304,6 +318,14 @@ export function ProgramForm({
             }
           </DragOverlay>
         </DndContext>
+        <AddWorkoutDialog
+          open={openAddWorkoutDialog} 
+          onOpenChange={setOpenAddWorkoutDialog}
+          workoutTags={workoutTags}
+          workouts={workouts}
+          addWorkoutToDay={handleAddWorkout}
+          weeks={weeks}
+        />
       </div>
     </div>
   )

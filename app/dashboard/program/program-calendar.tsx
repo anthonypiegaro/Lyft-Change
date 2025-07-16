@@ -2,7 +2,6 @@
 
 import { useLayoutEffect, useRef, useState } from "react"
 import { useDraggable, useDroppable } from "@dnd-kit/core"
-import { CSS } from "@dnd-kit/utilities"
 import { Calendar, Plus, X } from "lucide-react"
 import { FieldArrayWithId } from "react-hook-form"
 
@@ -46,23 +45,32 @@ export function ProgramCalendar({
 
   return (
     <Card className={"lg:max-h-full py-[12px]"}>
-      <CardContent className="lg:max-h-full py-0 my-0">
-        <div ref={headerRef} className="mb-[8px]">
+      <CardContent className="lg:max-h-full p-0 my-0">
+        <div ref={headerRef} className="mb-[8px] px-6">
           <div className="flex justify-between">
             <div className="flex items-center gap-x-2">
               <Calendar className="w-4.1 h-4.1" />
               <h2 className="text-xl font-normal">Program Calendar</h2>
             </div>
-            <Button onClick={onAddWeek}>
+            <Button onClick={onAddWeek} className="max-lg:hidden">
               <Plus /> Add Week
             </Button>
           </div>
           <p className="text-muted-foreground text-sm mb-0">Your program schedule - drag workouts from the library to get started</p>
         </div>
-        <div className="grid grid-cols-7 gap-3 pb-1 overflow-auto sm:overflow-x-hidden" style={{ maxHeight: calendarMaxHeight }} ref={daysRef}>
+        <div className="grid grid-cols-7 lg:px-6 lg:gap-3 max-lg:border-t max-lg:border-b lg:pb-1 overflow-auto sm:overflow-x-hidden" style={{ maxHeight: calendarMaxHeight }} ref={daysRef}>
           {Array.from({ length: weeks * 7}, (_, i) => {
             return (
-              <Date key={i} day={i} workouts={workouts} onRemoveWorkout={onRemoveWorkout}/>
+              <Date 
+                key={i} 
+                day={i} 
+                workouts={workouts} 
+                onRemoveWorkout={onRemoveWorkout} 
+                className={cn(
+                  Math.floor(i / 7) !== (weeks - 1) && "max-lg:border-b",
+                  (i + 1) % 7 !== 0 && "max-lg:border-r"
+                )} 
+              />
             )
           })}
         </div>
@@ -75,10 +83,12 @@ function Date({
   day,
   workouts,
   onRemoveWorkout,
+  className
 }: {
   day: number
   workouts: FieldArrayWithId<ProgramFormSchema, "workouts", "id">[]
   onRemoveWorkout: (fieldId: string) => void
+  className?: string
 }) {
 
   const { setNodeRef, isOver } = useDroppable({
@@ -88,12 +98,13 @@ function Date({
   return (
     <div 
       className={cn(
-        "flex flex-col items-center h-32 overflow-auto transition-all border-2 border-dashed rounded-md",
-        isOver && "border-muted-foreground scale-101"
+        "flex flex-col items-center h-32 overflow-auto transition-all lg:border-2 lg:border-dashed lg:rounded-md",
+        isOver && "border-muted-foreground scale-101",
+        className
       )}
       ref={setNodeRef}
     >
-      <p className="py-1">Day {day}</p>
+      <p className="py-1"><span className="max-md:hidden">Day </span>{day}</p>
       <div className="w-full">
         {workouts.map((workout, index) => workout.day === day && (
           <CalendarWorkoutEvent key={workout.id} fieldIndex={index} workout={workout} onRemoveWorkout={onRemoveWorkout} />
@@ -106,7 +117,7 @@ function Date({
 function CalendarWorkoutEvent({
   workout,
   onRemoveWorkout,
-  fieldIndex,
+  fieldIndex
 }: {
   workout: FieldArrayWithId<ProgramFormSchema, "workouts", "id">
   onRemoveWorkout: (fieldId: string) => void
