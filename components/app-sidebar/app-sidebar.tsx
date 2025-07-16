@@ -22,6 +22,7 @@ import {
 import { cn } from "@/lib/utils"
 
 import { NavUser } from "./nav-user";
+import { ThemeToggleButton } from "../ui/theme-toggle-button";
 
 const menuItems = [
   {
@@ -77,12 +78,16 @@ export function AppSidebar({
 
   return (
     <Sidebar variant="floating" collapsible="icon">
-      <SidebarHeader>
+      <SidebarHeader className="relative">
         <h1 className={cn("flex h-8 shrink-0 items-center justify-center text-lg font-semibold transition-opacity duration-75 delay-0", 
           state == "expanded" || (isMobile && openMobile) ? "opacity-100 delay-100" : "opacity-0"
         )}>
           <Link href="/dashboard">Lyft Change</Link>
         </h1>
+        <ThemeToggleButton 
+          className={cn("absolute top-1/2 right-2 -translate-y-1/2", !isMobile && "hidden")}
+          variant="ghost"
+        />
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>

@@ -33,10 +33,12 @@ export default async function DashboardLayout({
         <MobileWarningBanner />
         <AppSidebar id={id} name={name} email={email} />
         <div className="fixed top-5 right-4.75">
-          <ThemeToggleButton />
+          <ThemeToggleButton className="max-md:hidden z-50" />
         </div>
         <main className="flex w-full min-h-screen">
-          <SidebarTrigger className="fixed left-4.75 top-5 z-50" />
+          <div className="max-md:bg-muted-foreground/30 max-md:backdrop-blur-sm rounded-sm fixed left-4.75 top-5 z-50">
+            <SidebarTrigger />
+          </div>
           {children}
         </main>
         <Toaster />
