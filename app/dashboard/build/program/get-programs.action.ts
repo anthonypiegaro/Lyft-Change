@@ -43,7 +43,7 @@ export const getPrograms = async (): Promise<ProgramRowType[]> => {
     if (p.tagId && p.tagName) {
       acc[p.id].tags.push({
         id: p.tagId,
-        name: p.name
+        name: p.tagName
       })
     }
 
