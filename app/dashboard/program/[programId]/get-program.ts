@@ -17,7 +17,7 @@ export const getProgram = async (programId: string): Promise<z.infer<typeof prog
   })
 
   if (!session) {
-    redirect("/sign-in")
+    redirect("/auth")
   }
 
   const userId = session.user.id

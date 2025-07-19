@@ -14,7 +14,7 @@ export const deleteWorkout = async (id: string) => {
   })
 
   if (!session) {
-    redirect("/sign-in")
+    redirect("/auth")
   }
 
   const userId = session.user.id

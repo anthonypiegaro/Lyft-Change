@@ -31,7 +31,7 @@ export const createWorkoutFromTemplate = async (templateId: string): Promise<{ i
   })
 
   if (!session) {
-    redirect("/sign-in")
+    redirect("/auth")
   }
 
   const userId = session.user.id

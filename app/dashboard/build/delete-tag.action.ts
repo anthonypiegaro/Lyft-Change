@@ -14,7 +14,7 @@ export const deleteExerciseTag = async (id: string) => {
   })
 
   if (!session) {
-    redirect("/sign-in")
+    redirect("/auth")
   }
 
   const userId = session.user.id
@@ -31,7 +31,7 @@ export const deleteWorkoutTag = async (id: string) => {
   })
 
   if (!session) {
-    redirect("/sign-in")
+    redirect("/auth")
   }
 
   const userId = session.user.id
@@ -48,7 +48,7 @@ export const deleteProgramTag = async (id: string) => {
   })
 
   if (!session) {
-    redirect("/sign-in")
+    redirect("/auth")
   }
 
   const userId = session.user.id

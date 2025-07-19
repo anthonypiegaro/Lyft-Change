@@ -30,7 +30,7 @@ export const createWorkoutTemplate = async (values: WorkoutFormSchema) => {
   })
 
   if (!session) {
-    redirect("/sign-in")
+    redirect("/auth")
   }
 
   const userId = session.user.id

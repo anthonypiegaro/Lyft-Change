@@ -28,7 +28,7 @@ async function ActionButton() {
 function SignInButton() {
   return (
     <Button asChild>
-      <Link href="/sign-in">Sign In</Link>
+      <Link href="/auth">Sign In</Link>
     </Button>
   )
 }

@@ -27,7 +27,7 @@ export const getWorkout = async (id: string): Promise<Omit<WorkoutFormSchema, "d
   })
 
   if (!session) {
-    redirect("/sign-in")
+    redirect("/auth")
   }
 
   const userId = session.user.id

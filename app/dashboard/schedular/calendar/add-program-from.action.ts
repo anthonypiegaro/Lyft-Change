@@ -35,7 +35,7 @@ export const addProgramToCalendar = async (values: AddProgramFormSchema): Promis
   })
 
   if (!session) {
-    redirect("/sign-in")
+    redirect("/auth")
   }
 
   const userId = session.user.id

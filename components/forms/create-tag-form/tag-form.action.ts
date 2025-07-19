@@ -17,7 +17,7 @@ export const createTag = async (values: z.infer<typeof tagFormSchema>) => {
   })
 
   if (!session) {
-    redirect("/sign-in")
+    redirect("/auth")
   }
 
   const userId = session.user.id

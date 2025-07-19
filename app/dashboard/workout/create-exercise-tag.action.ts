@@ -14,7 +14,7 @@ export const createExerciseTag = async (values: CreateExerciseTagFormSchema) => 
   })
 
   if (!session) {
-    redirect("/sign-in")
+    redirect("/auth")
   }
 
   const userId = session.user.id

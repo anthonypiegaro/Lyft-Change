@@ -15,7 +15,7 @@ export const getPrograms = async (): Promise<ProgramRowType[]> => {
   })
 
   if (!session) {
-    redirect("/sign-in")
+    redirect("/auth")
   }
 
   const userId = session.user.id

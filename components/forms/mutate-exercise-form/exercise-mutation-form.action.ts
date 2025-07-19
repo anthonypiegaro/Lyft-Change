@@ -16,7 +16,7 @@ export const mutateExercise = async (values: ExerciseMutationFormSchema) => {
   })
 
   if (!session) {
-    redirect("/sign-in")
+    redirect("/auth")
   }
 
   const userId = session.user.id

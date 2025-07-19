@@ -14,7 +14,7 @@ export const getExerciseTags = async (): Promise<{ id: string, name: string }[]>
   })
 
   if (!session) {
-    redirect("/sign-in")
+    redirect("/auth")
   }
 
   const userId = session.user.id
@@ -30,7 +30,7 @@ export const getExerciseWithoutUserId = async () => {
     })
   
     if (!session) {
-      redirect("/sign-in")
+      redirect("/auth")
     }
 
     const userId = session.user.id

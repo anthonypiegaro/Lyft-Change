@@ -22,7 +22,7 @@ export const createWorkoutInstance = async (values: Omit<WorkoutFormSchema, "dat
   })
 
   if (!session) {
-    redirect("/sign-in")
+    redirect("/auth")
   }
 
   const userId = session.user.id

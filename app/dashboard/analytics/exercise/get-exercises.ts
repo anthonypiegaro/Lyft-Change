@@ -14,7 +14,7 @@ export const getExercises = async () => {
   })
 
   if (!session) {
-    redirect("/sign-in")
+    redirect("/auth")
   }
 
   const userId = session.user.id

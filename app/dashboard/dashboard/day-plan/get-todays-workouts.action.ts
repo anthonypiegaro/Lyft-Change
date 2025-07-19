@@ -15,7 +15,7 @@ export const getTodaysWorkouts = async (date: string): Promise<Workout[]> => {
   })
 
   if (!session) {
-    redirect("/sign-in")
+    redirect("/auth")
   }
 
   const userId = session.user.id
