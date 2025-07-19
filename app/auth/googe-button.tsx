@@ -4,14 +4,14 @@ import { signIn } from "@/lib/auth-client"
 
 export default function GoogleButton() {
   return (
-    <>
-    <div className="dark:hidden">
-      <ButtonLight />
+    <div className="flex justify-center">
+      <div className="dark:hidden">
+        <ButtonLight />
+      </div>
+      <div className="hidden dark:block">
+        <ButtonDark />
+      </div>
     </div>
-    <div className="hidden dark:block">
-      <ButtonDark />
-    </div>
-    </>
   )
 }
 
