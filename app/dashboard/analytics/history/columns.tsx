@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { ColumnDef } from "@tanstack/react-table"
+import { ColumnDef, Row } from "@tanstack/react-table"
 import { useRouter } from "next/navigation"
 import { ArrowUpDown, MoreHorizontal } from "lucide-react"
 
@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button"
 import { 
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger
@@ -21,7 +20,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
-import { deleteWorkout } from "./delete-workout"
 import { DeleteWorkoutForm } from "./delete-workout-form"
 import { useWorkoutContext } from "./workout-context"
 
@@ -56,7 +54,24 @@ export const columns: ColumnDef<Workout>[] = [
         </Button>
       )
     },
-    sortingFn: "datetime"
+    sortingFn: "datetime",
+    filterFn: (row, columnId, filterValue: { start: Date | undefined, end: Date | undefined}) => {
+      const [year, month, day] = row.original.date.split("-").map(Number)
+      const date = new Date(year, month - 1, day)
+      if (isNaN(date.getTime())) {
+        return false;
+      }
+    
+      if (filterValue.start && filterValue.start > date) {
+        return false
+      }
+
+      if (filterValue.end && filterValue.end < date) {
+        return false
+      }
+
+      return true
+    }
   },
   {
     id: "actions",

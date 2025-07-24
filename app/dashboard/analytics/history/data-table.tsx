@@ -24,10 +24,22 @@ import {
 } from "@/components/ui/table"
 
 import { DataTablePagination } from "./data-table-pagination"
+import { DatePicker } from "./date-picker"
+import { Label } from "@/components/ui/label"
 
 export interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
+}
+
+type DateRange = { start?: Date; end?: Date }
+
+function isDateRange(val: unknown): val is DateRange {
+  return (
+    typeof val === "object" &&
+    val !== null &&
+    ("start" in val || "end" in val)
+  )
 }
 
 export function DataTable<TData, TValue>({
@@ -52,17 +64,41 @@ export function DataTable<TData, TValue>({
     },
   })
 
+  const dateFilterValue = table.getColumn("date")?.getFilterValue()
+  const startDate = isDateRange(dateFilterValue) ? dateFilterValue.start : undefined
+  const endDate = isDateRange(dateFilterValue) ? dateFilterValue.end : undefined
+
   return (
     <>
-      <div className="flex items-center py-4">
-        <Input
-          placeholder="Filter workouts..."
-          value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("name")?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        />
+      <div className="flex items-center py-4 gap-4">
+        <div className="flex flex-col gap-1">
+          <Label>Workout filter</Label>
+          <Input
+            value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+            onChange={(event) =>
+              table.getColumn("name")?.setFilterValue(event.target.value)
+            }
+            className="max-w-sm"
+          />
+        </div>
+        <div className="flex gap-2">
+          <DatePicker 
+            date={startDate}
+            setDate={(date: Date | undefined) => table.getColumn("date")?.setFilterValue({
+              start: date,
+              end: endDate
+            })}
+            label="Start date"
+          />
+          <DatePicker 
+            date={endDate}
+            setDate={(date: Date | undefined) => table.getColumn("date")?.setFilterValue({
+              start: startDate,
+              end: date
+            })}
+            label="End date"
+          />
+        </div>
       </div>
       <div className="rounded-md border mb-4">
         <Table>
