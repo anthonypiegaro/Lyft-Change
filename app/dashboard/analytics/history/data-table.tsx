@@ -14,6 +14,7 @@ import {
 } from "@tanstack/react-table"
 
 import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import {
   Table,
   TableBody,
@@ -25,7 +26,6 @@ import {
 
 import { DataTablePagination } from "./data-table-pagination"
 import { DatePicker } from "./date-picker"
-import { Label } from "@/components/ui/label"
 
 export interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -71,33 +71,35 @@ export function DataTable<TData, TValue>({
   return (
     <>
       <div className="flex items-center py-4 gap-4">
-        <div className="flex flex-col gap-1">
-          <Label>Workout filter</Label>
-          <Input
-            value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
-            onChange={(event) =>
-              table.getColumn("name")?.setFilterValue(event.target.value)
-            }
-            className="max-w-sm"
-          />
-        </div>
-        <div className="flex gap-2">
-          <DatePicker 
-            date={startDate}
-            setDate={(date: Date | undefined) => table.getColumn("date")?.setFilterValue({
-              start: date,
-              end: endDate
-            })}
-            label="Start date"
-          />
-          <DatePicker 
-            date={endDate}
-            setDate={(date: Date | undefined) => table.getColumn("date")?.setFilterValue({
-              start: startDate,
-              end: date
-            })}
-            label="End date"
-          />
+        <div className="flex gap-4 w-full max-md:flex-col max-md:items-center">
+          <div className="flex flex-col gap-1">
+            <Label>Workout filter</Label>
+            <Input
+              value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+              onChange={(event) =>
+                table.getColumn("name")?.setFilterValue(event.target.value)
+              }
+              className="w-sm max-w-full"
+            />
+          </div>
+          <div className="flex gap-2">
+            <DatePicker 
+              date={startDate}
+              setDate={(date: Date | undefined) => table.getColumn("date")?.setFilterValue({
+                start: date,
+                end: endDate
+              })}
+              label="Start date"
+            />
+            <DatePicker 
+              date={endDate}
+              setDate={(date: Date | undefined) => table.getColumn("date")?.setFilterValue({
+                start: startDate,
+                end: date
+              })}
+              label="End date"
+            />
+          </div>
         </div>
       </div>
       <div className="rounded-md border mb-4">

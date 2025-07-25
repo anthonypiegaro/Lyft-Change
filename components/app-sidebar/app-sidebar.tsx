@@ -32,6 +32,17 @@ const menuItems = [
     subItems: []
   },
   {
+    title: "Analytics",
+    url: "/dashboard/analytics/quick-view/exercise",
+    icon: ChartArea,
+    subItems: [
+      {
+        title: "History",
+        url: "/dashboard/analytics/history"
+      }
+    ]
+  },
+  {
     title: "Build",
     url: "/dashboard/build/exercise",
     icon: Blocks,
@@ -55,18 +66,7 @@ const menuItems = [
     url: "/dashboard/schedular",
     icon: Calendar,
     subItems: []
-  },
-  {
-    title: "Analytics",
-    url: "/dashboard/analytics/quick-view/exercise",
-    icon: ChartArea,
-    subItems: [
-      {
-        title: "History",
-        url: "/dashboard/analytics/history"
-      }
-    ]
-  },
+  }
 ]
 
 export function AppSidebar({
